@@ -36,6 +36,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>LV_CONF_INCLUDE_SIMPLE;LV_LVGL_H_INCLUDE_SIMPLE;LV_USE_DEV_VERSION;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization Condition="'$(Configuration)'=='Release'">MinSpace</Optimization>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\delug\OneDrive\Source\Arduino\git\lv_port_pc_visual_studio-9.2\LvglWindowsSimulator\eez;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -516,6 +517,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\tileview\lv_tileview_private.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
+    <ClInclude Include="eez\actions.h" />
+    <ClInclude Include="eez\eez-flow.h" />
+    <ClInclude Include="eez\fonts.h" />
+    <ClInclude Include="eez\images.h" />
+    <ClInclude Include="eez\screens.h" />
+    <ClInclude Include="eez\structs.h" />
+    <ClInclude Include="eez\styles.h" />
+    <ClInclude Include="eez\ui.h" />
+    <ClInclude Include="eez\vars.h" />
     <ClInclude Include="lv_conf.h" />
   </ItemGroup>
   <ItemGroup>
@@ -3266,6 +3276,32 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="eez\eez-flow.cpp" />
+    <ClCompile Include="eez\images.c" />
+    <ClCompile Include="eez\screens.c" />
+    <ClCompile Include="eez\styles.c" />
+    <ClCompile Include="eez\ui.c" />
+    <ClCompile Include="eez\ui_font_lcars10.c" />
+    <ClCompile Include="eez\ui_font_lcars14.c" />
+    <ClCompile Include="eez\ui_font_lcars16.c" />
+    <ClCompile Include="eez\ui_font_lcars18.c" />
+    <ClCompile Include="eez\ui_font_lcars20.c" />
+    <ClCompile Include="eez\ui_font_lcars22.c" />
+    <ClCompile Include="eez\ui_font_lcars24.c" />
+    <ClCompile Include="eez\ui_image_klingon.c" />
+    <ClCompile Include="eez\ui_image_klingon48x48.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___blank.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___button___left___small.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___dark_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___light_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___medium_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___red.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___white.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___middle.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___small_bottom.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___small_top.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___top.c" />
     <ClCompile Include="LvglWindowsSimulator.cpp" />
   </ItemGroup>
   <ItemGroup>
