@@ -3276,27 +3276,32 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <ClCompile Include="eez\actions.c" />
     <ClCompile Include="eez\eez-flow.cpp" />
     <ClCompile Include="eez\images.c" />
     <ClCompile Include="eez\screens.c" />
     <ClCompile Include="eez\styles.c" />
     <ClCompile Include="eez\ui.c" />
-    <ClCompile Include="eez\ui_font_lcars_14.c" />
-    <ClCompile Include="eez\ui_font_lcars_16.c" />
-    <ClCompile Include="eez\ui_font_lcars_18.c" />
-    <ClCompile Include="eez\ui_font_lcars_20.c" />
-    <ClCompile Include="eez\ui_image_docker.c" />
+    <ClCompile Include="eez\ui_font_lcars10.c" />
+    <ClCompile Include="eez\ui_font_lcars14.c" />
+    <ClCompile Include="eez\ui_font_lcars16.c" />
+    <ClCompile Include="eez\ui_font_lcars18.c" />
+    <ClCompile Include="eez\ui_font_lcars20.c" />
+    <ClCompile Include="eez\ui_font_lcars22.c" />
+    <ClCompile Include="eez\ui_font_lcars24.c" />
+    <ClCompile Include="eez\ui_image_klingon.c" />
     <ClCompile Include="eez\ui_image_klingon48x48.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___blank.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___button___left___small.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___dark_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___light_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___medium_grey.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___red.c" />
+    <ClCompile Include="eez\ui_image_lcars_240x320___color___white.c" />
     <ClCompile Include="eez\ui_image_lcars_240x320___middle.c" />
     <ClCompile Include="eez\ui_image_lcars_240x320___small_bottom.c" />
     <ClCompile Include="eez\ui_image_lcars_240x320___small_top.c" />
     <ClCompile Include="eez\ui_image_lcars_240x320___top.c" />
-    <ClCompile Include="eez\ui_image_ui_elements_240x320.c" />
-    <ClCompile Include="eez\ui_image_ui_elements_240x320_transparent.c" />
-    <ClCompile Include="eez\ui_image_ui_element___icons.c" />
-    <ClCompile Include="eez\ui_image_ui_element___main_divider.c" />
-    <ClCompile Include="eez\ui_image_ui_element___subdivider.c" />
     <ClCompile Include="LvglWindowsSimulator.cpp" />
   </ItemGroup>
   <ItemGroup>

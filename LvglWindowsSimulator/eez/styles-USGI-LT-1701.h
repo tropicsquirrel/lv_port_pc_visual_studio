@@ -1,5 +1,5 @@
-#ifndef EEZ_LVGL_UI_EVENTS_H
-#define EEZ_LVGL_UI_EVENTS_H
+#ifndef EEZ_LVGL_UI_STYLES_H
+#define EEZ_LVGL_UI_STYLES_H
 
 #include <lvgl.h>
 
@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif
 
-#endif /*EEZ_LVGL_UI_EVENTS_H*/
+#endif /*EEZ_LVGL_UI_STYLES_H*/

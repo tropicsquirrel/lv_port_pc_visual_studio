@@ -1433,33 +1433,6 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClInclude>
     <ClInclude Include="lv_conf.h" />
-    <ClInclude Include="eez\structs.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\styles.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\ui.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\vars.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\actions.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\eez-flow.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\fonts.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\images.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="eez\screens.h">
-      <Filter>eez</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3524,69 +3497,6 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClCompile>
     <ClCompile Include="LvglWindowsSimulator.cpp" />
-    <ClCompile Include="eez\styles.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_font_lcars_14.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_font_lcars_16.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_font_lcars_18.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_font_lcars_20.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_docker.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_klingon48x48.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_lcars_240x320___middle.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_lcars_240x320___small_bottom.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_lcars_240x320___small_top.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_lcars_240x320___top.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_ui_element___icons.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_ui_element___main_divider.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_ui_element___subdivider.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_ui_elements_240x320.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\ui_image_ui_elements_240x320_transparent.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\eez-flow.cpp">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\images.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\screens.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="eez\actions.c">
-      <Filter>eez</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
@@ -4806,9 +4716,6 @@
     </Filter>
     <Filter Include="lvgl\zephyr">
       <UniqueIdentifier>{1265f1bd-f9a3-4f46-bf6e-bb2675da02ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="eez">
-      <UniqueIdentifier>{a28ddf5f-e97c-4671-8fee-d7b7af5e45dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -12474,6 +12381,5 @@
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\zephyr\module.yml">
       <Filter>lvgl\zephyr</Filter>
     </None>
-    <None Include="freetype.props" />
   </ItemGroup>
 </Project>

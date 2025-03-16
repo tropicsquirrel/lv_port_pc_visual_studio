@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Size: 14 px
  * Bpp: 4
- * Opts: --bpp 4 --size 14 --no-compress --font ..\..\Desktop\assets\Antonio-VariableFont_wght.ttf --symbols +-!%/=()?,;:-_<>\|&^@#$* --range 32-127 --format lvgl
+ * Opts: --bpp 4 --size 14 --no-compress --font ..\..\Antonio-VariableFont_wght.ttf --range 32-127 --format lvgl
  ******************************************************************************/
 
 #ifdef __has_include
@@ -15,14 +15,14 @@
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
     #include "lvgl.h"
 #else
-    #include "lvgl/lvgl.h"
+    #include "lvgl.h"
 #endif
 
-#ifndef UI_FONT_LCARS14
-#define UI_FONT_LCARS14 1
+#ifndef UI_FONT_LCARS_14
+#define UI_FONT_LCARS_14 1
 #endif
 
-#if UI_FONT_LCARS14
+#if UI_FONT_LCARS_14
 
 /*-----------------
  *    BITMAPS
@@ -1024,9 +1024,9 @@ static lv_font_fmt_txt_dsc_t font_dsc = {
 
 /*Initialize a public general font descriptor*/
 #if LVGL_VERSION_MAJOR >= 8
-const lv_font_t ui_font_lcars14 = {
+const lv_font_t ui_font_lcars_14 = {
 #else
-lv_font_t ui_font_lcars14 = {
+lv_font_t ui_font_lcars_14 = {
 #endif
     .get_glyph_dsc = lv_font_get_glyph_dsc_fmt_txt,    /*Function pointer to get glyph's data*/
     .get_glyph_bitmap = lv_font_get_bitmap_fmt_txt,    /*Function pointer to get glyph's bitmap*/
@@ -1048,5 +1048,5 @@ lv_font_t ui_font_lcars14 = {
 
 
 
-#endif /*#if UI_FONT_LCARS14*/
+#endif /*#if UI_FONT_LCARS_14*/
 
