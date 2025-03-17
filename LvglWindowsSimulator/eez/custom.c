@@ -32,6 +32,16 @@ void set_var_tint_b(int32_t value) {
 
 extern objects_t objects;
 
+// set up callbacks for objects
+void setup_cb()
+{
+    lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(objects.progress, load_scroll_color_values, LV_EVENT_ALL, NULL);
+}
+
+// implement callback functions
 void set_color_panel(lv_event_t* e) {
     lv_event_code_t event = lv_event_get_code(e);
 

@@ -6,11 +6,12 @@
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
 #include "eez/ui.h"
+#include "eez/custom.h"
 
 int main()
 {
     lv_init();
-
+    
     /*
      * Optional workaround for users who wants UTF-8 console output.
      * If you don't want that behavior can comment them out.
@@ -81,6 +82,7 @@ int main()
     ui_init();
     //lv_demo_widgets();
     //lv_demo_benchmark();
+    setup_cb();
 
     while (1)
     {
