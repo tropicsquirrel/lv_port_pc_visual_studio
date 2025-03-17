@@ -1460,6 +1460,9 @@
     <ClInclude Include="eez\screens.h">
       <Filter>eez</Filter>
     </ClInclude>
+    <ClInclude Include="eez\custom.h">
+      <Filter>eez</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3585,6 +3588,9 @@
       <Filter>eez</Filter>
     </ClCompile>
     <ClCompile Include="eez\actions.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="eez\custom.c">
       <Filter>eez</Filter>
     </ClCompile>
   </ItemGroup>

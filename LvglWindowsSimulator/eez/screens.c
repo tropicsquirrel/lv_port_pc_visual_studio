@@ -7,83 +7,12 @@
 #include "vars.h"
 #include "styles.h"
 #include "ui.h"
+#include "custom.h"
 
 #include <string.h>
 
 objects_t objects;
 lv_obj_t *tick_value_change_obj;
-
-static void event_handler_cb_progress_obj_red(lv_event_t* e) {
-    lv_event_code_t event = lv_event_get_code(e);
-
-    if (event == LV_EVENT_PRESSING) {
-        void* flowState = lv_event_get_user_data(e);
-        e->user_data = (void*)0;
-
-        // Add our color update code here
-        lv_obj_t* slider = lv_event_get_target(e);
-        if (slider != NULL && lv_obj_is_valid(slider)) {
-            int32_t value = lv_slider_get_value(slider);
-            if (objects.panel_color != NULL && lv_obj_is_valid(objects.panel_color)) {
-                lv_color_t color = lv_obj_get_style_bg_color(objects.panel_color, LV_PART_MAIN);
-                lv_obj_set_style_bg_color(objects.panel_color,
-                    lv_color_make(value, color.green, color.blue),
-                    LV_PART_MAIN);
-            }
-        }
-
-        // Original code
-        //flowPropagateValueLVGLEvent(flowState, 9, 0, e);
-    }
-}
-
-static void event_handler_cb_progress_obj_green(lv_event_t* e) {
-    lv_event_code_t event = lv_event_get_code(e);
-
-    if (event == LV_EVENT_PRESSING) {
-        void* flowState = lv_event_get_user_data(e);
-        e->user_data = (void*)0;
-
-        // Add our color update code here
-        lv_obj_t* slider = lv_event_get_target(e);
-        if (slider != NULL && lv_obj_is_valid(slider)) {
-            int32_t value = lv_slider_get_value(slider);
-            if (objects.panel_color != NULL && lv_obj_is_valid(objects.panel_color)) {
-                lv_color_t color = lv_obj_get_style_bg_color(objects.panel_color, LV_PART_MAIN);
-                lv_obj_set_style_bg_color(objects.panel_color,
-                    lv_color_make(color.red, value, color.blue),
-                    LV_PART_MAIN);
-            }
-        }
-
-        // Original code
-        //flowPropagateValueLVGLEvent(flowState, 9, 0, e);
-    }
-}
-
-static void event_handler_cb_progress_obj_blue(lv_event_t* e) {
-    lv_event_code_t event = lv_event_get_code(e);
-
-    if (event == LV_EVENT_PRESSING) {
-        void* flowState = lv_event_get_user_data(e);
-        e->user_data = (void*)0;
-
-        // Add our color update code here
-        lv_obj_t* slider = lv_event_get_target(e);
-        if (slider != NULL && lv_obj_is_valid(slider)) {
-            int32_t value = lv_slider_get_value(slider);
-            if (objects.panel_color != NULL && lv_obj_is_valid(objects.panel_color)) {
-                lv_color_t color = lv_obj_get_style_bg_color(objects.panel_color, LV_PART_MAIN);
-                lv_obj_set_style_bg_color(objects.panel_color,
-                    lv_color_make(color.red, color.green, value),
-                    LV_PART_MAIN);
-            }
-        }
-
-        // Original code
-        //flowPropagateValueLVGLEvent(flowState, 9, 0, e);
-    }
-}
 
 static void event_handler_cb_main_obj0(lv_event_t *e) {
     lv_event_code_t event = lv_event_get_code(e);
@@ -540,6 +469,7 @@ void create_screen_progress() {
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 240, 320);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_event_cb(obj, load_scroll_color_values, LV_EVENT_ALL, flowState);
     lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     {
         lv_obj_t *parent_obj = obj;
@@ -623,9 +553,9 @@ void create_screen_progress() {
             lv_obj_set_pos(obj, 120, 253);
             lv_obj_set_size(obj, 78, 10);
             lv_slider_set_range(obj, 0, 255);
-            lv_slider_set_value(obj, 25, LV_ANIM_OFF);
+            lv_slider_set_value(obj, tint_r, LV_ANIM_OFF);
             add_style_slider_red(obj);
-            lv_obj_add_event_cb(obj, event_handler_cb_progress_obj_red, LV_EVENT_ALL, flowState);
+            lv_obj_add_event_cb(obj, set_color_panel, LV_EVENT_ALL, flowState);
         }
         {
             // slider_green
@@ -636,7 +566,7 @@ void create_screen_progress() {
             lv_slider_set_range(obj, 0, 255);
             lv_slider_set_value(obj, 25, LV_ANIM_OFF);
             add_style_slider_green(obj);
-            lv_obj_add_event_cb(obj, event_handler_cb_progress_obj_green, LV_EVENT_ALL, flowState);
+            lv_obj_add_event_cb(obj, set_color_panel, LV_EVENT_ALL, flowState);
         }
         {
             // slider_blue
@@ -647,7 +577,7 @@ void create_screen_progress() {
             lv_slider_set_range(obj, 0, 255);
             lv_slider_set_value(obj, 25, LV_ANIM_OFF);
             add_style_slider_blue(obj);
-            lv_obj_add_event_cb(obj, event_handler_cb_progress_obj_blue, LV_EVENT_ALL, flowState);
+            lv_obj_add_event_cb(obj, set_color_panel, LV_EVENT_ALL, flowState);
         }
         {
             lv_obj_t *obj = lv_obj_create(parent_obj);

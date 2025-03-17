@@ -518,6 +518,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
     <ClInclude Include="eez\actions.h" />
+    <ClInclude Include="eez\custom.h" />
     <ClInclude Include="eez\eez-flow.h" />
     <ClInclude Include="eez\fonts.h" />
     <ClInclude Include="eez\images.h" />
@@ -3277,6 +3278,7 @@
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <ClCompile Include="eez\actions.c" />
+    <ClCompile Include="eez\custom.c" />
     <ClCompile Include="eez\eez-flow.cpp" />
     <ClCompile Include="eez\images.c" />
     <ClCompile Include="eez\screens.c" />
