@@ -40,7 +40,7 @@
  * - LV_STDLIB_RTTHREAD:    RT-Thread implementation
  * - LV_STDLIB_CUSTOM:      Implement the functions externally
  */
-#define LV_USE_STDLIB_MALLOC    LV_STDLIB_CLIB //LV_STDLIB_BUILTIN?
+#define LV_USE_STDLIB_MALLOC    LV_STDLIB_CUSTOM //LV_STDLIB_BUILTIN to enable LV_MEM_SIZE
 #define LV_USE_STDLIB_STRING    LV_STDLIB_CLIB
 #define LV_USE_STDLIB_SPRINTF   LV_STDLIB_CLIB
 
@@ -50,6 +50,13 @@
 #define LV_INTTYPES_INCLUDE     <inttypes.h>
 #define LV_LIMITS_INCLUDE       <limits.h>
 #define LV_STDARG_INCLUDE       <stdarg.h>
+
+ // Added to support custom malloc/free and auto-switch between ESP32 and Windows
+#define LV_MEM_POOL_INCLUDE "lv_custom_alloc.h"
+#define LV_MEM_POOL_ALLOC   lv_custom_malloc
+#define LV_MEM_POOL_FREE    lv_custom_free
+
+#define LV_MEM_SIZE (512U * 1024U)  // adjust based on your avatar/PNG count
 
 #if LV_USE_STDLIB_MALLOC == LV_STDLIB_BUILTIN
     /*Size of the memory available for `lv_malloc()` in bytes (>= 2kB)*/
