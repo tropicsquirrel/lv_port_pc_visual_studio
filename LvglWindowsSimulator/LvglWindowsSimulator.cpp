@@ -6,7 +6,7 @@
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
 #include "eez/ui.h"
-#include "eez/custom.h"
+#include "custom.h"
 
 int main()
 {

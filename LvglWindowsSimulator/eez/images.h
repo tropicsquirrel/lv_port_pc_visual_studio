@@ -7,13 +7,6 @@
 extern "C" {
 #endif
 
-extern const lv_img_dsc_t img_ui_elements_240x320;
-extern const lv_img_dsc_t img_klingon48x48;
-extern const lv_img_dsc_t img_ui_elements_240x320_transparent;
-extern const lv_img_dsc_t img_lcars_240x320___middle;
-extern const lv_img_dsc_t img_lcars_240x320___small_bottom;
-extern const lv_img_dsc_t img_lcars_240x320___small_top;
-extern const lv_img_dsc_t img_lcars_240x320___top;
 extern const lv_img_dsc_t img_ui_element___main_divider;
 extern const lv_img_dsc_t img_ui_element___subdivider;
 extern const lv_img_dsc_t img_ui_element___icons;
@@ -26,7 +19,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[10];
+extern const ext_img_desc_t images[3];
 
 
 #ifdef __cplusplus
