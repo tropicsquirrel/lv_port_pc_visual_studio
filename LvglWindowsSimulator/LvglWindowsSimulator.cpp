@@ -23,7 +23,7 @@ int main()
     SetConsoleOutputCP(CP_UTF8);
 #endif
 
-    int32_t zoom_level = 100;
+    int32_t zoom_level = 200;
     bool allow_dpi_override = false;
     bool simulator_mode = true;
     lv_display_t* display = lv_windows_create_display(

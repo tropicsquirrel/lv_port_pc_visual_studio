@@ -19,8 +19,8 @@ void avatar_next(lv_event_t* e);
 void avatar_prev(lv_event_t* e);
 void load_scroll_color_values(lv_event_t* e);
 void setup_cb(void);
-void update_counters(void);
-void update_ui(void);
+void update_avatar_images(void);
+void update_item_counter(void);
 void load_screen_avatar(lv_event_t* e);
 
 #ifdef __cplusplus

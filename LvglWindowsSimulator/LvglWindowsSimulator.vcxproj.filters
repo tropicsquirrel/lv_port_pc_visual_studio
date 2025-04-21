@@ -3665,6 +3665,9 @@
     <ClCompile Include="lv_custom_alloc.cpp">
       <Filter>custom</Filter>
     </ClCompile>
+    <ClCompile Include="eez\ui_font_lcars_60.c">
+      <Filter>eez</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
