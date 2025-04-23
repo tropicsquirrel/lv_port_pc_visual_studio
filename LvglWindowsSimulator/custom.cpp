@@ -1,144 +1,23 @@
-﻿//#include "lvgl.h"
-//#include "pngs.h"
-//#include "custom.h"
-//#include ".\eez\screens.h"
-//#include <cstdio>
-//
-//int32_t int_max_items = 0;
-//int32_t int_current_item = 0;
-//
-//static lv_obj_t* avatar_canvas = nullptr;
-//static lv_color32_t* avatar_buf = nullptr;
-//
-//#define AVATAR_W 82
-//#define AVATAR_H 82
-//#define AVATAR_BUF_SIZE (AVATAR_W * AVATAR_H * sizeof(lv_color32_t))
-//
-//const char** avatar_layers[] = {
-//    background_images,
-//    body_images,
-//    clothes_images,
-//    head_images,
-//    mouth_images,
-//    beard_images,
-//    mustache_images,
-//    eye_l_images,
-//    noses_images,
-//    eye_r_images,
-//    hair_images,
-//    ears_images,
-//    ridges_images,
-//    eyebrows_l_images,
-//    eyebrows_r_images,
-//    borg_images,
-//    accessories_images,
-//    antennes_images,
-//    glasses_images,
-//    hands_images
-//};
-//
-//int32_t* avatar_layer_indices[] = {
-//    &int_current_background,
-//    &int_current_body,
-//    &int_current_clothes,
-//    &int_current_head,
-//    &int_current_mouth,
-//    &int_current_beard,
-//    &int_current_mustache,
-//    &int_current_eye_l,
-//    &int_current_noses,
-//    &int_current_eye_r,
-//    &int_current_hair,
-//    &int_current_ears,
-//    &int_current_ridges,
-//    &int_current_eyebrow_l,
-//    &int_current_eyebrow_r,
-//    &int_current_borg,
-//    &int_current_accessories,
-//    &int_current_antennae,
-//    &int_current_glasses,
-//    &int_current_hands
-//};
-//
-//static void blend_pixel(lv_color32_t* dest, lv_color32_t src) {
-//    uint8_t alpha = src.alpha;
-//    if (alpha == 255) {
-//        *dest = src;
-//    }
-//    else if (alpha > 0) {
-//        dest->red = (src.red * alpha + dest->red * (255 - alpha)) / 255;
-//        dest->green = (src.green * alpha + dest->green * (255 - alpha)) / 255;
-//        dest->blue = (src.blue * alpha + dest->blue * (255 - alpha)) / 255;
-//        dest->alpha = 255;
-//    }
-//}
-//
-//bool blend_image_file(const char* path) {
-//    FILE* file = fopen(path, "rb");
-//    if (!file) return false;
-//
-//    lv_color32_t src[AVATAR_W * AVATAR_H];
-//    size_t read = fread(src, 1, AVATAR_BUF_SIZE, file);
-//    fclose(file);
-//    if (read != AVATAR_BUF_SIZE) return false;
-//
-//    for (int i = 0; i < AVATAR_W * AVATAR_H; i++) {
-//        blend_pixel(&avatar_buf[i], src[i]);
-//    }
-//
-//    return true;
-//}
-//
-//void render_avatar_composite() {
-//    memset(avatar_buf, 0x00, AVATAR_BUF_SIZE);
-//
-//    for (int i = 0; i < 20; i++) {
-//        const char* path = avatar_layers[i][*avatar_layer_indices[i]];
-//        blend_image_file(path);
-//    }
-//
-//    lv_canvas_set_buffer(avatar_canvas, avatar_buf, AVATAR_W, AVATAR_H, LV_COLOR_FORMAT_ARGB8888);
-//}
-//
-//void setup_cb() {
-//    lv_obj_add_event_cb(objects.roller_avatar_component, roller_changed, LV_EVENT_VALUE_CHANGED, NULL);
-//    lv_obj_add_event_cb(objects.btn_avatar_next, avatar_next, LV_EVENT_CLICKED, NULL);
-//    lv_obj_add_event_cb(objects.btn_avatar_prev, avatar_prev, LV_EVENT_CLICKED, NULL);
-//    lv_obj_add_event_cb(objects.btn_avatar, load_screen_avatar, LV_EVENT_PRESSED, NULL);
-//    lv_obj_add_event_cb(objects.btn_profile_main, load_screen_avatar, LV_EVENT_PRESSED, NULL);
-//
-//    if (!avatar_buf) {
-//#ifdef _WIN32
-//        avatar_buf = (lv_color32_t*)malloc(AVATAR_BUF_SIZE);
-//#else
-//#include <esp_heap_caps.h>
-//        avatar_buf = (lv_color32_t*)heap_caps_malloc(AVATAR_BUF_SIZE, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-//#endif
-//    }
-//
-//    avatar_canvas = lv_canvas_create(objects.avatar);
-//    lv_obj_align(avatar_canvas, LV_ALIGN_CENTER, 0, 0);
-//    render_avatar_composite();
-//    lv_roller_set_selected(objects.roller_avatar_component, 0, LV_ANIM_OFF);
-//    update_counters();
-//}
-//
-//void update_ui() {
-//    char str_item_id[8];
-//    snprintf(str_item_id, sizeof(str_item_id), "%d/%d", int_current_item + 1, int_max_items);
-//    lv_label_set_text(objects.lbl_avatar_item_id, str_item_id);
-//    render_avatar_composite();
-//}
-
-
-
-#include <cstdio>
+﻿#include <cstdio>
+#if defined(_WIN32) || defined(_WIN64)
 #include ".\eez\screens.h"
 #include ".\eez\vars.h"
 #include ".\eez\images.h"
-#include "custom.h"
 #include "pngs.h"
 #include "mp3s.h"
+//#include "json.h"
+#else
+#include "screens.h"
+#include "vars.h"
+#include "images.h"
+#include "../pngs.h"
+#include "../mp3s.h"
+//#include "../json.h"
+#endif
+
+#include "custom.h"
+#include <chrono>
+
 
 
 /*
@@ -169,37 +48,93 @@ Layer Description
 int32_t int_max_items = 0;
 int32_t int_current_item = 0;
 
-int32_t tint_r = 128; // Default value
-int32_t tint_g = 128; // Default value
-int32_t tint_b = 128; // Default value
+extern objects_t objects; // LVGL root screens object
+//extern Config config; // Global configuration object
 
+void set_tint(lv_event_t* e)
+{
+    int32_t tint_r = lv_slider_get_value(objects.slider_avatar_red);
+    int32_t tint_g = lv_slider_get_value(objects.slider_avatar_green);
+    int32_t tint_b = lv_slider_get_value(objects.slider_avatar_blue);
 
+    lv_color_t color = lv_color_make(tint_r, tint_g, tint_b);
+    lv_opa_t intense = lv_slider_get_value(objects.slider_avatar_intensity);
 
-// get/set red
-int32_t get_var_tint_r() {
-    return tint_r;
-}
-void set_var_tint_r(int32_t value) {
-    tint_r = value;
-}
+    lv_obj_t* img1 = NULL;
 
-// get/set green
-int32_t get_var_tint_g() {
-    return tint_g;
-}
-void set_var_tint_g(int32_t value) {
-    tint_g = value;
-}
+    switch (lv_roller_get_selected(objects.roller_avatar_component))
+    {
+    case 0: //background
+        img1 = objects.img_background;
+        break;
+    case 1: //body
+        img1 = objects.img_body;
+        break;
+    case 2: //clothes
+        img1 = objects.img_clothes;
+        break;
+    case 3: //head
+        img1 = objects.img_head;
+        break;
+    case 4: //mouth
+        img1 = objects.img_mouth;
+        break;
+    case 5: //beard
+        img1 = objects.img_beard;
+        break;
+    case 6: //mustache
+        img1 = objects.img_moustache;
+        break;
+    case 7: //eye-l
+        img1 = objects.img_eye_left;
+        break;
+    case 8: //nose
+        img1 = objects.img_nose;
+        break;
+    case 9: //eye-r
+        img1 = objects.img_eye_right;
+        break;
+    case 10: //hair
+        img1 = objects.img_hair;
+        break;
+    case 11: //ears
+        img1 = objects.img_ears;
+        break;
+    case 12: //ridges
+        img1 = objects.img_ridges;
+        break;
+    case 13: //eyebrows-l
+        img1 = objects.img_eyebrow_left;
+        break;
+    case 14: //eyebrows-r
+        img1 = objects.img_eyebrow_right;
+        break;
+    case 15: //borg
+        img1 = objects.img_borg;
+        break;
+    case 16: //accessories
+        img1 = objects.img_accessories;
+        break;
+    case 17: //antennae
+        img1 = objects.img_antennae;
+        break;
+    case 18: //glasses
+        img1 = objects.img_glasses;
+        break;
+    case 19: //hands		
+        img1 = objects.img_hands;
+        break;
+    default:
+        int_max_items = 0;
+        break;
+    }
 
-// get/set blue
-int32_t get_var_tint_b() {
-    return tint_b;
+    if (NULL != img1)
+    {
+        lv_obj_set_style_image_recolor_opa(img1, intense, 0);
+        lv_obj_set_style_image_recolor(img1, color, 0);
+    }
 }
-void set_var_tint_b(int32_t value) {
-    tint_b = value;
-}
-
-extern objects_t objects;
 
 // set up callbacks for objects
 void setup_cb()
@@ -209,6 +144,10 @@ void setup_cb()
     lv_obj_add_event_cb(objects.btn_avatar_prev, avatar_prev, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar, load_screen_avatar, LV_EVENT_PRESSED, NULL);
     lv_obj_add_event_cb(objects.btn_profile_main, load_screen_avatar, LV_EVENT_PRESSED, NULL);
+    lv_obj_add_event_cb(objects.slider_avatar_red, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.slider_avatar_green, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.slider_avatar_blue, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     //lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);
