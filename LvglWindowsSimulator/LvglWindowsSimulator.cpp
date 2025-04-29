@@ -7,6 +7,7 @@
 #include "lvgl/demos/lv_demos.h"
 #include "eez/ui.h"
 #include "custom.h"
+#include "json.h"
 
 int main()
 {
@@ -82,6 +83,23 @@ int main()
     ui_init();
     //lv_demo_widgets();
     //lv_demo_benchmark();
+
+    // Load JSON configuration
+    Config config;
+    if (loadBoardConfig(config))
+    {
+        printf("Config loaded successfully\n");
+        if (config.contacts.size() > 0)
+        {
+            printf("Loaded %zu contacts\n", config.contacts.size());
+        }
+    }
+    else
+    {
+        printf("Error loading config, using defaults\n");
+    }
+    printConfig(config, false);  // Set to true for verbose output
+
     setup_cb();
 
     while (1)

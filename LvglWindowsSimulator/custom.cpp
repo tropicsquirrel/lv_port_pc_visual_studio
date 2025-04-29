@@ -5,7 +5,7 @@
 #include ".\eez\images.h"
 #include "pngs.h"
 #include "mp3s.h"
-//#include "json.h"
+#include "json.h"
 #else
 #include "screens.h"
 #include "vars.h"

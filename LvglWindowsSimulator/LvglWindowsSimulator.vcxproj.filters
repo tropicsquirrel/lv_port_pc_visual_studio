@@ -1469,6 +1469,427 @@
     <ClInclude Include="lv_custom_alloc.h">
       <Filter>custom</Filter>
     </ClInclude>
+    <ClInclude Include="json.h" />
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\ArrayData.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\ArrayImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\ElementProxy.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\JsonArray.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\JsonArrayConst.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\JsonArrayIterator.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Array\Utilities.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Collection\CollectionData.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Collection\CollectionImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\compatibility.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Configuration.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\DeserializationError.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\DeserializationOptions.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\deserialize.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Filter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\NestingLimit.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Reader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\ArduinoStreamReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\ArduinoStringReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\FlashReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\IteratorReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\RamReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\StdStreamReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Deserialization\Readers\VariantReader.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Document\JsonDocument.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\EscapeSequence.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\JsonDeserializer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\JsonSerializer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\Latch.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\PrettyJsonSerializer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\TextFormatter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\Utf16.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Json\Utf8.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\Alignment.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\Allocator.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\MemoryPool.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\MemoryPoolList.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\ResourceManager.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\ResourceManagerImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\StringBuffer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\StringBuilder.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\StringNode.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Memory\StringPool.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Misc\SerializedValue.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\endianness.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\ieee754.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\MsgPackBinary.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\MsgPackDeserializer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\MsgPackExtension.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\MsgPack\MsgPackSerializer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Namespace.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\arithmeticCompare.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\convertNumber.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\FloatParts.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\FloatTraits.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\JsonFloat.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\JsonInteger.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Numbers\parseNumber.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\JsonObject.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\JsonObjectConst.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\JsonObjectIterator.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\JsonPair.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\MemberProxy.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\ObjectData.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Object\ObjectImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\alias_cast.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\assert.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\attributes.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\ctype.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\integer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\limits.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\math.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\mpl\max.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\pgmspace.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\pgmspace_generic.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\preprocessor.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\conditional.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\declval.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\enable_if.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\function_traits.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\integral_constant.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_array.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_base_of.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_class.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_const.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_convertible.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_enum.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_floating_point.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_integral.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_pointer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_same.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_signed.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\is_unsigned.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\make_unsigned.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\remove_const.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\remove_cv.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\remove_reference.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\type_identity.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits\void_t.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\type_traits.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Polyfills\utility.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\CountingDecorator.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\measure.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\serialize.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writer.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\ArduinoStringWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\DummyWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\PrintWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\StaticStringWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\StdStreamWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Serialization\Writers\StdStringWriter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\Adapters\FlashString.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\Adapters\JsonString.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\Adapters\RamString.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\Adapters\StringObject.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\IsString.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\JsonString.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\StringAdapter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\StringAdapters.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Strings\StringTraits.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\Converter.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\ConverterImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\JsonVariant.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\JsonVariantConst.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\JsonVariantCopier.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\JsonVariantVisitor.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantAttorney.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantCompare.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantContent.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantData.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantDataVisitor.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantOperators.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantRefBase.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantRefBaseImpl.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantTag.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantTo.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson\version.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson.h">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
+    <ClInclude Include="ArduinoJson\src\ArduinoJson.hpp">
+      <Filter>ArduinoJson</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3668,6 +4089,7 @@
     <ClCompile Include="eez\ui_font_lcars_60.c">
       <Filter>eez</Filter>
     </ClCompile>
+    <ClCompile Include="json.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
@@ -4899,6 +5321,9 @@
     </Filter>
     <Filter Include="zlib">
       <UniqueIdentifier>{5943cb03-389b-4796-bdb0-4c80674ba4f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ArduinoJson">
+      <UniqueIdentifier>{6899fea2-b34c-4c01-b62e-b042b9f3c8c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -12565,5 +12990,10 @@
       <Filter>lvgl\zephyr</Filter>
     </None>
     <None Include="freetype.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ArduinoJson\src\CMakeLists.txt">
+      <Filter>ArduinoJson</Filter>
+    </Text>
   </ItemGroup>
 </Project>
