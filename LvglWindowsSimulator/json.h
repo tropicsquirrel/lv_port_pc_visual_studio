@@ -60,36 +60,16 @@ enum DisplayOptions
     None = 3        // no names
 };
 
-struct AvatarComponent
-{
-    char imagePath[256]; // = "L:/wink.png";
-    int red; // = 0;
-    int green; // = 0;
-    int blue; // = 0;
-};
-
-struct Avatar
-{
-    AvatarComponent background;
-    AvatarComponent head;
-    AvatarComponent clothes;
-    AvatarComponent ears;
-    AvatarComponent eyes;
-    AvatarComponent hair;
-    AvatarComponent accessory;
-};
-
 struct ContactData
 {
     uint32_t nodeId = 0;
     char displayName[64] = "";
-    bool isCrew = false;
     bool isFriend = false;
     bool blocked = false;
     bool pendingSave = false;
     uint64_t lastUpdateTime = 0;
     int totalXP = 0;
-    Avatar avatar;
+    int avatar;
 };
 
 struct Ranks
@@ -172,7 +152,6 @@ public:
 
     // Filtering
     std::vector<ContactData*> getContacts();
-    std::vector<ContactData*> getCrew();
     std::vector<ContactData*> getFriends();
 };
 

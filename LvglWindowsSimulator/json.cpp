@@ -1,76 +1,5 @@
 ﻿#include "json.h"
 
-// Helper function to load an AvatarComponent from JSON
-static void loadAvatarComponent(AvatarComponent& component, JsonObjectConst json)
-{
-    if (json["Image"].is<String>())
-    {
-        strlcpy(component.imagePath, json["Image"] | "", sizeof(component.imagePath));
-    }
-    component.red = json["Red"] | 0;
-    component.green = json["Green"] | 0;
-    component.blue = json["Blue"] | 0;
-}
-
-// Helper function to load an Avatar from JSON
-static void loadAvatar(Avatar& avatar, JsonObjectConst json)
-{
-    loadAvatarComponent(avatar.background, json["Background"]);
-    loadAvatarComponent(avatar.head, json["Head"]);
-    loadAvatarComponent(avatar.clothes, json["Clothes"]);
-    loadAvatarComponent(avatar.ears, json["Ears"]);
-    loadAvatarComponent(avatar.eyes, json["Eyes"]);
-    loadAvatarComponent(avatar.hair, json["Hair"]);
-    loadAvatarComponent(avatar.accessory, json["Accessory"]);
-}
-
-// Function to serialize Avatar into JSON object
-static void serializeAvatar(const Avatar& avatar, JsonObject& json)
-{
-    //JsonObject background = json.createNestedObject("Background");
-    JsonObject background = json["Background"];
-    background["Image"] = avatar.background.imagePath;
-    background["Red"] = avatar.background.red;
-    background["Green"] = avatar.background.green;
-    background["Blue"] = avatar.background.blue;
-    //JsonObject head = json.createNestedObject("Head");
-    JsonObject head = json["Head"];
-    head["Image"] = avatar.head.imagePath;
-    head["Red"] = avatar.head.red;
-    head["Green"] = avatar.head.green;
-    head["Blue"] = avatar.head.blue;
-    //JsonObject clothes = json.createNestedObject("Clothes");
-    JsonObject clothes = json["Clothes"];
-    clothes["Image"] = avatar.clothes.imagePath;
-    clothes["Red"] = avatar.clothes.red;
-    clothes["Green"] = avatar.clothes.green;
-    clothes["Blue"] = avatar.clothes.blue;
-    //JsonObject ears = json.createNestedObject("Ears");
-    JsonObject ears = json["Ears"];
-    ears["Image"] = avatar.ears.imagePath;
-    ears["Red"] = avatar.ears.red;
-    ears["Green"] = avatar.ears.green;
-    ears["Blue"] = avatar.ears.blue;
-    //JsonObject eyes = json.createNestedObject("Eyes");
-    JsonObject eyes = json["Eyes"];
-    eyes["Image"] = avatar.eyes.imagePath;
-    eyes["Red"] = avatar.eyes.red;
-    eyes["Green"] = avatar.eyes.green;
-    eyes["Blue"] = avatar.eyes.blue;
-    //JsonObject hair = json.createNestedObject("Hair");
-    JsonObject hair = json["Hair"];
-    hair["Image"] = avatar.hair.imagePath;
-    hair["Red"] = avatar.hair.red;
-    hair["Green"] = avatar.hair.green;
-    hair["Blue"] = avatar.hair.blue;
-    //JsonObject accessory = json.createNestedObject("Accessory");
-    JsonObject accessory = json["Accessory"];
-    accessory["Image"] = avatar.accessory.imagePath;
-    accessory["Red"] = avatar.accessory.red;
-    accessory["Green"] = avatar.accessory.green;
-    accessory["Blue"] = avatar.accessory.blue;
-}
-
 // ContactManager implementation
 ContactManager::ContactManager()
 {
@@ -172,14 +101,9 @@ void ContactManager::fromJson(JsonObjectConst json)
         JsonObjectConst data = kv.value().as<JsonObjectConst>();
         strlcpy(contact.displayName, data["DisplayName"] | "", sizeof(contact.displayName));
         contact.isFriend = data["Friend"] | false;
-        contact.isCrew = data["Crew"] | false;
         contact.blocked = data["Blocked"] | false;
         contact.totalXP = data["TotalXP"] | 0;
-
-        if (!data["Avatar"].isNull())
-        {
-            loadAvatar(contact.avatar, data["Avatar"]);
-        }
+        contact.avatar = data["Avatar"] | 0;
 
         addOrUpdateContact(contact);
     }
@@ -199,13 +123,9 @@ void ContactManager::toJson(JsonObject& json) const
             JsonObject contactObj = json[nodeIdStr];
             contactObj["DisplayName"] = contact.displayName;
             contactObj["Friend"] = contact.isFriend;
-            contactObj["Crew"] = contact.isCrew;
             contactObj["Blocked"] = contact.blocked;
             contactObj["TotalXP"] = contact.totalXP;
-
-            //JsonObject avatarObj = contactObj.createNestedObject("Avatar");
-            JsonObject avatarObj = contactObj["Avatar"];
-            serializeAvatar(contact.avatar, avatarObj);
+            contactObj["Avatar"] = contact.avatar;
         }
     }
 }
@@ -257,20 +177,6 @@ std::vector<ContactData*> ContactManager::getContacts()
     return result;
 }
 
-std::vector<ContactData*> ContactManager::getCrew()
-{
-    std::vector<ContactData*> result;
-    for (std::vector<ContactData>::iterator it = contacts.begin(); it != contacts.end(); ++it)
-    {
-        ContactData& contact = *it;
-        if (contact.isCrew)
-        {
-            result.push_back(&contact);
-        }
-    }
-    return result;
-}
-
 // Function to serialize Config into JSON document
 static void serializeConfig(const Config& config, JsonDocument& doc)
 {
@@ -300,8 +206,7 @@ static void serializeConfig(const Config& config, JsonDocument& doc)
     user["DisplayName"] = config.user.displayName;
     user["TotalXP"] = config.user.totalXP;
     //JsonObject userAvatar = user.createNestedObject("Avatar");
-    JsonObject userAvatar = user["Avatar"];
-    serializeAvatar(config.user.avatar, userAvatar);
+    user["Avatar"] = config.user.avatar;
 
     // Serialize board
     //JsonObject board = root.createNestedObject("Board");
@@ -389,10 +294,7 @@ static bool loadConfig(Config& config, const JsonDocument& doc)
     {
         strlcpy(config.user.displayName, userObj["DisplayName"] | "", sizeof(config.user.displayName));
         config.user.totalXP = userObj["TotalXP"] | 0;
-        if (!userObj["Avatar"].isNull())
-        {
-            loadAvatar(config.user.avatar, userObj["Avatar"]);
-        }
+        config.user.avatar = userObj["Avatar"] | 0;
     }
     else
     {
@@ -551,27 +453,6 @@ void serialPrintJson(JsonDocument doc)
 #endif
 }
 
-// debug: prints an avatar's config
-static void printAvatarComponent(const char* name, const AvatarComponent& comp)
-{
-    printf("    %s:\n", name);
-    printf("      Image: %s\n", comp.imagePath);
-    printf("      RGB: (%d, %d, %d)\n", comp.red, comp.green, comp.blue);
-}
-
-// debug: prints an avatar
-//void printAvatar(const Avatar& avatar)
-//{
-//	printf("  Avatar:");
-//	printAvatarComponent("Background", avatar.background);
-//	printAvatarComponent("Head", avatar.head);
-//	printAvatarComponent("Clothes", avatar.clothes);
-//	printAvatarComponent("Ears", avatar.ears);
-//	printAvatarComponent("Eyes", avatar.eyes);
-//	printAvatarComponent("Hair", avatar.hair);
-//	printAvatarComponent("Accessory", avatar.accessory);
-//}
-
 // debug: converts a displayOption (int) to a string
 static const char* displayOptionToString(int option)
 {
@@ -600,45 +481,20 @@ static bool jsonTest(const char* inFile, const char* outFile)
     return true;
 }
 
-static void printAvatarComponent(const char* name, const AvatarComponent& comp, int indent = 0)
-{
-    String spaces(indent, ' ');
-    printf("%s%s:\n", spaces.c_str(), name);
-    printf("%s  Image: %s\n", spaces.c_str(), comp.imagePath);
-    printf("%s  RGB: (%d, %d, %d)\n", spaces.c_str(), comp.red, comp.green, comp.blue);
-}
-
-static void printAvatar(const Avatar& avatar, int indent = 0)
-{
-    String spaces(indent, ' ');
-    printf("%sAvatar:\n", spaces.c_str());
-    printAvatarComponent("Background", avatar.background, indent + 2);
-    printAvatarComponent("Head", avatar.head, indent + 2);
-    printAvatarComponent("Clothes", avatar.clothes, indent + 2);
-    printAvatarComponent("Ears", avatar.ears, indent + 2);
-    printAvatarComponent("Eyes", avatar.eyes, indent + 2);
-    printAvatarComponent("Hair", avatar.hair, indent + 2);
-    printAvatarComponent("Accessory", avatar.accessory, indent + 2);
-}
-
 static void printContactData(const ContactData& contact, bool verbose = false, int indent = 0)
 {
     String spaces(indent, ' ');
     printf("%sContact NodeID: %u\n", spaces.c_str(), contact.nodeId);
     printf("%s  DisplayName: %s\n", spaces.c_str(), contact.displayName);
     printf("%s  Roles: %s%s\n", spaces.c_str(),
-        contact.isFriend ? "Contact " : "",
-        contact.isCrew ? "Crew " : "");
+        contact.isFriend ? "Contact " : "");
     printf("%s  Status: %s%s\n", spaces.c_str(),
         contact.blocked ? "Blocked " : "",
         contact.pendingSave ? "PendingSave " : "");
     printf("%s  LastUpdate: %llu\n", spaces.c_str(), contact.lastUpdateTime);
     printf("%s  TotalXP: %d\n", spaces.c_str(), contact.totalXP);
+    printf("%s  Avatar: %d\n", spaces.c_str(), contact.avatar);
 
-    if (verbose)
-    {
-        printAvatar(contact.avatar, indent + 2);
-    }
 }
 
 static void printContactManager(const ContactManager& manager, bool verbose = false)
@@ -654,7 +510,6 @@ static void printContactManager(const ContactManager& manager, bool verbose = fa
     for (const auto& contact : manager)
     {
         if (contact.isFriend) totalContacts++;
-        if (contact.isCrew) totalCrew++;
         if (contact.blocked) blockedContacts++;
         if (contact.pendingSave) pendingUpdates++;
     }
@@ -677,15 +532,6 @@ static void printContactManager(const ContactManager& manager, bool verbose = fa
     // Print specific lists if requested
     if (verbose)
     {
-        printf("\nCrew Members:");
-        for (const auto& contact : manager)
-        {
-            if (contact.isCrew)
-            {
-                printContactData(contact, false, 2);
-            }
-        }
-
         printf("\nBlocked Contacts:");
         for (const auto& contact : manager)
         {
@@ -727,10 +573,7 @@ void printConfig(const Config& config, bool verbose)
     printf("\n--- User ---\n");
     printf("  DisplayName: %s\n", config.user.displayName);
     printf("  TotalXP: %d\n", config.user.totalXP);
-    if (verbose)
-    {
-        printAvatar(config.user.avatar, 2);
-    }
+    printf("  Avatar: %d\n", config.user.avatar);
 
     // Print Board Settings
     printf("\n--- Board Settings ---\n");
@@ -826,10 +669,9 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
         JsonObject entry = kv.value().as<JsonObject>();
         strlcpy(c.displayName, entry["DisplayName"] | "", sizeof(c.displayName));
         c.isFriend = entry["Friend"] | false;
-        c.isCrew = entry["Crew"] | false;
         c.blocked = entry["Blocked"] | false;
         c.totalXP = entry["TotalXP"] | 0;
-        c.avatar.background.red = entry["Avatar"] | 0; // simplified avatar ID
+        c.avatar = entry["Avatar"] | 0; 
         cfg.contacts.addOrUpdateContact(c);
     }
 
@@ -880,10 +722,9 @@ static void configToJson(const Config& config, JsonDocument& doc)
         auto entry = contacts[id];
         entry["DisplayName"] = c.displayName;
         entry["Friend"] = c.isFriend;
-        entry["Crew"] = c.isCrew;
         entry["Blocked"] = c.blocked;
         entry["TotalXP"] = c.totalXP;
-        //entry["Avatar"] = c.avatar.background.red; 
+        entry["Avatar"] = c.avatar; 
     }
 
     auto board = doc["Board"];
