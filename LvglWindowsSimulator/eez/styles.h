@@ -27,6 +27,11 @@ lv_style_t *get_style_button_grey_accent_MAIN_DEFAULT();
 void add_style_button_grey_accent(lv_obj_t *obj);
 void remove_style_button_grey_accent(lv_obj_t *obj);
 
+// Style: Button-White-Accent
+lv_style_t *get_style_button_white_accent_MAIN_DEFAULT();
+void add_style_button_white_accent(lv_obj_t *obj);
+void remove_style_button_white_accent(lv_obj_t *obj);
+
 // Style: Button-Grey-Default
 lv_style_t *get_style_button_grey_default_MAIN_DEFAULT();
 void add_style_button_grey_default(lv_obj_t *obj);
@@ -110,6 +115,16 @@ void remove_style_text_flavor_orange(lv_obj_t *obj);
 lv_style_t *get_style_text_flavor_white_MAIN_DEFAULT();
 void add_style_text_flavor_white(lv_obj_t *obj);
 void remove_style_text_flavor_white(lv_obj_t *obj);
+
+// Style: Text-Label-White
+lv_style_t *get_style_text_label_white_MAIN_DEFAULT();
+void add_style_text_label_white(lv_obj_t *obj);
+void remove_style_text_label_white(lv_obj_t *obj);
+
+// Style: check-default
+lv_style_t *get_style_check_default_MAIN_DEFAULT();
+void add_style_check_default(lv_obj_t *obj);
+void remove_style_check_default(lv_obj_t *obj);
 
 
 

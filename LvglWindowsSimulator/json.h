@@ -52,17 +52,20 @@ inline void strlcpy(char* dst, const char* src, size_t size) {
 #include <vector>
 #include <lvgl.h>
 
-#define DISPLAY_EVERYONE 0
-#define DISPLAY_NOT_BLOCKED 1
-#define DISPLAY_FRIENDS 2
-#define DISPLAY_NONE 3
+enum DisplayOptions
+{
+    Everyone = 0,   // everyone
+    NotBlocked = 1, // all except blocked
+    Friends = 2,    // friends only
+    None = 3        // no names
+};
 
 struct AvatarComponent
 {
-    char imagePath[256] = "L:/wink.png";
-    int red = 0;
-    int green = 0;
-    int blue = 0;
+    char imagePath[256]; // = "L:/wink.png";
+    int red; // = 0;
+    int green; // = 0;
+    int blue; // = 0;
 };
 
 struct Avatar
@@ -108,9 +111,9 @@ struct BadgeMode
 
 struct DisplayNameOptions
 {
-    int awayMissions = DISPLAY_EVERYONE;
-    int acceptInvitesFrom = DISPLAY_EVERYONE;
-    int showNamesFrom = DISPLAY_EVERYONE;
+    DisplayOptions awayMissions = Everyone;
+    DisplayOptions acceptInvitesFrom = Everyone;
+    DisplayOptions showNamesFrom = Everyone;
 };
 
 struct Board

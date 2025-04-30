@@ -666,6 +666,7 @@
     <ClInclude Include="eez\styles.h" />
     <ClInclude Include="eez\ui.h" />
     <ClInclude Include="eez\vars.h" />
+    <ClInclude Include="global.hpp" />
     <ClInclude Include="json.h" />
     <ClInclude Include="lv_conf.h" />
     <ClInclude Include="lv_custom_alloc.h" />

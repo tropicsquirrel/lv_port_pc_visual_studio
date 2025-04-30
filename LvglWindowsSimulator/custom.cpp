@@ -12,12 +12,11 @@
 #include "images.h"
 #include "../pngs.h"
 #include "../mp3s.h"
-//#include "../json.h"
+#include "../json.h"
 #endif
 
 #include "custom.h"
 #include <chrono>
-
 
 
 /*
@@ -49,7 +48,7 @@ int32_t int_max_items = 0;
 int32_t int_current_item = 0;
 
 extern objects_t objects; // LVGL root screens object
-//extern Config config; // Global configuration object
+extern Config config;     // Global configuration object
 
 void set_tint(lv_event_t* e)
 {
@@ -136,24 +135,43 @@ void set_tint(lv_event_t* e)
     }
 }
 
+static void load_screen_settings(lv_event_t* e)
+{
+    lv_screen_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+}
+
+static void load_screen_avatar(lv_event_t* e)
+{
+    lv_screen_load_anim(objects.avatar, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+}
+
+static void set_airplane_mode(lv_event_t* e)
+{
+    config.board.airplaneMode = (lv_obj_get_state(objects.check_settings_airplanemode) & LV_STATE_CHECKED);
+    saveBoardConfig(config);
+}
+
 // set up callbacks for objects
 void setup_cb()
 {
+    printf("initial airplane mode: %u\n", config.board.airplaneMode);
     lv_obj_add_event_cb(objects.roller_avatar_component, roller_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_next, avatar_next, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_prev, avatar_prev, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar, load_screen_avatar, LV_EVENT_PRESSED, NULL);
-    lv_obj_add_event_cb(objects.btn_profile_main, load_screen_avatar, LV_EVENT_PRESSED, NULL);
+    //lv_obj_add_event_cb(objects.btn_profile_main, load_screen_avatar, LV_EVENT_PRESSED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_red, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_green, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_blue, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.btn_main_settings, load_screen_settings, LV_EVENT_PRESSED, NULL);
+    lv_obj_add_event_cb(objects.check_settings_airplanemode, set_airplane_mode, LV_EVENT_VALUE_CHANGED, NULL);
     //lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.progress, load_scroll_color_values, LV_EVENT_ALL, NULL);
     roller_changed(NULL); // Initialize the roller
-	//update_ui(); //called by roller_changed() so not needed
+    //update_ui(); //called by roller_changed() so not needed
 
     //test to show that we're reading images from the file system
     lv_fs_dir_t dir;
@@ -165,7 +183,7 @@ void setup_cb()
     while (1) {
         res = lv_fs_dir_read(&dir, fn, sizeof(fn));
         if (res == LV_FS_RES_NOT_EX) //End of directory
-        {            
+        {
             break;
         }
         if (res != LV_FS_RES_OK) {
@@ -202,82 +220,82 @@ void roller_changed(lv_event_t* e) {
         int_max_items = int_background_count;
         int_current_item = int_current_background;
         break;
-	case 1: //body
-		int_max_items = int_body_count;
-		int_current_item = int_current_body;
-		break;
-	case 2: //clothes
-		int_max_items = int_clothes_count;
-		int_current_item = int_current_clothes;
-		break;
-	case 3: //head
-		int_max_items = int_head_count;
-		int_current_item = int_current_head;
-		break;
-	case 4: //mouth
-		int_max_items = int_mouth_count;
-		int_current_item = int_current_mouth;
-		break;
-	case 5: //beard
-		int_max_items = int_beard_count;
-		int_current_item = int_current_beard;
-		break;
-	case 6: //mustache
-		int_max_items = int_mustache_count;
-		int_current_item = int_current_mustache;
-		break;
+    case 1: //body
+        int_max_items = int_body_count;
+        int_current_item = int_current_body;
+        break;
+    case 2: //clothes
+        int_max_items = int_clothes_count;
+        int_current_item = int_current_clothes;
+        break;
+    case 3: //head
+        int_max_items = int_head_count;
+        int_current_item = int_current_head;
+        break;
+    case 4: //mouth
+        int_max_items = int_mouth_count;
+        int_current_item = int_current_mouth;
+        break;
+    case 5: //beard
+        int_max_items = int_beard_count;
+        int_current_item = int_current_beard;
+        break;
+    case 6: //mustache
+        int_max_items = int_mustache_count;
+        int_current_item = int_current_mustache;
+        break;
     case 7: //eye-l
         int_max_items = int_eye_l_count;
         int_current_item = int_current_eye_l;
         break;
     case 8: //nose
-		int_max_items = int_nose_count;
-		int_current_item = int_current_noses;
-		break;
-	case 9: //eye-r
-		int_max_items = int_eye_r_count;
-		int_current_item = int_current_eye_r;
-		break;
-	case 10: //hair
-		int_max_items = int_hair_count;
-		int_current_item = int_current_hair;
-		break;
-	case 11: //ears
-		int_max_items = int_ears_count;
-		int_current_item = int_current_ears;
-		break;            
-	case 12: //ridges
-		int_max_items = int_ridges_count;
-		int_current_item = int_current_ridges;
-		break;
-	case 13: //eyebrows-l
-		int_max_items = int_eyebrow_l_count;
-		int_current_item = int_current_eyebrow_l;
-		break;
-	case 14: //eyebrows-r
-		int_max_items = int_eyebrow_r_count;
-		int_current_item = int_current_eyebrow_r;
-		break;
-	case 15: //borg
-		int_max_items = int_borg_count;
-		int_current_item = int_current_borg;
-		break;
-	case 16: //accessories
-		int_max_items = int_accessories_count;
-		int_current_item = int_current_accessories;
-		break;
-	case 17: //antennae
-		int_max_items = int_antennae_count;
-		int_current_item = int_current_antennae;
-		break;
-	case 18: //glasses
-		int_max_items = int_glasses_count;
-		int_current_item = int_current_glasses;
-		break;
-	case 19: //hands		
-		int_max_items = int_hands_count;
-		int_current_item = int_current_hands;
-		break;
+        int_max_items = int_nose_count;
+        int_current_item = int_current_noses;
+        break;
+    case 9: //eye-r
+        int_max_items = int_eye_r_count;
+        int_current_item = int_current_eye_r;
+        break;
+    case 10: //hair
+        int_max_items = int_hair_count;
+        int_current_item = int_current_hair;
+        break;
+    case 11: //ears
+        int_max_items = int_ears_count;
+        int_current_item = int_current_ears;
+        break;
+    case 12: //ridges
+        int_max_items = int_ridges_count;
+        int_current_item = int_current_ridges;
+        break;
+    case 13: //eyebrows-l
+        int_max_items = int_eyebrow_l_count;
+        int_current_item = int_current_eyebrow_l;
+        break;
+    case 14: //eyebrows-r
+        int_max_items = int_eyebrow_r_count;
+        int_current_item = int_current_eyebrow_r;
+        break;
+    case 15: //borg
+        int_max_items = int_borg_count;
+        int_current_item = int_current_borg;
+        break;
+    case 16: //accessories
+        int_max_items = int_accessories_count;
+        int_current_item = int_current_accessories;
+        break;
+    case 17: //antennae
+        int_max_items = int_antennae_count;
+        int_current_item = int_current_antennae;
+        break;
+    case 18: //glasses
+        int_max_items = int_glasses_count;
+        int_current_item = int_current_glasses;
+        break;
+    case 19: //hands		
+        int_max_items = int_hands_count;
+        int_current_item = int_current_hands;
+        break;
     default:
         int_max_items = 0;
         break;
@@ -287,7 +305,7 @@ void roller_changed(lv_event_t* e) {
 
 // fires when the '>' (next) avatar component variant button is clicked 
 void avatar_next(lv_event_t* e) {
-	play_random_beep(); // Play a random beep sound when the button is clicked
+    play_random_beep(); // Play a random beep sound when the button is clicked
     int_current_item++;
     if (int_current_item >= int_max_items) {
         int_current_item = 0;
@@ -303,12 +321,6 @@ void avatar_prev(lv_event_t* e) {
         int_current_item = int_max_items - 1;
     }
     update_avatar_images();
-}
-
-void load_screen_avatar(lv_event_t* e)
-{
-    printf("Loading screen avatar\n");
-    lv_screen_load_anim(objects.avatar, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
 }
 
 // This function updates the counters ("x/y") based on the current selection in the roller
@@ -406,27 +418,27 @@ void update_item_counter()
 {
     char str_item_id[8];
 
-	//need to load images from flash
+    //need to load images from flash
  //   lv_image_set_src(objects.img_background, background_images[int_current_background]);
  //   lv_image_set_src(objects.img_head, head_images[int_current_head]);
-	//lv_image_set_src(objects.img_mouth, mouth_images[int_current_mouth]);
-	//lv_image_set_src(objects.img_beard, beard_images[int_current_beard]);
-	//lv_image_set_src(objects.img_moustache, mustache_images[int_current_mustache]);
-	//lv_image_set_src(objects.img_nose, noses_images[int_current_noses]);
-	//lv_image_set_src(objects.img_eye_left, eye_l_images[int_current_eye_l]);
-	//lv_image_set_src(objects.img_eye_right, eye_r_images[int_current_eye_r]);
-	//lv_image_set_src(objects.img_hair, hair_images[int_current_hair]);
-	//lv_image_set_src(objects.img_ears, ears_images[int_current_ears]);
-	//lv_image_set_src(objects.img_ridges, ridges_images[int_current_ridges]);
-	//lv_image_set_src(objects.img_eyebrow_left, eyebrows_l_images[int_current_eyebrow_l]);
-	//lv_image_set_src(objects.img_eyebrow_right, eyebrows_r_images[int_current_eyebrow_r]);
-	//lv_image_set_src(objects.img_borg, borg_images[int_current_borg]);
-	//lv_image_set_src(objects.img_accessories, accessories_images[int_current_accessories]);
-	//lv_image_set_src(objects.img_clothes, clothes_images[int_current_clothes]);
-	//lv_image_set_src(objects.img_hands, hands_images[int_current_hands]);
-	//lv_image_set_src(objects.img_glasses, glasses_images[int_current_glasses]);
+    //lv_image_set_src(objects.img_mouth, mouth_images[int_current_mouth]);
+    //lv_image_set_src(objects.img_beard, beard_images[int_current_beard]);
+    //lv_image_set_src(objects.img_moustache, mustache_images[int_current_mustache]);
+    //lv_image_set_src(objects.img_nose, noses_images[int_current_noses]);
+    //lv_image_set_src(objects.img_eye_left, eye_l_images[int_current_eye_l]);
+    //lv_image_set_src(objects.img_eye_right, eye_r_images[int_current_eye_r]);
+    //lv_image_set_src(objects.img_hair, hair_images[int_current_hair]);
+    //lv_image_set_src(objects.img_ears, ears_images[int_current_ears]);
+    //lv_image_set_src(objects.img_ridges, ridges_images[int_current_ridges]);
+    //lv_image_set_src(objects.img_eyebrow_left, eyebrows_l_images[int_current_eyebrow_l]);
+    //lv_image_set_src(objects.img_eyebrow_right, eyebrows_r_images[int_current_eyebrow_r]);
+    //lv_image_set_src(objects.img_borg, borg_images[int_current_borg]);
+    //lv_image_set_src(objects.img_accessories, accessories_images[int_current_accessories]);
+    //lv_image_set_src(objects.img_clothes, clothes_images[int_current_clothes]);
+    //lv_image_set_src(objects.img_hands, hands_images[int_current_hands]);
+    //lv_image_set_src(objects.img_glasses, glasses_images[int_current_glasses]);
 
-    snprintf(str_item_id, sizeof(str_item_id), "%d/%d", int_current_item+1, int_max_items);
+    snprintf(str_item_id, sizeof(str_item_id), "%d/%d", int_current_item + 1, int_max_items);
     lv_label_set_text(objects.lbl_avatar_item_id, str_item_id);
 }
 

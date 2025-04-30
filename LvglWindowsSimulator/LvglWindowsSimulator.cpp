@@ -8,9 +8,15 @@
 #include "eez/ui.h"
 #include "custom.h"
 #include "json.h"
+#include "global.hpp"
+
+Config config;
+GameState gameState;
 
 int main()
 {
+    gameState.playerCount = 0;
+
     lv_init();
     
     /*
@@ -85,7 +91,7 @@ int main()
     //lv_demo_benchmark();
 
     // Load JSON configuration
-    Config config;
+    
     if (loadBoardConfig(config))
     {
         printf("Config loaded successfully\n");

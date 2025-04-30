@@ -1890,6 +1890,7 @@
     <ClInclude Include="ArduinoJson\src\ArduinoJson.hpp">
       <Filter>ArduinoJson</Filter>
     </ClInclude>
+    <ClInclude Include="global.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />

@@ -1,7 +1,7 @@
 ﻿#include "json.h"
 
 // Helper function to load an AvatarComponent from JSON
-void loadAvatarComponent(AvatarComponent& component, JsonObjectConst json)
+static void loadAvatarComponent(AvatarComponent& component, JsonObjectConst json)
 {
     if (json["Image"].is<String>())
     {
@@ -13,7 +13,7 @@ void loadAvatarComponent(AvatarComponent& component, JsonObjectConst json)
 }
 
 // Helper function to load an Avatar from JSON
-void loadAvatar(Avatar& avatar, JsonObjectConst json)
+static void loadAvatar(Avatar& avatar, JsonObjectConst json)
 {
     loadAvatarComponent(avatar.background, json["Background"]);
     loadAvatarComponent(avatar.head, json["Head"]);
@@ -25,7 +25,7 @@ void loadAvatar(Avatar& avatar, JsonObjectConst json)
 }
 
 // Function to serialize Avatar into JSON object
-void serializeAvatar(const Avatar& avatar, JsonObject& json)
+static void serializeAvatar(const Avatar& avatar, JsonObject& json)
 {
     //JsonObject background = json.createNestedObject("Background");
     JsonObject background = json["Background"];
@@ -272,18 +272,18 @@ std::vector<ContactData*> ContactManager::getCrew()
 }
 
 // Function to serialize Config into JSON document
-void serializeConfig(const Config& config, JsonDocument& doc)
+static void serializeConfig(const Config& config, JsonDocument& doc)
 {
-    JsonObject root = doc.to<JsonObject>();
+    //JsonObject root = doc.to<JsonObject>();
 
     // Serialize contacts
     //JsonObject contacts = root.createNestedObject("Contacts");
-    JsonObject contacts = root["Contacts"];
+    JsonObject contacts = doc["Contacts"];
     config.contacts.toJson(contacts);
 
     // Serialize games
     //JsonObject games = root.createNestedObject("Games");
-    JsonObject games = root["Games"];
+    JsonObject games = doc["Games"];
     for (const Game& game : config.games)
     {
         //JsonObject gameObj = games.createNestedObject(game.description);
@@ -291,9 +291,12 @@ void serializeConfig(const Config& config, JsonDocument& doc)
         gameObj["XP"] = game.XP;
     }
 
+    String temp;
+    serializeJsonPretty(doc, temp); // Print the JSON document to Serial for debugging
+    printf("JSON Output:\n%s\n", temp.c_str());
     // Serialize user
     //JsonObject user = root.createNestedObject("User");
-    JsonObject user = root["User"];
+    JsonObject user = doc["User"];
     user["DisplayName"] = config.user.displayName;
     user["TotalXP"] = config.user.totalXP;
     //JsonObject userAvatar = user.createNestedObject("Avatar");
@@ -302,7 +305,7 @@ void serializeConfig(const Config& config, JsonDocument& doc)
 
     // Serialize board
     //JsonObject board = root.createNestedObject("Board");
-    JsonObject board = root["Board"];
+    JsonObject board = doc["Board"];
     board["AirplaneMode"] = config.board.airplaneMode;
     board["IntroWatched"] = config.board.introWatched;
     board["Volume"] = config.board.volume;
@@ -335,16 +338,16 @@ void serializeConfig(const Config& config, JsonDocument& doc)
 }
 
 // Helper function to convert string to display option
-int stringToDisplayOption(const char* str)
+static DisplayOptions stringToDisplayOption(const char* str)
 {
-    if (strcmp(str, "Everyone") == 0) return DISPLAY_EVERYONE;
-    if (strcmp(str, "NotBlocked") == 0) return DISPLAY_NOT_BLOCKED;
-    if (strcmp(str, "Friends") == 0) return DISPLAY_FRIENDS;
-    if (strcmp(str, "None") == 0) return DISPLAY_NONE;
-    return DISPLAY_EVERYONE;  // default
+    if (strcmp(str, "Everyone") == 0) return Everyone;
+    if (strcmp(str, "NotBlocked") == 0) return NotBlocked;
+    if (strcmp(str, "Friends") == 0) return Friends;
+    if (strcmp(str, "None") == 0) return None;
+    return Everyone;  // default
 }
 
-bool loadConfig(Config& config, const JsonDocument& doc)
+static bool loadConfig(Config& config, const JsonDocument& doc)
 {
     //serialPrintJson(doc); // Print the JSON document to Serial for debugging
 
@@ -436,7 +439,7 @@ bool loadConfig(Config& config, const JsonDocument& doc)
 }
 
 // Read in a JSON document and return it (or an empty document)
-JsonDocument readJson(const char* filename)
+static JsonDocument readJson(const char* filename)
 {
     JsonDocument doc;  // Adjust size based on your needs
     LV_LOG_INFO("Starting read:");
@@ -499,7 +502,7 @@ JsonDocument readJson(const char* filename)
     return doc;
 }
 
-bool writeJson(const char* fileName, const JsonDocument& doc)
+static bool writeJson(const char* fileName, const JsonDocument& doc)
 {
     lv_fs_file_t f;
     lv_fs_res_t res = lv_fs_open(&f, fileName, LV_FS_MODE_WR);
@@ -549,7 +552,7 @@ void serialPrintJson(JsonDocument doc)
 }
 
 // debug: prints an avatar's config
-void printAvatarComponent(const char* name, const AvatarComponent& comp)
+static void printAvatarComponent(const char* name, const AvatarComponent& comp)
 {
     printf("    %s:\n", name);
     printf("      Image: %s\n", comp.imagePath);
@@ -570,20 +573,20 @@ void printAvatarComponent(const char* name, const AvatarComponent& comp)
 //}
 
 // debug: converts a displayOption (int) to a string
-const char* displayOptionToString(int option)
+static const char* displayOptionToString(int option)
 {
     switch (option)
     {
-    case DISPLAY_EVERYONE: return "Everyone";
-    case DISPLAY_NOT_BLOCKED: return "NotBlocked";
-    case DISPLAY_FRIENDS: return "Friends";
-    case DISPLAY_NONE: return "None";
+    case Everyone: return "Everyone";
+    case NotBlocked: return "NotBlocked";
+    case Friends: return "Friends";
+    case None: return "None";
     default: return "Unknown";
     }
 }
 
 // debug: prints a Config{} struct to the serial port
-void printConfig(const Config& config)
+static void printConfig(const Config& config)
 {
     printf("=== Config Dump ===\n");
 
@@ -592,12 +595,12 @@ void printConfig(const Config& config)
 }
 
 // Test all json functions
-bool jsonTest(const char* inFile, const char* outFile)
+static bool jsonTest(const char* inFile, const char* outFile)
 {
     return true;
 }
 
-void printAvatarComponent(const char* name, const AvatarComponent& comp, int indent = 0)
+static void printAvatarComponent(const char* name, const AvatarComponent& comp, int indent = 0)
 {
     String spaces(indent, ' ');
     printf("%s%s:\n", spaces.c_str(), name);
@@ -605,7 +608,7 @@ void printAvatarComponent(const char* name, const AvatarComponent& comp, int ind
     printf("%s  RGB: (%d, %d, %d)\n", spaces.c_str(), comp.red, comp.green, comp.blue);
 }
 
-void printAvatar(const Avatar& avatar, int indent = 0)
+static void printAvatar(const Avatar& avatar, int indent = 0)
 {
     String spaces(indent, ' ');
     printf("%sAvatar:\n", spaces.c_str());
@@ -618,7 +621,7 @@ void printAvatar(const Avatar& avatar, int indent = 0)
     printAvatarComponent("Accessory", avatar.accessory, indent + 2);
 }
 
-void printContactData(const ContactData& contact, bool verbose = false, int indent = 0)
+static void printContactData(const ContactData& contact, bool verbose = false, int indent = 0)
 {
     String spaces(indent, ' ');
     printf("%sContact NodeID: %u\n", spaces.c_str(), contact.nodeId);
@@ -638,7 +641,7 @@ void printContactData(const ContactData& contact, bool verbose = false, int inde
     }
 }
 
-void printContactManager(const ContactManager& manager, bool verbose = false)
+static void printContactManager(const ContactManager& manager, bool verbose = false)
 {
     printf("\n=== Contact Manager Debug Dump ===");
 
@@ -785,11 +788,143 @@ bool loadBoardConfig(Config& config, const char* fileName)
     return true;
 }
 
+bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
+    lv_fs_file_t file;
+    if (lv_fs_open(&file, filename, LV_FS_MODE_RD) != LV_FS_RES_OK) {
+        LV_LOG_ERROR("Failed to open file for reading");
+        return false;
+    }
+
+    String jsonString;
+    char buffer[256];
+    uint32_t read = 0;
+
+    while (lv_fs_read(&file, buffer, sizeof(buffer) - 1, &read) == LV_FS_RES_OK && read > 0) {
+        buffer[read] = '\0';
+        jsonString += buffer;
+    }
+    lv_fs_close(&file);
+
+    JsonDocument doc;
+
+    if (deserializeJson(doc, jsonString)) {
+        LV_LOG_ERROR("Failed to parse JSON config. Loading defaults.");
+        doc.clear(); // Clear the document & try again
+    }
+
+    JsonObject user = doc["User"];
+    strlcpy(cfg.user.displayName, user["DisplayName"] | "Queue Who", sizeof(cfg.user.displayName));
+    cfg.user.totalXP = user["TotalXP"] | 0;
+
+    //JsonObject avatar = user["Avatar"];
+    //cfg.user.avatar = avatar["Image"] | 0;
+
+    JsonObject contacts = doc["Contacts"];
+    for (JsonPair kv : contacts) {
+        ContactData c;
+        c.nodeId = strtoul(kv.key().c_str(), nullptr, 10);
+        JsonObject entry = kv.value().as<JsonObject>();
+        strlcpy(c.displayName, entry["DisplayName"] | "", sizeof(c.displayName));
+        c.isFriend = entry["Friend"] | false;
+        c.isCrew = entry["Crew"] | false;
+        c.blocked = entry["Blocked"] | false;
+        c.totalXP = entry["TotalXP"] | 0;
+        c.avatar.background.red = entry["Avatar"] | 0; // simplified avatar ID
+        cfg.contacts.addOrUpdateContact(c);
+    }
+
+    JsonObject board = doc["Board"];
+    cfg.board.airplaneMode = board["AirplaneMode"] | false;
+    cfg.board.introWatched = board["IntroWatched"] | false;
+    cfg.board.volume = board["Volume"] | 100;
+    strlcpy(cfg.board.ssid, board["Ssid"] | "sheetmetalcon", sizeof(cfg.board.ssid));
+    strlcpy(cfg.board.password, board["Password"] | "V9$Jqc8EmDPHVQ3kGf_qgAVmjdrqj@y", sizeof(cfg.board.password));
+    cfg.board.port = board["Port"] | 5555;
+    cfg.board.channel = board["Channel"] | 6;
+    cfg.board.hidden = board["Hidden"] | false;
+
+    JsonObject badge = board["BadgeMode"];
+    cfg.board.badgeMode.enabled = badge["Enabled"] | false;
+    cfg.board.badgeMode.delay = badge["Delay"] | 60;
+
+    JsonObject display = board["DisplayNameOptions"];
+    cfg.board.displayNameOptions.awayMissions = (DisplayOptions)(display["AwayMissions"] | 0);
+    cfg.board.displayNameOptions.acceptInvitesFrom = (DisplayOptions)(display["AcceptInvitesFrom"] | 0);
+    cfg.board.displayNameOptions.showNamesFrom = (DisplayOptions)(display["ShowNamesFrom"] | 0);
+
+    JsonObject ranks = board["Ranks"];
+    cfg.board.ranks.cpo = ranks["CPO"] | 0;
+    cfg.board.ranks.ensign = ranks["Ensign"] | 0;
+    cfg.board.ranks.ltjg = ranks["LTJG"] | 0;
+    cfg.board.ranks.lt = ranks["LT"] | 0;
+    cfg.board.ranks.ltc = ranks["LTC"] | 0;
+    cfg.board.ranks.cdr = ranks["CDR"] | 0;
+    cfg.board.ranks.capt = ranks["CAPT"] | 0;
+
+    return true;
+}
+
+
+static void configToJson(const Config& config, JsonDocument& doc)
+{
+    auto user = doc["User"];
+    user["DisplayName"] = config.user.displayName;
+    user["TotalXP"] = config.user.totalXP;
+
+    //user["Image"] = config.user.image;  // Simplified
+
+    auto contacts = doc["Contacts"];
+    for (const auto& c : config.contacts) {
+        char id[16];
+        snprintf(id, sizeof(id), "%u", c.nodeId);
+        auto entry = contacts[id];
+        entry["DisplayName"] = c.displayName;
+        entry["Friend"] = c.isFriend;
+        entry["Crew"] = c.isCrew;
+        entry["Blocked"] = c.blocked;
+        entry["TotalXP"] = c.totalXP;
+        //entry["Avatar"] = c.avatar.background.red; 
+    }
+
+    auto board = doc["Board"];
+    board["AirplaneMode"] = config.board.airplaneMode;
+    board["IntroWatched"] = config.board.introWatched;
+    board["Volume"] = config.board.volume;
+    board["Ssid"] = config.board.ssid;
+    board["Password"] = config.board.password;
+    board["Port"] = config.board.port;
+    board["Channel"] = config.board.channel;
+    board["Hidden"] = config.board.hidden;
+
+    auto badge = board["BadgeMode"];
+    badge["Enabled"] = config.board.badgeMode.enabled;
+    badge["Delay"] = config.board.badgeMode.delay;
+
+    auto display = board["DisplayNameOptions"];
+    display["AwayMissions"] = config.board.displayNameOptions.awayMissions;
+    display["AcceptInvitesFrom"] = config.board.displayNameOptions.acceptInvitesFrom;
+    display["ShowNamesFrom"] = config.board.displayNameOptions.showNamesFrom;
+
+    auto ranks = board["Ranks"];
+    ranks["CPO"] = config.board.ranks.cpo;
+    ranks["Ensign"] = config.board.ranks.ensign;
+    ranks["LTJG"] = config.board.ranks.ltjg;
+    ranks["LT"] = config.board.ranks.lt;
+    ranks["LTC"] = config.board.ranks.ltc;
+    ranks["CDR"] = config.board.ranks.cdr;
+    ranks["CAPT"] = config.board.ranks.capt;
+
+    //String temp;
+    //serializeJsonPretty(doc, temp);
+    //printf("JSON Output:\n%s\n", temp.c_str());
+}
+
 bool saveBoardConfig(Config& config, const char* fileName)
 {
     JsonDocument defaultJson;
 
     //convert config struct to JsonDocument
+    configToJson(config, defaultJson);
     serializeConfig(config, defaultJson);
     if (defaultJson.size() < 1)
     {
