@@ -22,9 +22,13 @@ typedef struct _objects_t {
     lv_obj_t *check_settings_airplanemode;
     lv_obj_t *check_settings_badgemode;
     lv_obj_t *btn_settings_delay_down;
+    lv_obj_t *lbl_settings_badgedelay;
     lv_obj_t *btn_settings_delay_up;
     lv_obj_t *btn_settings_usernames;
+    lv_obj_t *lbl_settings_usernames;
     lv_obj_t *btn_settings_gamehosts;
+    lv_obj_t *lbl_settings_gamehosts;
+    lv_obj_t *sld_settings_volume;
     lv_obj_t *pip_right;
     lv_obj_t *pip_right_mid;
     lv_obj_t *pip_left_mid;

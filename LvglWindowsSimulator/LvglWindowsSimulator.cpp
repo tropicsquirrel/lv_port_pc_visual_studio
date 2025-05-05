@@ -92,7 +92,7 @@ int main()
 
     // Load JSON configuration
     
-    if (loadBoardConfig(config))
+    if (loadConfig(config))
     {
         printf("Config loaded successfully\n");
         if (config.contacts.size() > 0)

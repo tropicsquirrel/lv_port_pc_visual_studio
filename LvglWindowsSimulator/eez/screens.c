@@ -355,14 +355,13 @@ void create_screen_settings() {
                     }
                 }
                 {
-                    lv_obj_t *obj = lv_spinbox_create(parent_obj);
-                    lv_obj_set_pos(obj, 52, 112);
-                    lv_obj_set_size(obj, 39, 37);
-                    lv_spinbox_set_digit_format(obj, 3, 0);
-                    lv_spinbox_set_range(obj, 0, 900);
-                    lv_spinbox_set_rollover(obj, true);
-                    lv_spinbox_set_step(obj, 1);
-                    lv_obj_set_style_text_font(obj, &ui_font_lcars_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    // lbl_settings_badgedelay
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    objects.lbl_settings_badgedelay = obj;
+                    lv_obj_set_pos(obj, 49, 118);
+                    lv_obj_set_size(obj, 44, LV_SIZE_CONTENT);
+                    lv_label_set_text(obj, "60");
+                    add_style_text_label_white(obj);
                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                 }
                 {
@@ -401,7 +400,9 @@ void create_screen_settings() {
                     {
                         lv_obj_t *parent_obj = obj;
                         {
+                            // lbl_settings_usernames
                             lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.lbl_settings_usernames = obj;
                             lv_obj_set_pos(obj, -1, 1);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_label_set_text(obj, "None");
@@ -426,7 +427,9 @@ void create_screen_settings() {
                     {
                         lv_obj_t *parent_obj = obj;
                         {
+                            // lbl_settings_gamehosts
                             lv_obj_t *obj = lv_label_create(parent_obj);
+                            objects.lbl_settings_gamehosts = obj;
                             lv_obj_set_pos(obj, 0, 1);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_label_set_text(obj, "None");
@@ -435,6 +438,25 @@ void create_screen_settings() {
                     }
                 }
             }
+        }
+        {
+            // sld_settings_volume
+            lv_obj_t *obj = lv_slider_create(parent_obj);
+            objects.sld_settings_volume = obj;
+            lv_obj_set_pos(obj, 105, 49);
+            lv_obj_set_size(obj, 129, 32);
+            lv_slider_set_range(obj, 0, 21);
+            lv_slider_set_value(obj, 10, LV_ANIM_OFF);
+            add_style_slider_blue(obj);
+            lv_obj_set_style_bg_opa(obj, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+        }
+        {
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            lv_obj_set_pos(obj, 105, 19);
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_label_set_text(obj, "Volume");
+            add_style_text_label_white(obj);
+            lv_obj_set_style_text_font(obj, &ui_font_lcars_20, LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
     

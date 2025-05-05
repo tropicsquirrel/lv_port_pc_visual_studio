@@ -86,13 +86,12 @@ struct Ranks
 struct BadgeMode
 {
     bool enabled = true;
-    int delay = 60;
+    int32_t delay = 60;
 };
 
 struct DisplayNameOptions
 {
-    DisplayOptions awayMissions = Everyone;
-    DisplayOptions acceptInvitesFrom = Everyone;
+    DisplayOptions gameHosts = Everyone;
     DisplayOptions showNamesFrom = Everyone;
 };
 
@@ -105,7 +104,7 @@ struct Board
     int channel = 6;
     bool hidden = 0;
     bool introWatched = false;
-    int volume = 100;
+    int32_t volume = 21;
     BadgeMode badgeMode;
     DisplayNameOptions displayNameOptions;
     Ranks ranks;
@@ -163,7 +162,8 @@ struct Config
     Board board;
 };
 
-bool loadBoardConfig(Config& config, const char* fileName = "L:/default.json");
+bool loadConfig(Config& cfg, const char* filename = "L:/default.json");
+//bool loadBoardConfig(Config& config, const char* fileName = "L:/default.json");
 bool saveBoardConfig(Config& config, const char* fileName = "L:/default.json");
 void printConfig(const Config& config, bool verbose = false);
 void serialPrintJson(JsonDocument doc);

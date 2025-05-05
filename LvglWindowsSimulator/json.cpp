@@ -1,5 +1,12 @@
 ﻿#include "json.h"
 
+const char* DEFAULT_GAME_NAMES[] = {
+    "Assimilation", "DNS", "Crypto", "AntiSocial",
+    "QingTheory", "IoTConnect", "BotOrNot"
+};
+const size_t NUM_DEFAULT_GAMES = sizeof(DEFAULT_GAME_NAMES) / sizeof(DEFAULT_GAME_NAMES[0]);
+
+
 // ContactManager implementation
 ContactManager::ContactManager()
 {
@@ -93,7 +100,7 @@ void ContactManager::fromJson(JsonObjectConst json)
     contacts.clear();
     std::fill_n(indexCache, 256, 0);
 
-    for (JsonPairConst kv : json)
+    for (const JsonPairConst kv : json)
     {
         ContactData contact;
         contact.nodeId = strtoul(kv.key().c_str(), nullptr, 10);
@@ -227,8 +234,7 @@ static void serializeConfig(const Config& config, JsonDocument& doc)
 
     //JsonObject displayNameOptions = board.createNestedObject("DisplayNameOptions");
     JsonObject displayNameOptions = board["DisplayNameOptions"];
-    displayNameOptions["AwayMissions"] = config.board.displayNameOptions.awayMissions;
-    displayNameOptions["AcceptInvitesFrom"] = config.board.displayNameOptions.acceptInvitesFrom;
+    displayNameOptions["AwayMissions"] = config.board.displayNameOptions.gameHosts;
     displayNameOptions["ShowNamesFrom"] = config.board.displayNameOptions.showNamesFrom;
 
     //JsonObject ranks = board.createNestedObject("Ranks");
@@ -252,93 +258,99 @@ static DisplayOptions stringToDisplayOption(const char* str)
     return Everyone;  // default
 }
 
-static bool loadConfig(Config& config, const JsonDocument& doc)
-{
-    //serialPrintJson(doc); // Print the JSON document to Serial for debugging
-
-    // Load contacts
-    LV_LOG_INFO("Loading contacts...");
-    JsonObjectConst contactsObj = doc["Contacts"].as<JsonObjectConst>();
-    if (!contactsObj.isNull())
-    {
-        config.contacts.fromJson(contactsObj);
-    }
-    else
-    {
-        LV_LOG_ERROR("Contacts key not found!");
-    }
-
-    // Load games
-    LV_LOG_INFO("Loading Games...");
-    JsonObjectConst gamesObj = doc["Games"].as<JsonObjectConst>();
-
-    if (!gamesObj.isNull())
-    {
-        config.games.clear();
-        for (JsonPairConst kv : gamesObj)
-        {
-            Game game;
-            strlcpy(game.description, kv.key().c_str(), sizeof(game.description));
-            game.XP = kv.value()["XP"] | 0;
-            config.games.push_back(game);
-        }
-    }
-    else
-    {
-        LV_LOG_ERROR("Games key not found!");
-    }
-
-    // Load user
-    JsonObjectConst userObj = doc["User"].as<JsonObjectConst>();
-    if (userObj)
-    {
-        strlcpy(config.user.displayName, userObj["DisplayName"] | "", sizeof(config.user.displayName));
-        config.user.totalXP = userObj["TotalXP"] | 0;
-        config.user.avatar = userObj["Avatar"] | 0;
-    }
-    else
-    {
-        LV_LOG_ERROR("User key not found!");
-    }
-
-    // Load board settings
-    JsonObjectConst boardObj = doc["Board"].as<JsonObjectConst>();
-    if (boardObj)
-    {
-        config.board.airplaneMode = boardObj["AirplaneMode"] | false;
-        config.board.introWatched = boardObj["IntroWatched"] | false;
-        config.board.volume = boardObj["Volume"] | 0;
-        strlcpy(config.board.ssid, boardObj["Ssid"] | "sheetmetalcon", sizeof(config.board.ssid));
-        strlcpy(config.board.password, boardObj["Password"] | "default_password", sizeof(config.board.password));
-        config.board.port = boardObj["Port"] | 5555;
-        config.board.channel = boardObj["Channel"] | 6;
-        config.board.hidden = boardObj["Hidden"] | false;
-
-        JsonObjectConst badgeModeObj = boardObj["BadgeMode"].as<JsonObjectConst>();
-        config.board.badgeMode.enabled = badgeModeObj["Enabled"] | false;
-        config.board.badgeMode.delay = badgeModeObj["Delay"] | 0;
-
-        JsonObjectConst displayNameOptionsObj = boardObj["DisplayNameOptions"].as<JsonObjectConst>();
-        config.board.displayNameOptions.awayMissions = stringToDisplayOption(displayNameOptionsObj["AwayMissions"] | "Everyone");
-        config.board.displayNameOptions.acceptInvitesFrom = stringToDisplayOption(displayNameOptionsObj["AcceptInvitesFrom"] | "Everyone");
-        config.board.displayNameOptions.showNamesFrom = stringToDisplayOption(displayNameOptionsObj["ShowNamesFrom"] | "Everyone");
-
-        JsonObjectConst ranksObj = boardObj["Ranks"].as<JsonObjectConst>();
-        config.board.ranks.cpo = ranksObj["CPO"] | 0;
-        config.board.ranks.ensign = ranksObj["Ensign"] | 0;
-        config.board.ranks.ltjg = ranksObj["LTJG"] | 0;
-        config.board.ranks.lt = ranksObj["LT"] | 0;
-        config.board.ranks.ltc = ranksObj["LTC"] | 0;
-        config.board.ranks.cdr = ranksObj["CDR"] | 0;
-        config.board.ranks.capt = ranksObj["CAPT"] | 0;
-    }
-    else
-    {
-        LV_LOG_ERROR("Board key not found!");
-    }
-
-    return true;
-}
+//static bool loadConfig(Config& config, const JsonDocument& doc)
+//{
+//    //serialPrintJson(doc); // Print the JSON document to Serial for debugging
+//
+//    // Load contacts
+//    LV_LOG_INFO("Loading contacts...");
+//    JsonObjectConst contactsObj = doc["Contacts"].as<JsonObjectConst>();
+//    if (!contactsObj.isNull())
+//    {
+//        config.contacts.fromJson(contactsObj);
+//    }
+//    else
+//    {
+//        LV_LOG_ERROR("Contacts key not found!");
+//    }
+//
+//    // Load games
+//    LV_LOG_INFO("Loading Games...");
+//    JsonObjectConst games = doc["Games"].as<JsonObjectConst>();
+//
+//    // Add all games that exist in JSON
+//    for (JsonPairConst kv : games) {
+//        Game g;
+//        strlcpy(g.description, kv.key().c_str(), sizeof(g.description));
+//        g.XP = kv.value()["XP"] | 0;
+//        config.games.push_back(g);
+//    }
+//
+//    // Ensure all required game names exist
+//    for (size_t i = 0; i < NUM_DEFAULT_GAMES; ++i) {
+//        const char* name = DEFAULT_GAME_NAMES[i];
+//        auto it = std::find_if(config.games.begin(), config.games.end(), [name](const Game& g) {
+//            return strcmp(g.description, name) == 0;
+//            });
+//        if (it == config.games.end()) {
+//            Game g;
+//            strlcpy(g.description, name, sizeof(g.description));
+//            g.XP = 0;
+//            config.games.push_back(g);
+//        }
+//    }
+//
+//    // Load user
+//    JsonObjectConst userObj = doc["User"].as<JsonObjectConst>();
+//    if (userObj)
+//    {
+//        strlcpy(config.user.displayName, userObj["DisplayName"] | "", sizeof(config.user.displayName));
+//        config.user.totalXP = userObj["TotalXP"] | 0;
+//        config.user.avatar = userObj["Avatar"] | 0;
+//    }
+//    else
+//    {
+//        LV_LOG_ERROR("User key not found!");
+//    }
+//
+//    // Load board settings
+//    JsonObjectConst boardObj = doc["Board"].as<JsonObjectConst>();
+//    if (boardObj)
+//    {
+//        config.board.airplaneMode = boardObj["AirplaneMode"] | false;
+//        config.board.introWatched = boardObj["IntroWatched"] | false;
+//        config.board.volume = boardObj["Volume"] | 0;
+//        strlcpy(config.board.ssid, boardObj["Ssid"] | "sheetmetalcon", sizeof(config.board.ssid));
+//        strlcpy(config.board.password, boardObj["Password"] | "default_password", sizeof(config.board.password));
+//        config.board.port = boardObj["Port"] | 5555;
+//        config.board.channel = boardObj["Channel"] | 6;
+//        config.board.hidden = boardObj["Hidden"] | false;
+//
+//        JsonObjectConst badgeModeObj = boardObj["BadgeMode"].as<JsonObjectConst>();
+//        config.board.badgeMode.enabled = badgeModeObj["Enabled"] | false;
+//        config.board.badgeMode.delay = badgeModeObj["Delay"] | 0;
+//
+//        JsonObjectConst displayNameOptionsObj = boardObj["DisplayNameOptions"].as<JsonObjectConst>();
+//        config.board.displayNameOptions.awayMissions = stringToDisplayOption(displayNameOptionsObj["AwayMissions"] | "Everyone");
+//        config.board.displayNameOptions.acceptInvitesFrom = stringToDisplayOption(displayNameOptionsObj["AcceptInvitesFrom"] | "Everyone");
+//        config.board.displayNameOptions.showNamesFrom = stringToDisplayOption(displayNameOptionsObj["ShowNamesFrom"] | "Everyone");
+//
+//        JsonObjectConst ranksObj = boardObj["Ranks"].as<JsonObjectConst>();
+//        config.board.ranks.cpo = ranksObj["CPO"] | 0;
+//        config.board.ranks.ensign = ranksObj["Ensign"] | 0;
+//        config.board.ranks.ltjg = ranksObj["LTJG"] | 0;
+//        config.board.ranks.lt = ranksObj["LT"] | 0;
+//        config.board.ranks.ltc = ranksObj["LTC"] | 0;
+//        config.board.ranks.cdr = ranksObj["CDR"] | 0;
+//        config.board.ranks.capt = ranksObj["CAPT"] | 0;
+//    }
+//    else
+//    {
+//        LV_LOG_ERROR("Board key not found!");
+//    }
+//
+//    return true;
+//}
 
 // Read in a JSON document and return it (or an empty document)
 static JsonDocument readJson(const char* filename)
@@ -421,14 +433,17 @@ static bool writeJson(const char* fileName, const JsonDocument& doc)
     // Write the string to file
     uint32_t bw;  // bytes written
     res = lv_fs_write(&f, jsonString.c_str(), jsonString.length(), &bw);
-    if (res != LV_FS_RES_OK || bw != jsonString.length())
+    if (res != LV_FS_RES_OK || bw != (uint32_t)jsonString.length())
     {
         LV_LOG_ERROR("Failed to write file. Error: %d", (int)res);
-        lv_fs_close(&f);
         return false;
     }
 
-    res = lv_fs_close(&f);
+    if (&f)
+    {
+        res = lv_fs_close(&f);
+    }
+
     if (res != LV_FS_RES_OK)
     {
         LV_LOG_ERROR("Failed to close file. Error: %d", (int)res);
@@ -486,7 +501,7 @@ static void printContactData(const ContactData& contact, bool verbose = false, i
     String spaces(indent, ' ');
     printf("%sContact NodeID: %u\n", spaces.c_str(), contact.nodeId);
     printf("%s  DisplayName: %s\n", spaces.c_str(), contact.displayName);
-    printf("%s  Roles: %s%s\n", spaces.c_str(),
+    printf("%s  Roles: %s%s\n", spaces.c_str(),"x",
         contact.isFriend ? "Contact " : "");
     printf("%s  Status: %s%s\n", spaces.c_str(),
         contact.blocked ? "Blocked " : "",
@@ -590,8 +605,7 @@ void printConfig(const Config& config, bool verbose)
     printf("    Delay: %d\n", config.board.badgeMode.delay);
 
     printf("  Display Name Options:");
-    printf("    Away Missions: %d\n", config.board.displayNameOptions.awayMissions);
-    printf("    Accept Invites From: %d\n", config.board.displayNameOptions.acceptInvitesFrom);
+    printf("    Away Missions: %d\n", config.board.displayNameOptions.gameHosts);
     printf("    Show Names From: %d\n", config.board.displayNameOptions.showNamesFrom);
 
     printf("  Ranks:");
@@ -606,32 +620,33 @@ void printConfig(const Config& config, bool verbose)
     printf("\n====== End Configuration Dump ======\n");
 }
 
-bool loadBoardConfig(Config& config, const char* fileName)
-{
-    JsonDocument defaultJson;
+//bool loadBoardConfig(Config& config, const char* fileName)
+//{
+//    JsonDocument defaultJson;
+//
+//    //load fileName
+//    defaultJson = readJson(fileName);
+//    if (defaultJson.size() < 1)
+//    {
+//        LV_LOG_ERROR("No records in JSON config: %s. Using default config.", fileName);
+//        config = Config(); //ensure we reset to defaults
+//        return true;
+//    }
+//
+//    //parse fileName
+//    if (!loadConfig(config, defaultJson))
+//    {
+//        LV_LOG_ERROR("Error loading JSON config");
+//        return false;
+//    }
+//
+//    LV_LOG_INFO("Board config successfully loaded.");
+//    //printConfig(config);
+//    return true;
+//}
 
-    //load fileName
-    defaultJson = readJson(fileName);
-    if (defaultJson.size() < 1)
-    {
-        LV_LOG_ERROR("No records in JSON config: %s. Using default config.", fileName);
-        config = Config(); //ensure we reset to defaults
-        return true;
-    }
-
-    //parse fileName
-    if (!loadConfig(config, defaultJson))
-    {
-        LV_LOG_ERROR("Error loading JSON config");
-        return false;
-    }
-
-    LV_LOG_INFO("Board config successfully loaded.");
-    //printConfig(config);
-    return true;
-}
-
-bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
+// Function to load configuration from a JSON file
+bool loadConfig(Config& cfg, const char* filename) {
     lv_fs_file_t file;
     if (lv_fs_open(&file, filename, LV_FS_MODE_RD) != LV_FS_RES_OK) {
         LV_LOG_ERROR("Failed to open file for reading");
@@ -658,9 +673,7 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
     JsonObject user = doc["User"];
     strlcpy(cfg.user.displayName, user["DisplayName"] | "Queue Who", sizeof(cfg.user.displayName));
     cfg.user.totalXP = user["TotalXP"] | 0;
-
-    //JsonObject avatar = user["Avatar"];
-    //cfg.user.avatar = avatar["Image"] | 0;
+    cfg.user.avatar = user["Avatar"] | 0; 
 
     JsonObject contacts = doc["Contacts"];
     for (JsonPair kv : contacts) {
@@ -673,6 +686,31 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
         c.totalXP = entry["TotalXP"] | 0;
         c.avatar = entry["Avatar"] | 0; 
         cfg.contacts.addOrUpdateContact(c);
+    }
+
+    cfg.games.clear();
+    JsonObject games = doc["Games"];
+
+    // Add all games that exist in JSON
+    for (JsonPair kv : games) {
+        Game g;
+        strlcpy(g.description, kv.key().c_str(), sizeof(g.description));
+        g.XP = kv.value()["XP"] | 0;
+        cfg.games.push_back(g);
+    }
+
+    // Ensure all required game names exist
+    for (size_t i = 0; i < NUM_DEFAULT_GAMES; ++i) {
+        const char* name = DEFAULT_GAME_NAMES[i];
+        auto it = std::find_if(cfg.games.begin(), cfg.games.end(), [name](const Game& g) {
+            return strcmp(g.description, name) == 0;
+            });
+        if (it == cfg.games.end()) {
+            Game g;
+            strlcpy(g.description, name, sizeof(g.description));
+            g.XP = 0;
+            cfg.games.push_back(g);
+        }
     }
 
     JsonObject board = doc["Board"];
@@ -690,8 +728,7 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
     cfg.board.badgeMode.delay = badge["Delay"] | 60;
 
     JsonObject display = board["DisplayNameOptions"];
-    cfg.board.displayNameOptions.awayMissions = (DisplayOptions)(display["AwayMissions"] | 0);
-    cfg.board.displayNameOptions.acceptInvitesFrom = (DisplayOptions)(display["AcceptInvitesFrom"] | 0);
+    cfg.board.displayNameOptions.gameHosts = (DisplayOptions)(display["AwayMissions"] | 0);
     cfg.board.displayNameOptions.showNamesFrom = (DisplayOptions)(display["ShowNamesFrom"] | 0);
 
     JsonObject ranks = board["Ranks"];
@@ -706,7 +743,7 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json") {
     return true;
 }
 
-
+// Function to convert Config struct to JSON document
 static void configToJson(const Config& config, JsonDocument& doc)
 {
     auto user = doc["User"];
@@ -742,8 +779,7 @@ static void configToJson(const Config& config, JsonDocument& doc)
     badge["Delay"] = config.board.badgeMode.delay;
 
     auto display = board["DisplayNameOptions"];
-    display["AwayMissions"] = config.board.displayNameOptions.awayMissions;
-    display["AcceptInvitesFrom"] = config.board.displayNameOptions.acceptInvitesFrom;
+    display["AwayMissions"] = config.board.displayNameOptions.gameHosts;
     display["ShowNamesFrom"] = config.board.displayNameOptions.showNamesFrom;
 
     auto ranks = board["Ranks"];
@@ -755,18 +791,27 @@ static void configToJson(const Config& config, JsonDocument& doc)
     ranks["CDR"] = config.board.ranks.cdr;
     ranks["CAPT"] = config.board.ranks.capt;
 
+    auto games = doc["Games"];
+    for (const Game& g : config.games) {
+        JsonObject entry = games[g.description];
+        entry["XP"] = g.XP;
+    }
+
+
+
     //String temp;
     //serializeJsonPretty(doc, temp);
     //printf("JSON Output:\n%s\n", temp.c_str());
 }
 
+// Function to save the board configuration to a file
 bool saveBoardConfig(Config& config, const char* fileName)
 {
     JsonDocument defaultJson;
 
     //convert config struct to JsonDocument
     configToJson(config, defaultJson);
-    serializeConfig(config, defaultJson);
+    //serializeConfig(config, defaultJson);
     if (defaultJson.size() < 1)
     {
         LV_LOG_ERROR("Error converting config to JsonDocument");

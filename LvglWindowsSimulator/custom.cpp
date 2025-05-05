@@ -135,6 +135,77 @@ void set_tint(lv_event_t* e)
     }
 }
 
+// change UI settings and apply them to the board
+bool applyConfig(Config& config)
+{
+    //volume
+    lv_slider_set_value(objects.sld_settings_volume, config.board.volume, LV_ANIM_OFF);
+    //actually change board volume
+
+    //airplane mode
+    lv_obj_set_state(objects.check_settings_airplanemode, LV_STATE_CHECKED, config.board.airplaneMode);
+    //actually change wifi
+
+    //badge mode
+    lv_obj_set_state(objects.check_settings_badgemode, LV_STATE_CHECKED, config.board.badgeMode.enabled);
+    lv_label_set_text(objects.lbl_settings_badgedelay, std::to_string(config.board.badgeMode.delay).c_str());
+    //modify badge mode
+
+    String displayUsernames;
+    switch (config.board.displayNameOptions.showNamesFrom)
+    {
+    case Everyone:
+        displayUsernames = "Everyone";
+        break;
+    case NotBlocked:
+        displayUsernames = "Not Blocked";
+        break;
+    case Friends:
+        displayUsernames = "Friends";
+        break;
+    case None:
+        displayUsernames = "None";
+        break;
+    default:
+        break;
+    }
+    lv_label_set_text(objects.lbl_settings_usernames, displayUsernames.c_str());
+
+    String gameHosts;
+    switch (config.board.displayNameOptions.gameHosts)
+    {
+    case Everyone:
+        gameHosts = "Everyone";
+        break;
+    case NotBlocked:
+        gameHosts = "Not Blocked";
+        break;
+    case Friends:
+        gameHosts = "Friends";
+        break;
+    case None:
+        gameHosts = "None";
+        break;
+    default:
+        break;
+    }
+    lv_label_set_text(objects.lbl_settings_gamehosts, gameHosts.c_str());
+
+    return true;
+}
+
+bool saveAndApplyBoardConfig(Config& config)
+{
+    // Save the configuration to the file
+    if (!saveBoardConfig(config))
+    {
+        printf("Failed to save board config\n");
+        return false;
+    }
+    // Apply the configuration to the board
+    return applyConfig(config);
+}
+
 static void load_screen_settings(lv_event_t* e)
 {
     lv_screen_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
@@ -148,7 +219,63 @@ static void load_screen_avatar(lv_event_t* e)
 static void set_airplane_mode(lv_event_t* e)
 {
     config.board.airplaneMode = (lv_obj_get_state(objects.check_settings_airplanemode) & LV_STATE_CHECKED);
-    saveBoardConfig(config);
+    saveAndApplyBoardConfig(config);
+}
+
+static void set_badge_mode(lv_event_t* e)
+{
+    config.board.badgeMode.enabled = (lv_obj_get_state(objects.check_settings_badgemode) & LV_STATE_CHECKED);
+    saveAndApplyBoardConfig(config);
+}
+
+static void increase_delay(lv_event_t* e)
+{
+    config.board.badgeMode.delay += 5;
+    saveAndApplyBoardConfig(config);
+}
+
+static void decrease_delay(lv_event_t* e)
+{
+    config.board.badgeMode.delay -= 5;
+    saveAndApplyBoardConfig(config);
+}
+
+static void set_usernames(lv_event_t* e)
+{
+    char* usernames = lv_label_get_text(objects.lbl_settings_usernames);
+    if (strcmp(usernames, "Everyone") == 0)
+        config.board.displayNameOptions.showNamesFrom = NotBlocked;
+    else if (strcmp(usernames, "Not Blocked") == 0)
+        config.board.displayNameOptions.showNamesFrom = Friends;
+    else if (strcmp(usernames, "Friends") == 0)
+        config.board.displayNameOptions.showNamesFrom = None;
+    else
+    {
+        config.board.displayNameOptions.showNamesFrom = Everyone;
+    }
+    saveAndApplyBoardConfig(config);
+}
+
+static void set_gamehosts(lv_event_t* e)
+{
+    char* gameHosts = lv_label_get_text(objects.lbl_settings_gamehosts);
+    if (strcmp(gameHosts, "Everyone") == 0)
+        config.board.displayNameOptions.gameHosts = NotBlocked;
+    else if (strcmp(gameHosts, "Not Blocked") == 0)
+        config.board.displayNameOptions.gameHosts = Friends;
+    else if (strcmp(gameHosts, "Friends") == 0)
+        config.board.displayNameOptions.gameHosts = None;
+    else
+    {
+        config.board.displayNameOptions.gameHosts = Everyone;
+    }
+    saveAndApplyBoardConfig(config);
+}
+
+static void set_volume(lv_event_t* e)
+{
+    config.board.volume = lv_slider_get_value(objects.sld_settings_volume);
+    saveAndApplyBoardConfig(config);
 }
 
 // set up callbacks for objects
@@ -166,40 +293,47 @@ void setup_cb()
     lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_main_settings, load_screen_settings, LV_EVENT_PRESSED, NULL);
     lv_obj_add_event_cb(objects.check_settings_airplanemode, set_airplane_mode, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.check_settings_badgemode, set_badge_mode, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.btn_settings_delay_down, decrease_delay, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.btn_settings_delay_up, increase_delay, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.btn_settings_usernames, set_usernames, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.btn_settings_gamehosts, set_gamehosts, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
     //lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.progress, load_scroll_color_values, LV_EVENT_ALL, NULL);
     roller_changed(NULL); // Initialize the roller
     //update_ui(); //called by roller_changed() so not needed
+    applyConfig(config); // Apply the config to the UI and the board
 
     //test to show that we're reading images from the file system
-    lv_fs_dir_t dir;
-    lv_fs_res_t res;
-    res = lv_fs_dir_open(&dir, "L:/images/bg");
-    if (res != LV_FS_RES_OK) printf("Error accessing directory\n");
+    //lv_fs_dir_t dir;
+    //lv_fs_res_t res;
+    //res = lv_fs_dir_open(&dir, "L:/images/bg");
+    //if (res != LV_FS_RES_OK) printf("Error accessing directory\n");
 
-    char fn[256];
-    while (1) {
-        res = lv_fs_dir_read(&dir, fn, sizeof(fn));
-        if (res == LV_FS_RES_NOT_EX) //End of directory
-        {
-            break;
-        }
-        if (res != LV_FS_RES_OK) {
-            printf("Error reading directory\n");
-            break;
-        }
+    //char fn[256];
+    //while (1) {
+    //    res = lv_fs_dir_read(&dir, fn, sizeof(fn));
+    //    if (res == LV_FS_RES_NOT_EX) //End of directory
+    //    {
+    //        break;
+    //    }
+    //    if (res != LV_FS_RES_OK) {
+    //        printf("Error reading directory\n");
+    //        break;
+    //    }
 
-        /* fn is empty if there are no more files to read. */
-        if (strlen(fn) == 0) {
-            break;
-        }
+    //    /* fn is empty if there are no more files to read. */
+    //    if (strlen(fn) == 0) {
+    //        break;
+    //    }
 
-        printf("%s\n", fn);
-    }
+    //    printf("%s\n", fn);
+    //}
 
-    lv_fs_dir_close(&dir);
+    //lv_fs_dir_close(&dir);
 
     //load an image and display it
     lv_obj_t* obj = lv_image_create(objects.main);
