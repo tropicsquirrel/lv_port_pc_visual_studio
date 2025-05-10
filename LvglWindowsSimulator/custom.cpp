@@ -47,8 +47,11 @@ Layer Description
 int32_t int_max_items = 0;
 int32_t int_current_item = 0;
 
+int32_t int_ms_since_touch = 0;
+
 extern objects_t objects; // LVGL root screens object
 extern Config config;     // Global configuration object
+extern bool badgeMode_triggered;
 
 void set_tint(lv_event_t* e)
 {
@@ -149,7 +152,6 @@ bool applyConfig(Config& config)
     //badge mode
     lv_obj_set_state(objects.check_settings_badgemode, LV_STATE_CHECKED, config.board.badgeMode.enabled);
     lv_label_set_text(objects.lbl_settings_badgedelay, std::to_string(config.board.badgeMode.delay).c_str());
-    //modify badge mode
 
     String displayUsernames;
     switch (config.board.displayNameOptions.showNamesFrom)
@@ -216,6 +218,15 @@ static void load_screen_avatar(lv_event_t* e)
     lv_screen_load_anim(objects.avatar, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
 }
 
+void load_screen_badge()
+{
+    lv_display_t* disp = lv_display_get_default();
+    printf("rotation: %d\n", lv_display_get_rotation(disp));
+    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
+    lv_screen_load_anim(objects.badge, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+    printf("rotation: %d\n", lv_display_get_rotation(disp));
+}
+
 static void set_airplane_mode(lv_event_t* e)
 {
     config.board.airplaneMode = (lv_obj_get_state(objects.check_settings_airplanemode) & LV_STATE_CHECKED);
@@ -230,13 +241,13 @@ static void set_badge_mode(lv_event_t* e)
 
 static void increase_delay(lv_event_t* e)
 {
-    config.board.badgeMode.delay += 5;
+    config.board.badgeMode.delay = min(995, config.board.badgeMode.delay + 5);
     saveAndApplyBoardConfig(config);
 }
 
 static void decrease_delay(lv_event_t* e)
 {
-    config.board.badgeMode.delay -= 5;
+    config.board.badgeMode.delay = max(5, config.board.badgeMode.delay - 5);
     saveAndApplyBoardConfig(config);
 }
 
@@ -278,6 +289,16 @@ static void set_volume(lv_event_t* e)
     saveAndApplyBoardConfig(config);
 }
 
+static void end_badge_mode(lv_event_t* e)
+{
+    lv_display_t* disp = lv_display_get_default();
+    printf("rotation: %d\n", lv_display_get_rotation(disp));
+    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_0);
+    badgeMode_triggered = false;
+    lv_screen_load_anim(objects.main, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+    printf("rotation: %d\n", lv_display_get_rotation(disp));
+}
+
 // set up callbacks for objects
 void setup_cb()
 {
@@ -299,6 +320,7 @@ void setup_cb()
     lv_obj_add_event_cb(objects.btn_settings_usernames, set_usernames, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_settings_gamehosts, set_gamehosts, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(objects.cnt_badge_tappad, end_badge_mode, LV_EVENT_CLICKED, NULL);
     //lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
     //lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);

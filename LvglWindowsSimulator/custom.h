@@ -18,6 +18,7 @@ void setup_cb(void);
 void update_avatar_images(void);
 void update_item_counter(void);
 void load_screen_avatar(lv_event_t* e);
+void load_screen_badge();
 
 #ifdef __cplusplus
 }

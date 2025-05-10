@@ -742,7 +742,15 @@
 #define LV_USE_FS_WIN32 1
 #if LV_USE_FS_WIN32
     #define LV_FS_WIN32_LETTER 'L'     /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_WIN32_PATH "C:/Users/data/OneDrive/Documents/Arduino Backups/painlessMesh/basic/data/"         /*Set the working directory. File/directory paths will be appended to it.*/
+#if __has_include("C:\\Users\\TomasOwen\\OneDrive\\Source\\Arduino\\git\\lv_port_pc_visual_studio-9.2\\LvglWindowsSimulator\\lv_conf.h")
+    #define LV_FS_WIN32_PATH "C:/users/tomasowen/OneDrive/Documents/Arduino Backups/painlessMesh/basic/data/"         /*Set the working directory. File/directory paths will be appended to it.*/
+#elif __has_include("C:\\Users\\data\\OneDrive\\Source\\Arduino\\git\\lv_port_pc_visual_studio-9.2\\LvglWindowsSimulator\\lv_conf.h")
+    #define LV_FS_WIN32_PATH "C:/users/data/OneDrive/Documents/Arduino Backups/painlessMesh/basic/data/"
+#elif __has_include("D:\\bryce\\path\\here\\lv_port_pc_visual_studio-9.2\\LvglWindowsSimulator\\lv_conf.h")
+    #define LV_FS_WIN32_PATH "d:/path/to/littlefs/data"
+#else
+#error "No matching lv_conf.h include."
+#endif
     #define LV_FS_WIN32_CACHE_SIZE 0    /*>0 to cache this number of bytes in lv_fs_read()*/
 #endif
 

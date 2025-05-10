@@ -8,27 +8,10 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
-    lv_obj_t *settings;
     lv_obj_t *main;
     lv_obj_t *avatar;
-    lv_obj_t *btn_settings_mission;
-    lv_obj_t *btn_settings_contacts;
-    lv_obj_t *btn_settings_info;
-    lv_obj_t *btn_avatar_settings_1;
-    lv_obj_t *obj0;
-    lv_obj_t *btn_settings_home;
-    lv_obj_t *btn_settings_profile;
-    lv_obj_t *lbl_settings_random;
-    lv_obj_t *check_settings_airplanemode;
-    lv_obj_t *check_settings_badgemode;
-    lv_obj_t *btn_settings_delay_down;
-    lv_obj_t *lbl_settings_badgedelay;
-    lv_obj_t *btn_settings_delay_up;
-    lv_obj_t *btn_settings_usernames;
-    lv_obj_t *lbl_settings_usernames;
-    lv_obj_t *btn_settings_gamehosts;
-    lv_obj_t *lbl_settings_gamehosts;
-    lv_obj_t *sld_settings_volume;
+    lv_obj_t *badge;
+    lv_obj_t *settings;
     lv_obj_t *pip_right;
     lv_obj_t *pip_right_mid;
     lv_obj_t *pip_left_mid;
@@ -37,8 +20,8 @@ typedef struct _objects_t {
     lv_obj_t *btn_main_contacts;
     lv_obj_t *btn_main_info;
     lv_obj_t *btn_main_settings;
+    lv_obj_t *obj0;
     lv_obj_t *obj1;
-    lv_obj_t *obj2;
     lv_obj_t *btn_main_profile;
     lv_obj_t *lbl_main_random;
     lv_obj_t *flavor_main1;
@@ -58,7 +41,7 @@ typedef struct _objects_t {
     lv_obj_t *btn_avatar_contacts;
     lv_obj_t *btn_avatar_info;
     lv_obj_t *btn_avatar_settings;
-    lv_obj_t *obj3;
+    lv_obj_t *obj2;
     lv_obj_t *btn_avatar_home;
     lv_obj_t *btn_avatar_profile;
     lv_obj_t *lbl_avatar_random;
@@ -86,29 +69,64 @@ typedef struct _objects_t {
     lv_obj_t *slider_avatar_green;
     lv_obj_t *slider_avatar_blue;
     lv_obj_t *slider_avatar_intensity;
-    lv_obj_t *obj4;
+    lv_obj_t *obj3;
     lv_obj_t *btn_avatar_prev;
-    lv_obj_t *obj5;
+    lv_obj_t *obj4;
     lv_obj_t *btn_avatar_next;
     lv_obj_t *lbl_avatar_item_id;
+    lv_obj_t *img_badge_avatar;
+    lv_obj_t *bar_badge_game1;
+    lv_obj_t *bar_badge_game2;
+    lv_obj_t *bar_badge_game3;
+    lv_obj_t *bar_badge_game4;
+    lv_obj_t *bar_badge_game5;
+    lv_obj_t *bar_badge_game6;
+    lv_obj_t *bar_badge_game7;
+    lv_obj_t *pip_badge_top;
+    lv_obj_t *pip_badge_top_mid;
+    lv_obj_t *pip_badge_bottom_mid;
+    lv_obj_t *pip_badge_bottom;
+    lv_obj_t *cnt_badge_tappad;
+    lv_obj_t *btn_settings_mission;
+    lv_obj_t *btn_settings_contacts;
+    lv_obj_t *btn_settings_info;
+    lv_obj_t *btn_avatar_settings_1;
+    lv_obj_t *obj5;
+    lv_obj_t *btn_settings_home;
+    lv_obj_t *btn_settings_profile;
+    lv_obj_t *lbl_settings_random;
+    lv_obj_t *check_settings_airplanemode;
+    lv_obj_t *check_settings_badgemode;
+    lv_obj_t *btn_settings_delay_down;
+    lv_obj_t *lbl_settings_badgedelay;
+    lv_obj_t *btn_settings_delay_up;
+    lv_obj_t *btn_settings_usernames;
+    lv_obj_t *lbl_settings_usernames;
+    lv_obj_t *btn_settings_gamehosts;
+    lv_obj_t *lbl_settings_gamehosts;
+    lv_obj_t *sld_settings_volume;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_SETTINGS = 1,
-    SCREEN_ID_MAIN = 2,
-    SCREEN_ID_AVATAR = 3,
+    SCREEN_ID_MAIN = 1,
+    SCREEN_ID_AVATAR = 2,
+    SCREEN_ID_BADGE = 3,
+    SCREEN_ID_SETTINGS = 4,
 };
-
-void create_screen_settings();
-void tick_screen_settings();
 
 void create_screen_main();
 void tick_screen_main();
 
 void create_screen_avatar();
 void tick_screen_avatar();
+
+void create_screen_badge();
+void tick_screen_badge();
+
+void create_screen_settings();
+void tick_screen_settings();
 
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);

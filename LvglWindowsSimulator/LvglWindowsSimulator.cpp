@@ -12,6 +12,34 @@
 
 Config config;
 GameState gameState;
+unsigned long badgeMode_lastActivity = 0;
+bool badgeMode_triggered = false;
+
+#if defined(_WIN32)
+#include <chrono>
+
+unsigned long millis() {
+    static auto start = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+}
+#endif
+
+void badgeMode_timer_loop() {
+    if (badgeMode_triggered)
+    {
+        badgeMode_lastActivity = millis();
+        return;
+    }
+
+    unsigned long now = millis();
+    if (now - badgeMode_lastActivity >= config.board.badgeMode.delay * 1000 && config.board.badgeMode.enabled) {
+        badgeMode_triggered = true;
+        load_screen_badge();
+    }
+    //only triggers once
+}
+
 
 int main()
 {
@@ -86,6 +114,9 @@ int main()
         return -1;
     }
 
+    // capture mouse events
+    //lv_indev_set_read_cb(pointer_indev, read_touchpad); //gets input but seems to block the UI... no bueno
+
     ui_init();
     //lv_demo_widgets();
     //lv_demo_benchmark();
@@ -113,6 +144,7 @@ int main()
         uint32_t time_till_next = lv_timer_handler();
         lv_delay_ms(time_till_next);
         ui_tick();
+        badgeMode_timer_loop();
     }
 
     return 0;
