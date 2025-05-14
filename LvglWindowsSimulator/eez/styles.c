@@ -175,6 +175,51 @@ void remove_style_button_grey_default(lv_obj_t *obj) {
 };
 
 //
+// Style: Button-Grey-Selected
+//
+
+void init_style_button_grey_selected_MAIN_PRESSED(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(0xff6c748c));
+};
+
+lv_style_t *get_style_button_grey_selected_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_grey_selected_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void init_style_button_grey_selected_MAIN_DEFAULT(lv_style_t *style) {
+    init_style_button_grey_default_MAIN_DEFAULT(style);
+    
+    lv_style_set_bg_color(style, lv_color_hex(0xffffffff));
+    lv_style_set_shadow_width(style, 0);
+};
+
+lv_style_t *get_style_button_grey_selected_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_grey_selected_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_button_grey_selected(lv_obj_t *obj) {
+    lv_obj_add_style(obj, get_style_button_grey_selected_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_add_style(obj, get_style_button_grey_selected_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_button_grey_selected(lv_obj_t *obj) {
+    lv_obj_remove_style(obj, get_style_button_grey_selected_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_remove_style(obj, get_style_button_grey_selected_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
 // Style: Button-Red-Default
 //
 
@@ -226,6 +271,52 @@ void add_style_button_red_default(lv_obj_t *obj) {
 void remove_style_button_red_default(lv_obj_t *obj) {
     lv_obj_remove_style(obj, get_style_button_red_default_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
     lv_obj_remove_style(obj, get_style_button_red_default_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: Button-Red-Selected
+//
+
+void init_style_button_red_selected_MAIN_DEFAULT(lv_style_t *style) {
+    init_style_button_red_default_MAIN_DEFAULT(style);
+    
+    lv_style_set_bg_color(style, lv_color_hex(0xffe74429));
+    lv_style_set_border_color(style, lv_color_hex(0xff000000));
+};
+
+lv_style_t *get_style_button_red_selected_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_red_selected_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void init_style_button_red_selected_MAIN_PRESSED(lv_style_t *style) {
+    init_style_button_red_default_MAIN_PRESSED(style);
+    
+};
+
+lv_style_t *get_style_button_red_selected_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_red_selected_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void add_style_button_red_selected(lv_obj_t *obj) {
+    lv_obj_add_style(obj, get_style_button_red_selected_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_style(obj, get_style_button_red_selected_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+void remove_style_button_red_selected(lv_obj_t *obj) {
+    lv_obj_remove_style(obj, get_style_button_red_selected_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_style(obj, get_style_button_red_selected_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
 };
 
 //
@@ -316,6 +407,8 @@ void init_style_text_flavor_black_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_text_color(style, lv_color_hex(0xff000000));
     lv_style_set_text_font(style, &ui_font_lcars_14);
     lv_style_set_text_align(style, LV_TEXT_ALIGN_RIGHT);
+    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
+    lv_style_set_bg_opa(style, 255);
 };
 
 lv_style_t *get_style_text_flavor_black_MAIN_DEFAULT() {
@@ -387,6 +480,52 @@ void add_style_button_grey_rounded(lv_obj_t *obj) {
 void remove_style_button_grey_rounded(lv_obj_t *obj) {
     lv_obj_remove_style(obj, get_style_button_grey_rounded_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_remove_style(obj, get_style_button_grey_rounded_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+//
+// Style: Button-Grey-Bullet
+//
+
+void init_style_button_grey_bullet_MAIN_DEFAULT(lv_style_t *style) {
+    init_style_button_grey_rounded_MAIN_DEFAULT(style);
+    
+    lv_style_set_shadow_width(style, 0);
+    lv_style_set_outline_width(style, 0);
+};
+
+lv_style_t *get_style_button_grey_bullet_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_grey_bullet_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void init_style_button_grey_bullet_MAIN_PRESSED(lv_style_t *style) {
+    init_style_button_grey_rounded_MAIN_PRESSED(style);
+    
+};
+
+lv_style_t *get_style_button_grey_bullet_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = lv_malloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_button_grey_bullet_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void add_style_button_grey_bullet(lv_obj_t *obj) {
+    lv_obj_add_style(obj, get_style_button_grey_bullet_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_style(obj, get_style_button_grey_bullet_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+void remove_style_button_grey_bullet(lv_obj_t *obj) {
+    lv_obj_remove_style(obj, get_style_button_grey_bullet_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_style(obj, get_style_button_grey_bullet_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
 };
 
 //
@@ -680,6 +819,8 @@ void init_style_text_flavor_gray_dark_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_text_color(style, lv_color_hex(0xff2e312e));
     lv_style_set_text_font(style, &ui_font_lcars_14);
     lv_style_set_text_align(style, LV_TEXT_ALIGN_RIGHT);
+    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
+    lv_style_set_bg_opa(style, 255);
 };
 
 lv_style_t *get_style_text_flavor_gray_dark_MAIN_DEFAULT() {
@@ -708,6 +849,8 @@ void init_style_text_flavor_gray_light_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_text_color(style, lv_color_hex(0xff959189));
     lv_style_set_text_font(style, &ui_font_lcars_14);
     lv_style_set_text_align(style, LV_TEXT_ALIGN_RIGHT);
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
 };
 
 lv_style_t *get_style_text_flavor_gray_light_MAIN_DEFAULT() {
@@ -736,6 +879,8 @@ void init_style_text_flavor_orange_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_text_color(style, lv_color_hex(0xffff8901));
     lv_style_set_text_font(style, &ui_font_lcars_14);
     lv_style_set_text_align(style, LV_TEXT_ALIGN_RIGHT);
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
 };
 
 lv_style_t *get_style_text_flavor_orange_MAIN_DEFAULT() {
@@ -852,11 +997,14 @@ void add_style(lv_obj_t *obj, int32_t styleIndex) {
         add_style_button_grey_accent,
         add_style_button_white_accent,
         add_style_button_grey_default,
+        add_style_button_grey_selected,
         add_style_button_red_default,
+        add_style_button_red_selected,
         add_style_text_button_grey,
         add_style_text_button_red,
         add_style_text_flavor_black,
         add_style_button_grey_rounded,
+        add_style_button_grey_bullet,
         add_style_slider_blue,
         add_style_slider_green,
         add_style_slider_red,
@@ -880,11 +1028,14 @@ void remove_style(lv_obj_t *obj, int32_t styleIndex) {
         remove_style_button_grey_accent,
         remove_style_button_white_accent,
         remove_style_button_grey_default,
+        remove_style_button_grey_selected,
         remove_style_button_red_default,
+        remove_style_button_red_selected,
         remove_style_text_button_grey,
         remove_style_text_button_red,
         remove_style_text_flavor_black,
         remove_style_button_grey_rounded,
+        remove_style_button_grey_bullet,
         remove_style_slider_blue,
         remove_style_slider_green,
         remove_style_slider_red,

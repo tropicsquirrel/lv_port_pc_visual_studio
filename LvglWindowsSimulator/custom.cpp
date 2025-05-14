@@ -1,19 +1,5 @@
 ﻿#include <cstdio>
-#if defined(_WIN32) || defined(_WIN64)
-#include ".\eez\screens.h"
-#include ".\eez\vars.h"
-#include ".\eez\images.h"
-#include "pngs.h"
-#include "mp3s.h"
-#include "json.h"
-#else
-#include "screens.h"
-#include "vars.h"
-#include "images.h"
-#include "../pngs.h"
-#include "../mp3s.h"
-#include "../json.h"
-#endif
+
 
 #include "custom.h"
 #include <chrono>
@@ -52,6 +38,7 @@ int32_t int_ms_since_touch = 0;
 extern objects_t objects; // LVGL root screens object
 extern Config config;     // Global configuration object
 extern bool badgeMode_triggered;
+extern lv_display_t* disp;
 
 void set_tint(lv_event_t* e)
 {
@@ -141,9 +128,14 @@ void set_tint(lv_event_t* e)
 // change UI settings and apply them to the board
 bool applyConfig(Config& config)
 {
+    //username
+	lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
+
     //volume
     lv_slider_set_value(objects.sld_settings_volume, config.board.volume, LV_ANIM_OFF);
-    //actually change board volume
+#ifndef _WIN32
+	//Volume_adjustment(config.board.volume);
+#endif // !_WIN32
 
     //airplane mode
     lv_obj_set_state(objects.check_settings_airplanemode, LV_STATE_CHECKED, config.board.airplaneMode);
@@ -208,49 +200,54 @@ bool saveAndApplyBoardConfig(Config& config)
     return applyConfig(config);
 }
 
-static void load_screen_settings(lv_event_t* e)
-{
-    lv_screen_load_anim(objects.settings, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
-}
-
-static void load_screen_avatar(lv_event_t* e)
-{
-    lv_screen_load_anim(objects.avatar, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
-}
-
-void load_screen_badge()
-{
-    lv_display_t* disp = lv_display_get_default();
-    printf("rotation: %d\n", lv_display_get_rotation(disp));
-    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
-    lv_screen_load_anim(objects.badge, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
-    printf("rotation: %d\n", lv_display_get_rotation(disp));
-}
-
+// en/disable airplane mode
 static void set_airplane_mode(lv_event_t* e)
 {
     config.board.airplaneMode = (lv_obj_get_state(objects.check_settings_airplanemode) & LV_STATE_CHECKED);
     saveAndApplyBoardConfig(config);
 }
 
+// en/disable badge mode
 static void set_badge_mode(lv_event_t* e)
 {
     config.board.badgeMode.enabled = (lv_obj_get_state(objects.check_settings_badgemode) & LV_STATE_CHECKED);
     saveAndApplyBoardConfig(config);
 }
 
+// increase badge mode delay by 5 seconds, but not above 900 (15 min)
 static void increase_delay(lv_event_t* e)
 {
-    config.board.badgeMode.delay = min(995, config.board.badgeMode.delay + 5);
+    config.board.badgeMode.delay = min(900, config.board.badgeMode.delay + 5);
     saveAndApplyBoardConfig(config);
 }
 
+// decrease badge mode delay by 5 seconds, but not below 5
 static void decrease_delay(lv_event_t* e)
 {
     config.board.badgeMode.delay = max(5, config.board.badgeMode.delay - 5);
     saveAndApplyBoardConfig(config);
 }
 
+// load the badge screen and rotate the display
+void load_screen_badge()
+{
+#ifndef _WIN32
+    set_display_rotation(disp, LV_DISPLAY_ROTATION_180);
+#endif
+    lv_screen_load_anim(objects.badge, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+}
+
+// end badge mode and go back to the main screen
+static void end_badge_mode(lv_event_t* e)
+{
+#ifndef _WIN32
+    set_display_rotation(disp, LV_DISPLAY_ROTATION_0);
+#endif
+    badgeMode_triggered = false;
+    lv_screen_load_anim(objects.main, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+}
+
+// rotate through usernames you allow to display
 static void set_usernames(lv_event_t* e)
 {
     char* usernames = lv_label_get_text(objects.lbl_settings_usernames);
@@ -267,6 +264,7 @@ static void set_usernames(lv_event_t* e)
     saveAndApplyBoardConfig(config);
 }
 
+// rotate through who is allowed to join your games
 static void set_gamehosts(lv_event_t* e)
 {
     char* gameHosts = lv_label_get_text(objects.lbl_settings_gamehosts);
@@ -283,36 +281,126 @@ static void set_gamehosts(lv_event_t* e)
     saveAndApplyBoardConfig(config);
 }
 
+// change the badge volume
 static void set_volume(lv_event_t* e)
 {
     config.board.volume = lv_slider_get_value(objects.sld_settings_volume);
     saveAndApplyBoardConfig(config);
 }
 
-static void end_badge_mode(lv_event_t* e)
+// setup a simplified keyboard
+//static void remap_keyboard(lv_event_t* e)
+//{
+//    static const char* kb_map[] = { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_BACKSPACE, "\n",
+//                                    "A", "S", "D", "F", "G", "H", "J", "K", "L",  LV_SYMBOL_NEW_LINE, "\n",
+//                                    "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "?", "\n",
+//                                    LV_SYMBOL_CLOSE, " ",  " ", " ", LV_SYMBOL_OK, NULL
+//    };
+//
+//    /*Set the relative width of the buttons and other controls*/
+//    static const lv_buttonmatrix_ctrl_t kb_ctrl[] = { LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_6,
+//                                                     LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_6,
+//                                                     LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4, LV_BUTTONMATRIX_CTRL_WIDTH_4,
+//                                                     LV_BUTTONMATRIX_CTRL_WIDTH_2, (lv_buttonmatrix_ctrl_t)(LV_BUTTONMATRIX_CTRL_HIDDEN | LV_BUTTONMATRIX_CTRL_WIDTH_2), LV_BUTTONMATRIX_CTRL_WIDTH_6, (lv_buttonmatrix_ctrl_t)(LV_BUTTONMATRIX_CTRL_HIDDEN | LV_BUTTONMATRIX_CTRL_WIDTH_2), LV_BUTTONMATRIX_CTRL_WIDTH_2
+//    };
+//    
+//    /*Create a keyboard and add the new map as USER_1 mode*/
+//    lv_keyboard_set_map(objects.kbd_profile, LV_KEYBOARD_MODE_USER_1, kb_map, kb_ctrl);
+//    lv_keyboard_set_mode(objects.kbd_profile, LV_KEYBOARD_MODE_USER_1);
+//}
+
+// reset username
+static void profile_undo(lv_event_t* e)
 {
-    lv_display_t* disp = lv_display_get_default();
-    printf("rotation: %d\n", lv_display_get_rotation(disp));
-    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_0);
-    badgeMode_triggered = false;
-    lv_screen_load_anim(objects.main, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
-    printf("rotation: %d\n", lv_display_get_rotation(disp));
+	lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
+}
+
+// save username
+static void profile_save(lv_event_t* e)
+{
+	const char* newName = lv_textarea_get_text(objects.txt_profile_username);
+	if (strlen(newName) > 0)
+	{
+		strlcpy(config.user.displayName, newName, sizeof(config.user.displayName));
+		saveAndApplyBoardConfig(config);
+	}
+}
+
+// Generic screen loader; requires that the screen to load is passed in as user_data
+void load_screen(lv_event_t* e) {
+    // Get the screen object from user_data
+    lv_obj_t* target_screen = static_cast<lv_obj_t*>(lv_event_get_user_data(e));
+    if (target_screen) {
+        lv_screen_load_anim(target_screen, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
+    }
+}
+
+// Register a button 
+static void cb_register(lv_obj_t* button, lv_obj_t* screen)
+{
+	lv_obj_add_event_cb(button, load_screen, LV_EVENT_PRESSED, screen);
 }
 
 // set up callbacks for objects
 void setup_cb()
 {
-    printf("initial airplane mode: %u\n", config.board.airplaneMode);
+	// main UI button callbacks
+    cb_register(objects.btn_main_mission, objects.mission);
+    cb_register(objects.btn_main_contacts, objects.contacts);
+    cb_register(objects.btn_main_info, objects.info);
+    cb_register(objects.btn_main_settings, objects.settings);
+    cb_register(objects.btn_main_profile, objects.profile);
+    cb_register(objects.btn_main_avatar, objects.avatar);
+    cb_register(objects.btn_avatar_mission, objects.mission);
+    cb_register(objects.btn_avatar_contacts, objects.contacts);
+    cb_register(objects.btn_avatar_info, objects.info);
+    cb_register(objects.btn_avatar_settings, objects.settings);
+    cb_register(objects.btn_avatar_profile, objects.profile);
+    cb_register(objects.btn_avatar_main, objects.main);
+    cb_register(objects.btn_mission_contacts, objects.contacts);
+    cb_register(objects.btn_mission_info, objects.info);
+    cb_register(objects.btn_mission_settings, objects.settings);
+    cb_register(objects.btn_mission_profile, objects.profile);
+    cb_register(objects.btn_mission_main, objects.main);
+    cb_register(objects.btn_contacts_mission, objects.mission);
+    cb_register(objects.btn_contacts_info, objects.info);
+    cb_register(objects.btn_contacts_settings, objects.settings);
+    cb_register(objects.btn_contacts_profile, objects.profile);
+    cb_register(objects.btn_contacts_main, objects.main);
+    cb_register(objects.btn_info_contacts, objects.contacts);
+    cb_register(objects.btn_info_mission, objects.mission);
+    cb_register(objects.btn_info_settings, objects.settings);
+    cb_register(objects.btn_info_profile, objects.profile);
+    cb_register(objects.btn_info_main, objects.main);
+    cb_register(objects.btn_settings_mission, objects.mission);
+    cb_register(objects.btn_settings_contacts, objects.contacts);
+    cb_register(objects.btn_settings_info, objects.info);
+    cb_register(objects.btn_settings_profile, objects.profile);
+    cb_register(objects.btn_settings_main, objects.main);
+    cb_register(objects.btn_profile_mission, objects.mission);
+    cb_register(objects.btn_profile_contacts, objects.contacts);
+    cb_register(objects.btn_profile_info, objects.info);
+    cb_register(objects.btn_profile_settings, objects.settings);
+    cb_register(objects.btn_profile_main, objects.main);
+
+    // special UI buttons for loading screens    
+    lv_obj_add_event_cb(objects.cnt_badge_tappad, end_badge_mode, LV_EVENT_CLICKED, NULL);
+
+    // avatar screen callbacks
     lv_obj_add_event_cb(objects.roller_avatar_component, roller_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_next, avatar_next, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_prev, avatar_prev, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_event_cb(objects.btn_avatar, load_screen_avatar, LV_EVENT_PRESSED, NULL);
-    //lv_obj_add_event_cb(objects.btn_profile_main, load_screen_avatar, LV_EVENT_PRESSED, NULL);
+    
     lv_obj_add_event_cb(objects.slider_avatar_red, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_green, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_blue, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.btn_main_settings, load_screen_settings, LV_EVENT_PRESSED, NULL);
+    
+	// profile screen callbacks
+	lv_obj_add_event_cb(objects.btn_profile_undo, profile_undo, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.btn_profile_save, profile_save, LV_EVENT_CLICKED, NULL);
+
+	// settings screen callbacks
     lv_obj_add_event_cb(objects.check_settings_airplanemode, set_airplane_mode, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.check_settings_badgemode, set_badge_mode, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_settings_delay_down, decrease_delay, LV_EVENT_CLICKED, NULL);
@@ -320,42 +408,10 @@ void setup_cb()
     lv_obj_add_event_cb(objects.btn_settings_usernames, set_usernames, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_settings_gamehosts, set_gamehosts, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(objects.cnt_badge_tappad, end_badge_mode, LV_EVENT_CLICKED, NULL);
-    //lv_obj_add_event_cb(objects.slider_red, set_color_panel, LV_EVENT_ALL, NULL);
-    //lv_obj_add_event_cb(objects.slider_green, set_color_panel, LV_EVENT_ALL, NULL);
-    //lv_obj_add_event_cb(objects.slider_blue, set_color_panel, LV_EVENT_ALL, NULL);
-    //lv_obj_add_event_cb(objects.progress, load_scroll_color_values, LV_EVENT_ALL, NULL);
+    
+
     roller_changed(NULL); // Initialize the roller
-    //update_ui(); //called by roller_changed() so not needed
     applyConfig(config); // Apply the config to the UI and the board
-
-    //test to show that we're reading images from the file system
-    //lv_fs_dir_t dir;
-    //lv_fs_res_t res;
-    //res = lv_fs_dir_open(&dir, "L:/images/bg");
-    //if (res != LV_FS_RES_OK) printf("Error accessing directory\n");
-
-    //char fn[256];
-    //while (1) {
-    //    res = lv_fs_dir_read(&dir, fn, sizeof(fn));
-    //    if (res == LV_FS_RES_NOT_EX) //End of directory
-    //    {
-    //        break;
-    //    }
-    //    if (res != LV_FS_RES_OK) {
-    //        printf("Error reading directory\n");
-    //        break;
-    //    }
-
-    //    /* fn is empty if there are no more files to read. */
-    //    if (strlen(fn) == 0) {
-    //        break;
-    //    }
-
-    //    printf("%s\n", fn);
-    //}
-
-    //lv_fs_dir_close(&dir);
 
     //load an image and display it
     lv_obj_t* obj = lv_image_create(objects.main);

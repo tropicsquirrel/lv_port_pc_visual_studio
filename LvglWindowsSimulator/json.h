@@ -104,7 +104,7 @@ struct Board
     int channel = 6;
     bool hidden = 0;
     bool introWatched = false;
-    int32_t volume = 21;
+    uint8_t volume = 21;
     BadgeMode badgeMode;
     DisplayNameOptions displayNameOptions;
     Ranks ranks;

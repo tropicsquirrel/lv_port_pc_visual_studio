@@ -37,11 +37,23 @@ lv_style_t *get_style_button_grey_default_MAIN_DEFAULT();
 void add_style_button_grey_default(lv_obj_t *obj);
 void remove_style_button_grey_default(lv_obj_t *obj);
 
+// Style: Button-Grey-Selected
+lv_style_t *get_style_button_grey_selected_MAIN_PRESSED();
+lv_style_t *get_style_button_grey_selected_MAIN_DEFAULT();
+void add_style_button_grey_selected(lv_obj_t *obj);
+void remove_style_button_grey_selected(lv_obj_t *obj);
+
 // Style: Button-Red-Default
 lv_style_t *get_style_button_red_default_MAIN_PRESSED();
 lv_style_t *get_style_button_red_default_MAIN_DEFAULT();
 void add_style_button_red_default(lv_obj_t *obj);
 void remove_style_button_red_default(lv_obj_t *obj);
+
+// Style: Button-Red-Selected
+lv_style_t *get_style_button_red_selected_MAIN_DEFAULT();
+lv_style_t *get_style_button_red_selected_MAIN_PRESSED();
+void add_style_button_red_selected(lv_obj_t *obj);
+void remove_style_button_red_selected(lv_obj_t *obj);
 
 // Style: Text-Button-Grey
 lv_style_t *get_style_text_button_grey_MAIN_DEFAULT();
@@ -64,6 +76,12 @@ lv_style_t *get_style_button_grey_rounded_MAIN_DEFAULT();
 lv_style_t *get_style_button_grey_rounded_MAIN_PRESSED();
 void add_style_button_grey_rounded(lv_obj_t *obj);
 void remove_style_button_grey_rounded(lv_obj_t *obj);
+
+// Style: Button-Grey-Bullet
+lv_style_t *get_style_button_grey_bullet_MAIN_DEFAULT();
+lv_style_t *get_style_button_grey_bullet_MAIN_PRESSED();
+void add_style_button_grey_bullet(lv_obj_t *obj);
+void remove_style_button_grey_bullet(lv_obj_t *obj);
 
 // Style: Slider_Blue
 lv_style_t *get_style_slider_blue_MAIN_DEFAULT();
