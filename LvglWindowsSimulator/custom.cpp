@@ -377,10 +377,10 @@ void setup_cb()
     cb_register(objects.btn_settings_info, objects.info);
     cb_register(objects.btn_settings_profile, objects.profile);
     cb_register(objects.btn_settings_main, objects.main);
-    cb_register(objects.btn_profile_mission, objects.mission);
-    cb_register(objects.btn_profile_contacts, objects.contacts);
-    cb_register(objects.btn_profile_info, objects.info);
-    cb_register(objects.btn_profile_settings, objects.settings);
+    //cb_register(objects.btn_profile_mission, objects.mission);
+    //cb_register(objects.btn_profile_contacts, objects.contacts);
+    //cb_register(objects.btn_profile_info, objects.info);
+    //cb_register(objects.btn_profile_settings, objects.settings);
     cb_register(objects.btn_profile_main, objects.main);
 
     // special UI buttons for loading screens    
