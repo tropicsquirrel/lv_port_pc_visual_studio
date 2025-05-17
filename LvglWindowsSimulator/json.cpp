@@ -176,10 +176,10 @@ std::vector<ContactData*> ContactManager::getContacts()
     for (std::vector<ContactData>::iterator it = contacts.begin(); it != contacts.end(); ++it)
     {
         ContactData& contact = *it;
-        if (contact.isFriend)
-        {
+        //if (contact.isFriend)
+        //{
             result.push_back(&contact);
-        }
+        //}
     }
     return result;
 }

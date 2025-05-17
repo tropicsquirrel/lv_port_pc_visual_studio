@@ -326,6 +326,24 @@ static void profile_save(lv_event_t* e)
 	}
 }
 
+
+
+// populate the crew list with the current crew members
+void populate_crew_list(lv_event_t* e)
+{
+    lv_list_add_text(objects.list_contacts_crew, "Crew Members");
+
+    lv_obj_t* list_entries;
+
+    std::vector<ContactData*> contacts = config.contacts.getContacts();
+
+    for(int i=0; i < contacts.size(); i++)
+    {
+        char* name = contacts[i]->displayName;
+        list_entries = lv_list_add_button(objects.list_contacts_crew, "L:/images/16x16.png", name);
+    }
+}
+
 // Generic screen loader; requires that the screen to load is passed in as user_data
 void load_screen(lv_event_t* e) {
     // Get the screen object from user_data
@@ -339,6 +357,54 @@ void load_screen(lv_event_t* e) {
 static void cb_register(lv_obj_t* button, lv_obj_t* screen)
 {
 	lv_obj_add_event_cb(button, load_screen, LV_EVENT_PRESSED, screen);
+}
+
+const char* get_lv_event_name(lv_event_code_t event) {
+    switch (event) {
+    case LV_EVENT_ALL: return "LV_EVENT_ALL";
+    case LV_EVENT_PRESSED: return "LV_EVENT_PRESSED";
+    case LV_EVENT_PRESSING: return "LV_EVENT_PRESSING";
+    case LV_EVENT_PRESS_LOST: return "LV_EVENT_PRESS_LOST";
+    case LV_EVENT_SHORT_CLICKED: return "LV_EVENT_SHORT_CLICKED";
+    case LV_EVENT_LONG_PRESSED: return "LV_EVENT_LONG_PRESSED";
+    case LV_EVENT_LONG_PRESSED_REPEAT: return "LV_EVENT_LONG_PRESSED_REPEAT";
+    case LV_EVENT_CLICKED: return "LV_EVENT_CLICKED";
+    case LV_EVENT_RELEASED: return "LV_EVENT_RELEASED";
+    case LV_EVENT_SCROLL_BEGIN: return "LV_EVENT_SCROLL_BEGIN";
+    case LV_EVENT_SCROLL_END: return "LV_EVENT_SCROLL_END";
+    case LV_EVENT_SCROLL: return "LV_EVENT_SCROLL";
+    case LV_EVENT_GESTURE: return "LV_EVENT_GESTURE";
+    case LV_EVENT_KEY: return "LV_EVENT_KEY";
+    case LV_EVENT_FOCUSED: return "LV_EVENT_FOCUSED";
+    case LV_EVENT_DEFOCUSED: return "LV_EVENT_DEFOCUSED";
+    case LV_EVENT_LEAVE: return "LV_EVENT_LEAVE";
+    case LV_EVENT_HIT_TEST: return "LV_EVENT_HIT_TEST";
+    case LV_EVENT_COVER_CHECK: return "LV_EVENT_COVER_CHECK";
+    case LV_EVENT_REFR_EXT_DRAW_SIZE: return "LV_EVENT_REFR_EXT_DRAW_SIZE";
+    case LV_EVENT_DRAW_MAIN_BEGIN: return "LV_EVENT_DRAW_MAIN_BEGIN";
+    case LV_EVENT_DRAW_MAIN: return "LV_EVENT_DRAW_MAIN";
+    case LV_EVENT_DRAW_MAIN_END: return "LV_EVENT_DRAW_MAIN_END";
+    case LV_EVENT_DRAW_POST_BEGIN: return "LV_EVENT_DRAW_POST_BEGIN";
+    case LV_EVENT_DRAW_POST: return "LV_EVENT_DRAW_POST";
+    case LV_EVENT_DRAW_POST_END: return "LV_EVENT_DRAW_POST_END";
+    case LV_EVENT_DRAW_TASK_ADDED: return "LV_EVENT_DRAW_TASK_ADDED";
+    case LV_EVENT_VALUE_CHANGED: return "LV_EVENT_VALUE_CHANGED";
+    case LV_EVENT_INSERT: return "LV_EVENT_INSERT";
+    case LV_EVENT_REFRESH: return "LV_EVENT_REFRESH";
+    case LV_EVENT_READY: return "LV_EVENT_READY";
+    case LV_EVENT_CANCEL: return "LV_EVENT_CANCEL";
+    default: return "OTHER_EVENT";
+    }
+}
+
+
+static void debug_events(lv_event_t* e)
+{
+    lv_event_code_t event = lv_event_get_code(e);
+    if (event < 23 || event > 31)
+    {
+        printf("%s: Event: %s\n", static_cast<char*>(lv_event_get_user_data(e)), get_lv_event_name(event));
+    }
 }
 
 // set up callbacks for objects
@@ -408,7 +474,26 @@ void setup_cb()
     lv_obj_add_event_cb(objects.btn_settings_usernames, set_usernames, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_settings_gamehosts, set_gamehosts, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
-    
+
+    // contacts screen callbacks
+    lv_obj_t* tabview_contacts_buttons = lv_tabview_get_tab_bar(objects.tabview_contacts);
+
+    for(int i=0; i< lv_tabview_get_tab_count(objects.tabview_contacts); i++)
+    {
+        lv_obj_t* button = lv_obj_get_child(tabview_contacts_buttons, i);
+        char* name;
+        name = (char*)malloc(10 * sizeof(char));
+        itoa(i, name, 10);
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_CLICKED, name);
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_FOCUSED, name);
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_DEFOCUSED, name);
+    }
+
+    /*lv_obj_add_event_cb(objects.list_contacts_crew, debug_events, LV_EVENT_ALL, (void*)"list_crew");
+    lv_obj_add_event_cb(objects.list_contacts_scan, debug_events, LV_EVENT_ALL, (void*)"list_scan");*/
+
+    // contacts screen style changes
+
 
     roller_changed(NULL); // Initialize the roller
     applyConfig(config); // Apply the config to the UI and the board
