@@ -12,6 +12,7 @@ typedef struct _objects_t {
     lv_obj_t *avatar;
     lv_obj_t *profile;
     lv_obj_t *mission;
+    lv_obj_t *game1;
     lv_obj_t *contacts;
     lv_obj_t *settings;
     lv_obj_t *info;
@@ -96,6 +97,9 @@ typedef struct _objects_t {
     lv_obj_t *obj10;
     lv_obj_t *btn_mission_main;
     lv_obj_t *lbl_mission_random;
+    lv_obj_t *btn_mission_game1;
+    lv_obj_t *cnt_game1_left;
+    lv_obj_t *cnt_game1_right;
     lv_obj_t *btn_contacts_mission;
     lv_obj_t *btn_contacts_contacts;
     lv_obj_t *btn_contacts_info;
@@ -162,10 +166,11 @@ enum ScreensEnum {
     SCREEN_ID_AVATAR = 2,
     SCREEN_ID_PROFILE = 3,
     SCREEN_ID_MISSION = 4,
-    SCREEN_ID_CONTACTS = 5,
-    SCREEN_ID_SETTINGS = 6,
-    SCREEN_ID_INFO = 7,
-    SCREEN_ID_BADGE = 8,
+    SCREEN_ID_GAME1 = 5,
+    SCREEN_ID_CONTACTS = 6,
+    SCREEN_ID_SETTINGS = 7,
+    SCREEN_ID_INFO = 8,
+    SCREEN_ID_BADGE = 9,
 };
 
 void create_screen_main();
@@ -179,6 +184,9 @@ void tick_screen_profile();
 
 void create_screen_mission();
 void tick_screen_mission();
+
+void create_screen_game1();
+void tick_screen_game1();
 
 void create_screen_contacts();
 void tick_screen_contacts();

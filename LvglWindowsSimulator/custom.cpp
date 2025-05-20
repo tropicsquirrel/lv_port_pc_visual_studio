@@ -1,6 +1,4 @@
 ﻿#include <cstdio>
-
-
 #include "custom.h"
 #include <chrono>
 
@@ -359,6 +357,7 @@ static void cb_register(lv_obj_t* button, lv_obj_t* screen)
 	lv_obj_add_event_cb(button, load_screen, LV_EVENT_PRESSED, screen);
 }
 
+// convert an lv_event code to a char*
 const char* get_lv_event_name(lv_event_code_t event) {
     switch (event) {
     case LV_EVENT_ALL: return "LV_EVENT_ALL";
@@ -397,13 +396,23 @@ const char* get_lv_event_name(lv_event_code_t event) {
     }
 }
 
-
+// print info about the event; expects string data in the 'user data' field of the event
 static void debug_events(lv_event_t* e)
 {
     lv_event_code_t event = lv_event_get_code(e);
     if (event < 23 || event > 31)
     {
-        printf("%s: Event: %s\n", static_cast<char*>(lv_event_get_user_data(e)), get_lv_event_name(event));
+        //printf("%s: Event: %s\n", static_cast<char*>(lv_event_get_user_data(e)), get_lv_event_name(event));
+        lv_indev_t* indev = lv_event_get_indev(e); // Get the indev object associated with the event
+        if (indev)
+        {
+                        lv_indev_type_t type = lv_indev_get_type(indev); // Get the type of the indev object
+            if (type == LV_INDEV_TYPE_POINTER) {
+                lv_point_t point;
+                lv_indev_get_point(indev, &point); // Get the point associated with the event
+                printf("Pointer event at (%d, %d)\n", point.x, point.y);
+            }
+        }
     }
 }
 
@@ -476,23 +485,32 @@ void setup_cb()
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
 
     // contacts screen callbacks
+    // contact tab buttons
     lv_obj_t* tabview_contacts_buttons = lv_tabview_get_tab_bar(objects.tabview_contacts);
-
-    for(int i=0; i< lv_tabview_get_tab_count(objects.tabview_contacts); i++)
+    lv_obj_set_style_bg_color(tabview_contacts_buttons, lv_color_make(0x6c, 0x74, 0x8c), LV_PART_MAIN);
+        for(int i=0; i< lv_tabview_get_tab_count(objects.tabview_contacts); i++)
     {
         lv_obj_t* button = lv_obj_get_child(tabview_contacts_buttons, i);
-        char* name;
-        name = (char*)malloc(10 * sizeof(char));
-        itoa(i, name, 10);
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_CLICKED, name);
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_FOCUSED, name);
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_DEFOCUSED, name);
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_CLICKED, (void*)"tab_button");
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_FOCUSED, (void*)"tab_button");
+        lv_obj_add_event_cb(button, debug_events, LV_EVENT_DEFOCUSED, (void*)"tab_button");
+        lv_obj_set_style_radius(button, 11, LV_PART_MAIN);
+        lv_obj_set_style_bg_color(button, lv_color_make(0x6c, 0x74, 0x8c), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(button, lv_color_make(0x21, 0x96, 0xf3), LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_bg_opa(button, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
     }
+    // add contacts 
 
     /*lv_obj_add_event_cb(objects.list_contacts_crew, debug_events, LV_EVENT_ALL, (void*)"list_crew");
     lv_obj_add_event_cb(objects.list_contacts_scan, debug_events, LV_EVENT_ALL, (void*)"list_scan");*/
 
-    // contacts screen style changes
+    // game1
+    cb_register(objects.btn_mission_game1, objects.game1);
+    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_PRESSING, (void*)"Right press");
+    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_HOVER_OVER, (void*)"Right hover");
+    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSED, (void*)"Left cnt");
+    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSING, (void*)"LEft press");
+    
 
 
     roller_changed(NULL); // Initialize the roller

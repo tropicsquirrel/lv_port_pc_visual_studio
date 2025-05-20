@@ -1484,12 +1484,74 @@ void create_screen_mission() {
             lv_obj_set_style_text_font(obj, &ui_font_lcars_14, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
         }
+        {
+            // btn_mission_game1
+            lv_obj_t *obj = lv_btn_create(parent_obj);
+            objects.btn_mission_game1 = obj;
+            lv_obj_set_pos(obj, 110, 145);
+            lv_obj_set_size(obj, 120, 50);
+            add_style_button_grey_bullet(obj);
+            {
+                lv_obj_t *parent_obj = obj;
+                {
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    lv_obj_set_pos(obj, 0, 0);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_label_set_text(obj, "Game1");
+                    lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                }
+            }
+        }
     }
     
     tick_screen_mission();
 }
 
 void tick_screen_mission() {
+}
+
+void create_screen_game1() {
+    lv_obj_t *obj = lv_obj_create(0);
+    objects.game1 = obj;
+    lv_obj_set_pos(obj, 0, 0);
+    lv_obj_set_size(obj, 240, 320);
+    lv_obj_set_style_bg_color(obj, lv_color_hex(0xff000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    {
+        lv_obj_t *parent_obj = obj;
+        {
+            // cnt_game1_left
+            lv_obj_t *obj = lv_obj_create(parent_obj);
+            objects.cnt_game1_left = obj;
+            lv_obj_set_pos(obj, 0, 0);
+            lv_obj_set_size(obj, 120, 320);
+            lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+        {
+            // cnt_game1_right
+            lv_obj_t *obj = lv_obj_create(parent_obj);
+            objects.cnt_game1_right = obj;
+            lv_obj_set_pos(obj, 120, 0);
+            lv_obj_set_size(obj, 120, 320);
+            lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_radius(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+    }
+    
+    tick_screen_game1();
+}
+
+void tick_screen_game1() {
 }
 
 void create_screen_contacts() {
@@ -2837,6 +2899,7 @@ tick_screen_func_t tick_screen_funcs[] = {
     tick_screen_avatar,
     tick_screen_profile,
     tick_screen_mission,
+    tick_screen_game1,
     tick_screen_contacts,
     tick_screen_settings,
     tick_screen_info,
@@ -2858,6 +2921,7 @@ void create_screens() {
     create_screen_avatar();
     create_screen_profile();
     create_screen_mission();
+    create_screen_game1();
     create_screen_contacts();
     create_screen_settings();
     create_screen_info();
