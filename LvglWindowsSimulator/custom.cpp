@@ -2,6 +2,8 @@
 #include "custom.h"
 #include <chrono>
 
+#include "game.h"
+#include "g_game1.h" // assimilation class
 
 /*
 Layer Description
@@ -37,6 +39,7 @@ extern objects_t objects; // LVGL root screens object
 extern Config config;     // Global configuration object
 extern bool badgeMode_triggered;
 extern lv_display_t* disp;
+cl_Game* game_master = nullptr;
 
 void set_tint(lv_event_t* e)
 {
@@ -416,6 +419,12 @@ static void debug_events(lv_event_t* e)
     }
 }
 
+void nightmaretest(lv_event_t* e)
+{
+    game_master = new g_game1();
+    game_master->Setup();
+}
+
 // set up callbacks for objects
 void setup_cb()
 {
@@ -504,13 +513,17 @@ void setup_cb()
     /*lv_obj_add_event_cb(objects.list_contacts_crew, debug_events, LV_EVENT_ALL, (void*)"list_crew");
     lv_obj_add_event_cb(objects.list_contacts_scan, debug_events, LV_EVENT_ALL, (void*)"list_scan");*/
 
-    // game1
+
+    // ------- GAME 1 -------
     cb_register(objects.btn_mission_game1, objects.game1);
-    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_PRESSING, (void*)"Right press");
-    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_HOVER_OVER, (void*)"Right hover");
-    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSED, (void*)"Left cnt");
-    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSING, (void*)"LEft press");
+    lv_obj_add_event_cb(objects.btn_mission_game1, nightmaretest, LV_EVENT_PRESSED, (void*)"load game");
+    //lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_PRESSING, (void*)"Right press");
+    //lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_HOVER_OVER, (void*)"Right hover");
+    lv_obj_add_event_cb(objects.cnt_game1_left, g_game1::PlayerInput, LV_EVENT_PRESSED, (void*)"l");
+    lv_obj_add_event_cb(objects.cnt_game1_right, g_game1::PlayerInput, LV_EVENT_PRESSED, (void*)"r");
+
     
+    //lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSING, (void*)"LEft press");
 
 
     roller_changed(NULL); // Initialize the roller

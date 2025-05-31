@@ -666,7 +666,9 @@
     <ClInclude Include="eez\styles.h" />
     <ClInclude Include="eez\ui.h" />
     <ClInclude Include="eez\vars.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="global.hpp" />
+    <ClInclude Include="g_game1.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="lv_conf.h" />
     <ClInclude Include="lv_custom_alloc.h" />
@@ -3433,6 +3435,8 @@
     <ClCompile Include="eez\ui_image_ui_element___icons.c" />
     <ClCompile Include="eez\ui_image_ui_element___main_divider.c" />
     <ClCompile Include="eez\ui_image_ui_element___subdivider.c" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="g_game1.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="lv_custom_alloc.cpp" />
     <ClCompile Include="libpng-1.6.44\png.c" />

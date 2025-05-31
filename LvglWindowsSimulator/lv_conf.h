@@ -746,8 +746,8 @@
     #define LV_FS_WIN32_PATH "C:/users/tomasowen/OneDrive/Documents/Arduino Backups/painlessMesh/basic/data/"         /*Set the working directory. File/directory paths will be appended to it.*/
 #elif __has_include("C:\\Users\\data\\OneDrive\\Source\\Arduino\\git\\lv_port_pc_visual_studio-9.2\\LvglWindowsSimulator\\lv_conf.h")
     #define LV_FS_WIN32_PATH "C:/users/data/OneDrive/Documents/Arduino Backups/painlessMesh/basic/data/"
-#elif __has_include("D:\\bryce\\path\\here\\lv_port_pc_visual_studio-9.2\\LvglWindowsSimulator\\lv_conf.h")
-    #define LV_FS_WIN32_PATH "d:/path/to/littlefs/data"
+#elif __has_include("D:\\EmbeddedProjects\\lv_port_pc_visual_studio\\LvglWindowsSimulator\\lv_conf.h")
+    #define LV_FS_WIN32_PATH "D:/EmbeddedProjects/lv_port_pc_visual_studio/LvglWindowsSimulator/ArduinoJson/data"
 #else
 #error "No matching lv_conf.h include."
 #endif

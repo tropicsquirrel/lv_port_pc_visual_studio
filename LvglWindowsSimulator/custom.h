@@ -17,6 +17,8 @@
 #include "../Audio_PCM5101.h"
 #endif
 
+#include "game.h"
+
 #pragma once
 
 #ifdef __cplusplus
@@ -56,6 +58,8 @@ void update_item_counter(void);
 //void load_screen_avatar(lv_event_t* e);
 void load_screen_badge();
 bool applyConfig(Config& config);
+
+extern cl_Game* game_master;
 
 #ifdef __cplusplus
 }

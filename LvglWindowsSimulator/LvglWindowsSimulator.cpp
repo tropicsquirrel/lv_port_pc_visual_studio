@@ -10,6 +10,9 @@
 #include "json.h"
 #include "global.hpp"
 
+#include "game.h"
+#include "g_game1.h"
+
 Config config;
 GameState gameState;
 unsigned long badgeMode_lastActivity = 0;
@@ -145,6 +148,9 @@ int main()
         lv_delay_ms(time_till_next);
         ui_tick();
         badgeMode_timer_loop();
+
+        if(nullptr != game_master && game_master->setup == true)
+            game_master->Update();
     }
 
     return 0;

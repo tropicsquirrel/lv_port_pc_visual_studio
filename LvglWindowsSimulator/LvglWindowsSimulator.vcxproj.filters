@@ -1891,6 +1891,8 @@
       <Filter>ArduinoJson</Filter>
     </ClInclude>
     <ClInclude Include="global.hpp" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="g_game1.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -4091,6 +4093,8 @@
       <Filter>eez</Filter>
     </ClCompile>
     <ClCompile Include="json.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="g_game1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
