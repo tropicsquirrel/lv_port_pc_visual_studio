@@ -63,6 +63,7 @@ class Object
 protected:
     cl_Game* gameInst;
     Velocity velocity;
+    lv_obj_t* img;
 
     void Render();
     void PhysicsUpdate();
@@ -76,8 +77,6 @@ public:
     void AddForce(float x, float y);
     void Update();
 
-    std::string name;
-    lv_obj_t* img;
     Transform transform;
 
 };

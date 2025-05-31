@@ -14,17 +14,17 @@ void g_game1::PlayerInput(lv_event_t* e)
 {
     if (game_master == nullptr)
         return;
-    /*if (game_master->GetObject(0) == nullptr)
-        return;*/
+    if (game_master->GetObject(0) == nullptr)
+        return;
 
     if (static_cast<char*>(lv_event_get_user_data(e)) == "l")
     {
-        //game_master->GetObject(0)->AddForce(.5, 3); // get player (always obj 0)
+        game_master->GetObject(0)->AddForce(-1, -3); // get player (always obj 0)
         printf("Input left\n");
     }
     else
     {
-        //game_master->GetObject(0)->AddForce(.5, 3); // get player (always obj 0)
+        game_master->GetObject(0)->AddForce(1, -3); // get player (always obj 0)
         printf("Input right\n");
     }
 };
@@ -45,6 +45,7 @@ void g_game1::Update()
     if (tick % 5 == 0)
     {
         tick = 0;
+        o1.AddForce(0, .25);
         RenderScene();
     }
 }

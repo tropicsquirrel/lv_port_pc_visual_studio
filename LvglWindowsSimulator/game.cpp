@@ -56,8 +56,6 @@ Object::Object(cl_Game& parentGame)
     velocity = Velocity();
     gameInst = &parentGame;
 
-    name = "test";
-
     // Setup rendering
     img = lv_label_create(objects.game1); //(lv_screen_active());
     lv_label_set_text(img, "");
@@ -75,19 +73,44 @@ void Object::Update()
 }
 void Object::Render()
 {
-    lv_obj_set_pos(img, 0, 0);//(int32_t)transform.x, (int32_t)transform.y);
+    lv_obj_set_pos(img, (int32_t)transform.x, (int32_t)transform.y);
 }
 void Object::PhysicsUpdate()
 {
     Move(velocity.x, velocity.y);
-
     CheckBoundingBox();
 }
 void Object::CheckBoundingBox()
 {
+    // Check screen border
+    if (transform.x - transform.bbWidth <= -125) // LEFT
+    {
+        transform.x = -125 + transform.bbWidth;
+        velocity.x = 0;
+    }
+    if (transform.x + transform.bbWidth >= 125) // RIGHT
+    {
+        transform.x = 125 - transform.bbWidth;
+        velocity.x = 0;
+    }
+
+    if (transform.y - transform.bbHeight <= -165) // TOP
+    {
+        transform.y = -165 + transform.bbHeight;
+        velocity.y = 0;
+    }
+    if (transform.y + transform.bbHeight >= 165) // BOTTOM
+    {
+        transform.y = 165 - transform.bbHeight;
+        velocity.y = 0;
+    }
+
+    printf("x: %f, y: %f\n", transform.x + transform.bbWidth, transform.y);
+
     Object* hit = gameInst->OverlapBox(*this);
     if (hit == nullptr)
         return;
+
 }
 void Object::Move(float dx, float dy)
 {
