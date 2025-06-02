@@ -44,6 +44,10 @@ void cl_Game::Update()
 {
     printf("Update game master");
 }
+void cl_Game::AddScore(int val)
+{
+    score += val;
+}
 
 //          ----------OBJECT CLASS----------
 Object::Object() // default constructor for game array
@@ -57,14 +61,30 @@ Object::Object(cl_Game& parentGame)
     gameInst = &parentGame;
 
     // Setup rendering
-    img = lv_label_create(objects.game1); //(lv_screen_active());
+    img = lv_label_create(::objects.game1); //(lv_screen_active());
     lv_label_set_text(img, "");
-    lv_obj_set_size(img, transform.bbWidth, transform.bbHeight); /*Set smaller width to make the lines wrap*/
+    lv_obj_set_size(img, transform.pxWidth, transform.pxHeight); /*Set smaller width to make the lines wrap*/
     lv_obj_align(img, LV_ALIGN_CENTER, transform.x, transform.y);
 
     // Set object color
     lv_obj_set_style_bg_color(img, lv_color_hex(0xFF0000), 0);
     lv_obj_set_style_bg_opa(img, LV_OPA_MAX, 0); // Something to do with opacity. Breaks if I remove it, so I'm leaving it here
+}
+Object::Object(lv_obj_t* screen, cl_Game& parentGame, const char* imgSource)
+{
+    transform = Transform();
+    velocity = Velocity();
+    gameInst = &parentGame;
+
+    // Setup rendering
+    img = lv_img_create(screen);
+    lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
+    lv_img_set_src(img, imgSource);
+    lv_obj_align(img, LV_ALIGN_CENTER, transform.x, transform.y);
+    lv_obj_set_size(img, transform.pxWidth, transform.pxHeight); /*Set smaller width to make the lines wrap*/
+
+    //lv_obj_set_style_bg_color(img, lv_color_hex(0xFF0000), 0);
+    //lv_obj_set_style_bg_opa(img, LV_OPA_MAX, 0);
 }
 void Object::Update()
 {
@@ -73,7 +93,7 @@ void Object::Update()
 }
 void Object::Render()
 {
-    lv_obj_set_pos(img, (int32_t)transform.x, (int32_t)transform.y);
+    lv_obj_set_pos(img, transform.x, transform.y);
 }
 void Object::PhysicsUpdate()
 {
@@ -82,30 +102,30 @@ void Object::PhysicsUpdate()
 }
 void Object::CheckBoundingBox()
 {
+    prev_velocity = Velocity(velocity);
+
     // Check screen border
-    if (transform.x - transform.bbWidth <= -125) // LEFT
+    if (transform.x - (transform.pxWidth / 2) <= -120) // LEFT
     {
-        transform.x = -125 + transform.bbWidth;
+        transform.x = -120 + (transform.pxWidth / 2);
         velocity.x = 0;
     }
-    if (transform.x + transform.bbWidth >= 125) // RIGHT
+    if (transform.x + (transform.pxWidth / 2) >= 120) // RIGHT
     {
-        transform.x = 125 - transform.bbWidth;
+        transform.x = 120 - (transform.pxWidth / 2);
         velocity.x = 0;
     }
 
-    if (transform.y - transform.bbHeight <= -165) // TOP
+    if (transform.y - (transform.pxHeight / 2) <= -160) // TOP
     {
-        transform.y = -165 + transform.bbHeight;
+        transform.y = -160 + (transform.pxHeight / 2);
         velocity.y = 0;
     }
-    if (transform.y + transform.bbHeight >= 165) // BOTTOM
+    if (transform.y + (transform.pxHeight / 2) >= 160) // BOTTOM
     {
-        transform.y = 165 - transform.bbHeight;
+        transform.y = 160 - (transform.pxHeight / 2);
         velocity.y = 0;
     }
-
-    printf("x: %f, y: %f\n", transform.x + transform.bbWidth, transform.y);
 
     Object* hit = gameInst->OverlapBox(*this);
     if (hit == nullptr)
@@ -121,4 +141,16 @@ void Object::AddForce(float x, float y)
 {
     velocity.x += x;
     velocity.y += y;
+}
+void Object::SetSize(int wid, int hei)
+{
+    transform.pxWidth = wid;
+    transform.pxHeight = hei;
+    lv_obj_set_size(img, transform.pxWidth, transform.pxHeight);
+}
+void Object::SetPos(int x, int y)
+{
+    transform.x = x;
+    transform.y = y;
+    lv_obj_set_pos(img, transform.x, transform.y);
 }

@@ -12,11 +12,11 @@ struct Transform
 {
     float x{ 0 };
     float y{ 0 };
-    int bbWidth{ 50 };
-    int bbHeight{ 50 };
+    int pxWidth{ 10 };
+    int pxHeight{ 10 };
 
     Transform(float nx = 0, float ny = 0, int nbbWidth = 10, int nbbHeight = 10)
-        : x(nx), y(ny), bbWidth(nbbWidth), bbHeight(nbbHeight) {}
+        : x(nx), y(ny), pxWidth(nbbWidth), pxHeight(nbbHeight) {}
 };
 
 struct Velocity
@@ -34,6 +34,8 @@ protected:
     float gravity;
     std::vector<Object*> objects;
     int objCount;
+    bool running = true;
+    float score = 0;
 
 public:
     cl_Game();
@@ -50,7 +52,8 @@ public:
     void RenderScene();
     virtual void Setup();
     virtual void Update();
-
+    void AddScore(int val);
+    int GetScore() const { return score; }
     bool setup = false;
     //Object* GetObject(int i) { return objects[i]; }
 
@@ -62,7 +65,6 @@ class Object
 {
 protected:
     cl_Game* gameInst;
-    Velocity velocity;
     lv_obj_t* img;
 
     void Render();
@@ -72,11 +74,16 @@ protected:
 public:
     Object();
     Object(cl_Game& parentGame);
+    Object(lv_obj_t* screen, cl_Game& parentGame, const char* imgSource);
     //Object(cl_Game& parentGame, lv_obj_t* screen);
     void Move(float dx, float dy);
     void AddForce(float x, float y);
     void Update();
 
-    Transform transform;
+    void SetSize(int wid, int hei);
+    void SetPos(int x, int y);
 
+    Transform transform;
+    Velocity velocity;
+    Velocity prev_velocity;
 };

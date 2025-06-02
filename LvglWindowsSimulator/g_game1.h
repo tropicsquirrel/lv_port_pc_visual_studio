@@ -4,7 +4,10 @@ class g_game1 : public cl_Game
 {
 private:
     int tick = 0;
-    Object o1;
+    Object player;
+    //Object test_obj;
+    Object bg;
+    Object landingpad;
 
 public:
     g_game1();
