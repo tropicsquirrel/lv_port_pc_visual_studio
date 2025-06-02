@@ -1,4 +1,6 @@
 ﻿#include <lvgl.h>
+#include <stdint.h>
+#include "global.hpp"
 #if defined(_WIN32) || defined(_WIN64)
 #include ".\eez\screens.h"
 #include ".\eez\vars.h"
@@ -23,7 +25,7 @@
 extern "C" {
 #endif
 
-// For some reason these aren't part of the lv_buttonmatrix.h header (lv_buttonmatrix_ctrl_t)
+    // For some reason these aren't part of the lv_buttonmatrix.h header (lv_buttonmatrix_ctrl_t)
 #define LV_BUTTONMATRIX_CTRL_NONE     (lv_buttonmatrix_ctrl_t)0x0000
 #define LV_BUTTONMATRIX_CTRL_WIDTH_1  (lv_buttonmatrix_ctrl_t)0x0001
 #define LV_BUTTONMATRIX_CTRL_WIDTH_2  (lv_buttonmatrix_ctrl_t)0x0002
@@ -41,21 +43,23 @@ extern "C" {
 #define LV_BUTTONMATRIX_CTRL_WIDTH_14 (lv_buttonmatrix_ctrl_t)0x000E
 #define LV_BUTTONMATRIX_CTRL_WIDTH_15 (lv_buttonmatrix_ctrl_t)0x000F
 
+    // repeating task callback start/stop
+    void repeat_on(uint32_t ms, void (*cb)());
+    void repeat_off();
 
-//void event_handler_cb_progress_obj_red(lv_event_t* e);
-//void event_handler_cb_progress_obj_green(lv_event_t* e);
-//void event_handler_cb_progress_obj_blue(lv_event_t* e);
-//void set_color_panel(lv_event_t* e);
-void roller_changed(lv_event_t* e);
-void avatar_next(lv_event_t* e);
-void avatar_prev(lv_event_t* e);
-void load_scroll_color_values(lv_event_t* e);
-void setup_cb(void);
-void update_avatar_images(void);
-void update_item_counter(void);
-//void load_screen_avatar(lv_event_t* e);
-void load_screen_badge();
-bool applyConfig(Config& config);
+    void populate_crew_list(lv_event_t* e);
+    void populate_scan_list(lv_event_t* e);
+
+    void roller_changed(lv_event_t* e);
+    void avatar_next(lv_event_t* e);
+    void avatar_prev(lv_event_t* e);
+    void load_scroll_color_values(lv_event_t* e);
+    void setup_cb(void);
+    void update_avatar_images(void);
+    void update_item_counter(void);
+    //void load_screen_avatar(lv_event_t* e);
+    void load_screen_badge();
+    bool applyConfig(Config& config);
 
 #ifdef __cplusplus
 }

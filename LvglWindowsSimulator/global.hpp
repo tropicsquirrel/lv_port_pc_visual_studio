@@ -50,8 +50,12 @@ extern "C" {
     /// <summary> Packet broadcast from each client regularly. Broadcast. </summary>
     struct IDPacket
     {
+        int32_t boardID;        // board ID
         int32_t avatarID;       // avatar ID
         char displayName[64];   // display name
+        PlayerStatus status;    // player status
+        int32_t timeArrived;    // time the packet arrived
+        int32_t totalXP;        // total XP
     };
 
 #ifdef __cplusplus

@@ -2,6 +2,19 @@
 #include "custom.h"
 #include <chrono>
 
+#ifdef _WIN32
+#include <thread>
+#include <atomic>
+static std::thread _rthr;
+static std::atomic<bool> _rrun{ false };
+#else
+#include <lvgl.h>
+static lv_timer_t* _rtr = nullptr;
+#endif
+
+// globals
+static void (*_rcb)() = nullptr; //repeating callback function pointer
+
 
 /*
 Layer Description
@@ -33,10 +46,11 @@ int32_t int_current_item = 0;
 
 int32_t int_ms_since_touch = 0;
 
-extern objects_t objects; // LVGL root screens object
-extern Config config;     // Global configuration object
-extern bool badgeMode_triggered;
-extern lv_display_t* disp;
+extern objects_t objects;                   // LVGL root screens object
+extern Config config;                       // Global configuration object
+extern std::vector<IDPacket> g_idPackets;   // global ID packet repo
+extern bool badgeMode_triggered;            // global 'is badge mode triggered?' bool
+extern lv_display_t* disp;                  // global reference to the LVGL display
 
 void set_tint(lv_event_t* e)
 {
@@ -123,16 +137,56 @@ void set_tint(lv_event_t* e)
     }
 }
 
+// Repeating callback task 
+#ifdef _WIN32
+static void _thread_loop(uint32_t ms) {
+    while (_rrun) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+        if (_rrun && _rcb) _rcb();
+    }
+}
+#endif
+
+// repeat the given callback function every ms milliseconds
+void repeat_on(uint32_t ms, void (*cb)()) {
+    repeat_off();
+    _rcb = cb;
+#ifdef _WIN32
+    _rrun = true;
+    _rthr = std::thread(_thread_loop, ms);
+#else
+    // no-capture lambda converts to lv_timer_cb_t
+    _rtr = lv_timer_create(
+        [](lv_timer_t* t) { if (_rcb) _rcb(); },
+        ms, nullptr
+    );
+#endif
+}
+
+// stop the repeating callback
+void repeat_off() {
+#ifdef _WIN32
+    _rrun = false;
+    if (_rthr.joinable()) _rthr.join();
+#else
+    if (_rtr) {
+        lv_timer_del(_rtr);
+        _rtr = nullptr;
+    }
+#endif
+    _rcb = nullptr;
+}
+
 // change UI settings and apply them to the board
 bool applyConfig(Config& config)
 {
     //username
-	lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
+    lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
 
     //volume
     lv_slider_set_value(objects.sld_settings_volume, config.board.volume, LV_ANIM_OFF);
 #ifndef _WIN32
-	//Volume_adjustment(config.board.volume);
+    //Volume_adjustment(config.board.volume);
 #endif // !_WIN32
 
     //airplane mode
@@ -198,6 +252,17 @@ bool saveAndApplyBoardConfig(Config& config)
     return applyConfig(config);
 }
 
+static char* avatarIDToFilename(int32_t avatarID)
+{
+    // Convert the avatar ID to a filename
+    static char filename[64];
+    snprintf(filename, sizeof(filename), "L:/avatars/%d.png", avatarID);
+    printf("Avatar ID: %d, Filename: %s\n", avatarID, filename);
+    // DEBUG VERSION - CHANGE FOR PRODUCTION
+    snprintf(filename, sizeof(filename), "L:/images/16x16.png");
+    return filename;
+}
+
 // en/disable airplane mode
 static void set_airplane_mode(lv_event_t* e)
 {
@@ -219,7 +284,7 @@ static void increase_delay(lv_event_t* e)
     saveAndApplyBoardConfig(config);
 }
 
-// decrease badge mode delay by 5 seconds, but not below 5
+// decrease badge mode delay by 5 seconds, but not below 5 seconds
 static void decrease_delay(lv_event_t* e)
 {
     config.board.badgeMode.delay = max(5, config.board.badgeMode.delay - 5);
@@ -245,7 +310,7 @@ static void end_badge_mode(lv_event_t* e)
     lv_screen_load_anim(objects.main, LV_SCR_LOAD_ANIM_FADE_OUT, 200, 0, false);
 }
 
-// rotate through usernames you allow to display
+// rotate through usernames you allow to display (all/none/friends/not blocked)
 static void set_usernames(lv_event_t* e)
 {
     char* usernames = lv_label_get_text(objects.lbl_settings_usernames);
@@ -262,7 +327,7 @@ static void set_usernames(lv_event_t* e)
     saveAndApplyBoardConfig(config);
 }
 
-// rotate through who is allowed to join your games
+// rotate through who is allowed to join your games (all/none/friends/not blocked)
 static void set_gamehosts(lv_event_t* e)
 {
     char* gameHosts = lv_label_get_text(objects.lbl_settings_gamehosts);
@@ -310,35 +375,141 @@ static void set_volume(lv_event_t* e)
 // reset username
 static void profile_undo(lv_event_t* e)
 {
-	lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
+    lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
 }
 
 // save username
 static void profile_save(lv_event_t* e)
 {
-	const char* newName = lv_textarea_get_text(objects.txt_profile_username);
-	if (strlen(newName) > 0)
-	{
-		strlcpy(config.user.displayName, newName, sizeof(config.user.displayName));
-		saveAndApplyBoardConfig(config);
-	}
+    const char* newName = lv_textarea_get_text(objects.txt_profile_username);
+    if (strlen(newName) > 0)
+    {
+        strlcpy(config.user.displayName, newName, sizeof(config.user.displayName));
+        saveAndApplyBoardConfig(config);
+    }
 }
 
+// show data from the clicked list entry in the contact details section
+void list_scan_click(lv_event_t* e)
+{
+    // clear out the details
+    lv_label_set_text(objects.lbl_contacts_name, "Select A Contact");
+    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
+    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+    lv_label_set_text(objects.lbl_contacts_xp, "0");
 
+    //extract the IDPacket from the user data of the clicked list entry
+    IDPacket* packet = static_cast<IDPacket*>(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
+    if (nullptr == packet) return; // No packet found, exit
+
+    //set display name in the label
+    lv_label_set_text(objects.lbl_contacts_name, (const char*)packet->displayName);
+
+    //set the avatar image
+    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(packet->avatarID));
+
+    //set the XP
+    char str_xp[16];
+    snprintf(str_xp, sizeof(str_xp), "%d", packet->totalXP);
+    lv_label_set_text(objects.lbl_contacts_xp, str_xp);
+
+    //check to see if the contact is a friend or blocked
+    for(int i= 0; i < config.contacts.getContacts().size(); i++)
+    {
+        ContactData* contact = config.contacts.getContacts()[i];
+        if (contact->nodeId == packet->boardID)
+        {
+            //found the contact, set the friend/blocked status
+            //blocked
+            if (contact->blocked)
+            {
+                lv_obj_add_state(objects.check_contacts_block, LV_STATE_CHECKED);
+            }
+
+            //friend
+            if (contact->isFriend)
+            {
+                lv_obj_add_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+            }
+            return;
+        }
+    }
+}
+
+// show data from the clicked list entry in the contact details section
+void list_crew_click(lv_event_t* e)
+{
+    // clear out the details
+    lv_label_set_text(objects.lbl_contacts_name, "Select A Contact");
+    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
+    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+    lv_label_set_text(objects.lbl_contacts_xp, "0");
+
+    //extract the IDPacket from the user data of the clicked list entry
+    ContactData* packet = static_cast<ContactData*>(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
+    if (nullptr == packet) return; // No packet found, exit
+
+    //set display name in the label
+    lv_label_set_text(objects.lbl_contacts_name, (const char*)packet->displayName);
+
+    //set the avatar image
+    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(packet->nodeId));
+
+    //set the XP
+    char str_xp[16];
+    snprintf(str_xp, sizeof(str_xp), "%d", packet->totalXP);
+    lv_label_set_text(objects.lbl_contacts_xp, str_xp);
+
+    if(packet->isFriend)
+        {
+        //if the contact is a friend, set the crew checkbox
+        lv_obj_add_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+    }
+
+    if(packet->blocked)
+        {
+        //if the contact is blocked, set the blocked checkbox
+        lv_obj_add_state(objects.check_contacts_block, LV_STATE_CHECKED);
+    }
+}
 
 // populate the crew list with the current crew members
 void populate_crew_list(lv_event_t* e)
 {
-    lv_list_add_text(objects.list_contacts_crew, "Crew Members");
+
+    lv_obj_clean(objects.list_contacts_crew); // Clear the list before adding new items
+    //lv_list_add_text(objects.list_contacts_crew, "Crew Members");
 
     lv_obj_t* list_entries;
 
     std::vector<ContactData*> contacts = config.contacts.getContacts();
 
-    for(int i=0; i < contacts.size(); i++)
+    for (int i = 0; i < contacts.size(); i++)
     {
         char* name = contacts[i]->displayName;
         list_entries = lv_list_add_button(objects.list_contacts_crew, "L:/images/16x16.png", name);
+        lv_obj_set_user_data(list_entries, contacts[i]); // Store the ContactData pointer in the user data
+        lv_obj_add_event_cb(list_entries, list_crew_click, LV_EVENT_CLICKED, NULL); // Add click event callback
+    }
+}
+
+void populate_scan_list(lv_event_t* e)
+{
+    if (lv_obj_get_screen(objects.contacts) != lv_scr_act())
+        return; // Only populate the scan list if the contacts screen is active
+
+    lv_obj_clean(objects.list_contacts_scan); // Clear the list before adding new items
+    //lv_list_add_text(objects.list_contacts_scan, "Scan Members");
+
+    lv_obj_t* list_entries;
+
+    // add contacts picked up by scanning
+    for (auto& p : g_idPackets)
+    {
+        char* name = p.displayName;
+        list_entries = lv_list_add_button(objects.list_contacts_scan, "L:/images/16x16.png", name);
+        lv_obj_set_user_data(list_entries, &p); // Store the IDPacket pointer in the user data
+        lv_obj_add_event_cb(list_entries, list_scan_click, LV_EVENT_CLICKED, NULL); // Add click event callback
     }
 }
 
@@ -354,7 +525,7 @@ void load_screen(lv_event_t* e) {
 // Register a button 
 static void cb_register(lv_obj_t* button, lv_obj_t* screen)
 {
-	lv_obj_add_event_cb(button, load_screen, LV_EVENT_PRESSED, screen);
+    lv_obj_add_event_cb(button, load_screen, LV_EVENT_PRESSED, screen);
 }
 
 // convert an lv_event code to a char*
@@ -402,15 +573,19 @@ static void debug_events(lv_event_t* e)
     lv_event_code_t event = lv_event_get_code(e);
     if (event < 23 || event > 31)
     {
-        //printf("%s: Event: %s\n", static_cast<char*>(lv_event_get_user_data(e)), get_lv_event_name(event));
-        lv_indev_t* indev = lv_event_get_indev(e); // Get the indev object associated with the event
-        if (indev)
+        printf("%s: Event: %s\n", static_cast<char*>(lv_event_get_user_data(e)), get_lv_event_name(event));
+
+        if (event == LV_EVENT_CLICKED)
         {
-                        lv_indev_type_t type = lv_indev_get_type(indev); // Get the type of the indev object
-            if (type == LV_INDEV_TYPE_POINTER) {
-                lv_point_t point;
-                lv_indev_get_point(indev, &point); // Get the point associated with the event
-                printf("Pointer event at (%d, %d)\n", point.x, point.y);
+            lv_indev_t* indev = lv_event_get_indev(e); // Get the indev object associated with the event
+            if (indev)
+            {
+                lv_indev_type_t type = lv_indev_get_type(indev); // Get the type of the indev object
+                if (type == LV_INDEV_TYPE_POINTER) {
+                    lv_point_t point;
+                    lv_indev_get_point(indev, &point); // Get the point associated with the event
+                    printf("Pointer event at (%d, %d)\n", point.x, point.y);
+                }
             }
         }
     }
@@ -419,7 +594,7 @@ static void debug_events(lv_event_t* e)
 // set up callbacks for objects
 void setup_cb()
 {
-	// main UI button callbacks
+    // main UI button callbacks
     cb_register(objects.btn_main_mission, objects.mission);
     cb_register(objects.btn_main_contacts, objects.contacts);
     cb_register(objects.btn_main_info, objects.info);
@@ -465,17 +640,17 @@ void setup_cb()
     lv_obj_add_event_cb(objects.roller_avatar_component, roller_changed, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_next, avatar_next, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_avatar_prev, avatar_prev, LV_EVENT_CLICKED, NULL);
-    
+
     lv_obj_add_event_cb(objects.slider_avatar_red, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_green, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_blue, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
-    
-	// profile screen callbacks
-	lv_obj_add_event_cb(objects.btn_profile_undo, profile_undo, LV_EVENT_CLICKED, NULL);
+
+    // profile screen callbacks
+    lv_obj_add_event_cb(objects.btn_profile_undo, profile_undo, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(objects.btn_profile_save, profile_save, LV_EVENT_CLICKED, NULL);
 
-	// settings screen callbacks
+    // settings screen callbacks
     lv_obj_add_event_cb(objects.check_settings_airplanemode, set_airplane_mode, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.check_settings_badgemode, set_badge_mode, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.btn_settings_delay_down, decrease_delay, LV_EVENT_CLICKED, NULL);
@@ -485,33 +660,34 @@ void setup_cb()
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
 
     // contacts screen callbacks
-    // contact tab buttons
+    // contact tab button callback & styling
     lv_obj_t* tabview_contacts_buttons = lv_tabview_get_tab_bar(objects.tabview_contacts);
-    lv_obj_set_style_bg_color(tabview_contacts_buttons, lv_color_make(0x6c, 0x74, 0x8c), LV_PART_MAIN);
-        for(int i=0; i< lv_tabview_get_tab_count(objects.tabview_contacts); i++)
+    lv_obj_set_style_bg_color(tabview_contacts_buttons, lv_color_make(0x00, 0x00, 0x00), LV_PART_MAIN);
+    for (int i = 0; i < lv_tabview_get_tab_count(objects.tabview_contacts); i++)
     {
         lv_obj_t* button = lv_obj_get_child(tabview_contacts_buttons, i);
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_CLICKED, (void*)"tab_button");
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_FOCUSED, (void*)"tab_button");
-        lv_obj_add_event_cb(button, debug_events, LV_EVENT_DEFOCUSED, (void*)"tab_button");
+        //lv_obj_add_event_cb(button, debug_events, LV_EVENT_CLICKED, (void*)"tab_button");
+        //lv_obj_add_event_cb(button, debug_events, LV_EVENT_FOCUSED, (void*)"tab_button");
+        //lv_obj_add_event_cb(button, debug_events, LV_EVENT_DEFOCUSED, (void*)"tab_button");
         lv_obj_set_style_radius(button, 11, LV_PART_MAIN);
-        lv_obj_set_style_bg_color(button, lv_color_make(0x6c, 0x74, 0x8c), LV_PART_MAIN);
-        lv_obj_set_style_bg_color(button, lv_color_make(0x21, 0x96, 0xf3), LV_PART_ITEMS | LV_STATE_CHECKED);
-        lv_obj_set_style_bg_opa(button, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);
+        //lv_obj_set_style_bg_color(button, lv_color_make(0x00, 0x00, 0x00), LV_PART_ITEMS | LV_STATE_CHECKED); //0x6c, 0x74, 0x8c
+        //lv_obj_set_style_bg_opa(button, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_CHECKED);
+  /*      lv_obj_set_style_bg_color(button, lv_color_make(0x21, 0x96, 0xf3), LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_obj_set_style_bg_opa(button, LV_OPA_COVER, LV_PART_ITEMS | LV_STATE_CHECKED);*/
+        lv_obj_set_style_text_color(button, lv_color_make(0xff, 0xff, 0xff), LV_PART_MAIN);
     }
-    // add contacts 
+    // add contacts
+    populate_crew_list(NULL); // Populate the crew list
 
-    /*lv_obj_add_event_cb(objects.list_contacts_crew, debug_events, LV_EVENT_ALL, (void*)"list_crew");
-    lv_obj_add_event_cb(objects.list_contacts_scan, debug_events, LV_EVENT_ALL, (void*)"list_scan");*/
+    //lv_obj_add_event_cb(objects.list_contacts_crew, populate_crew_list, LV_EVENT_CLICKED, (void*)"list_crew");
+    //lv_obj_add_event_cb(objects.list_contacts_scan, populate_scan_list, LV_EVENT_CLICKED, (void*)"list_scan");
 
     // game1
     cb_register(objects.btn_mission_game1, objects.game1);
-    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_PRESSING, (void*)"Right press");
-    lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_HOVER_OVER, (void*)"Right hover");
-    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSED, (void*)"Left cnt");
-    lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSING, (void*)"LEft press");
-    
-
+    //lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_PRESSING, (void*)"Right press");
+    //lv_obj_add_event_cb(objects.cnt_game1_right, debug_events, LV_EVENT_HOVER_OVER, (void*)"Right hover");
+    //lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSED, (void*)"Left cnt");
+    //lv_obj_add_event_cb(objects.cnt_game1_left, debug_events, LV_EVENT_PRESSING, (void*)"LEft press");
 
     roller_changed(NULL); // Initialize the roller
     applyConfig(config); // Apply the config to the UI and the board

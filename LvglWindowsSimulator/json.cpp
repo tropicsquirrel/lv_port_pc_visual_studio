@@ -537,7 +537,7 @@ static void printContactManager(const ContactManager& manager, bool verbose = fa
     printf("  Pending Updates: %zu\n", pendingUpdates);
 
     // Print all contacts
-    printf("\nDetailed Contact List:");
+    printf("\nDetailed Contact List:\n");
     for (const auto& contact : manager)
     {
         printContactData(contact, verbose);

@@ -1,4 +1,7 @@
 ﻿#include <Windows.h>
+#include <vector>
+#include <algorithm>
+#include <cstring>
 
 #include <LvglWindowsIconResource.h>
 
@@ -10,10 +13,11 @@
 #include "json.h"
 #include "global.hpp"
 
-Config config;
-GameState gameState;
-unsigned long badgeMode_lastActivity = 0;
-bool badgeMode_triggered = false;
+Config config;                            // Global variable to store configuration
+GameState gameState;                      // Global variable to store game state
+unsigned long badgeMode_lastActivity = 0; // Last activity timestamp for badge mode
+bool badgeMode_triggered = false;         // Flag to indicate if badge mode is triggered
+std::vector<IDPacket> g_idPackets; // Global variable to store ID packets
 
 #if defined(_WIN32)
 #include <chrono>
@@ -37,7 +41,68 @@ void badgeMode_timer_loop() {
         badgeMode_triggered = true;
         load_screen_badge();
     }
-    //only triggers once
+}
+
+
+// Print out known ID packets
+static void printIDPackets()
+{
+    printf("-----[%d ID Packets]-----\n", (int)g_idPackets.size());
+    for (auto& p : g_idPackets)
+    {
+        printf("-Board: %d:\n\tName: %s\n\tAvatar: %d\n\tStatus: %d\n\tXP: %d\n\tTime: %d\n", p.boardID, p.displayName, p.avatarID, p.status, p.totalXP, p.timeArrived);
+    }
+}
+
+// Merge a new packet into g_idPackets:
+//  – if avatarID already exists, just bump its time & update fields
+//  – otherwise push_back a fresh entry
+static void handleIncomingIDPacket(const IDPacket& pkt) {
+    int32_t now = millis();
+    for (auto& p : g_idPackets) {
+        if (p.boardID == pkt.boardID) {
+            // update existing
+            strncpy(p.displayName, pkt.displayName,
+                sizeof(p.displayName) - 1);
+            p.displayName[sizeof(p.displayName) - 1] = '\0';
+            p.avatarID = pkt.avatarID;
+            p.status = pkt.status;
+            p.totalXP = pkt.totalXP;
+            p.timeArrived = now;
+            return;
+        }
+    }
+    // new one
+    IDPacket np = pkt;
+    np.timeArrived = now;
+    g_idPackets.push_back(np);
+    //printIDPackets();
+    populate_scan_list(NULL); // Update the UI with the new packet if the contacts screen is active
+}
+
+// Remove old packets from g_idPackets
+static void cleanupStaleIDPackets() {
+    int32_t now = millis();
+    auto it = std::remove_if(
+        g_idPackets.begin(), g_idPackets.end(),
+        [now](const IDPacket& p) {
+            return (now - p.timeArrived) >= PLAYER_TIMEOUT;
+        });
+    g_idPackets.erase(it, g_idPackets.end());
+}
+
+// Generate a random IDPacket for testing purposes
+static IDPacket generateRandomIDPacket() {
+    IDPacket p;
+    p.boardID = rand() % 32;  // max of 32 possible boards
+    p.avatarID = rand() % 8;  // e.g. eight players
+    snprintf(p.displayName, sizeof(p.displayName),
+        "P%02d", p.avatarID);
+    p.status = static_cast<PlayerStatus>(rand() % 3);
+    p.totalXP = rand() % 1000;
+    printf("packet generated\n");
+    // p.timeArrived will be set by handleIncomingIDPacket
+    return p;
 }
 
 
@@ -139,12 +204,29 @@ int main()
 
     setup_cb();
 
+    srand(millis()); //seed the random number generator
+
     while (1)
     {
+        // variables for simulating incoming ID packets
+        static unsigned long lastSim = 0;
+        constexpr unsigned long SIM_INTERVAL = 5000;  // every 5 s
+
         uint32_t time_till_next = lv_timer_handler();
         lv_delay_ms(time_till_next);
         ui_tick();
         badgeMode_timer_loop();
+
+        // Simulate an arrival every SIM_INTERVAL:
+        unsigned long now = millis();
+        if (now - lastSim >= SIM_INTERVAL) {
+            lastSim = now;
+            IDPacket p = generateRandomIDPacket();
+            handleIncomingIDPacket(p);
+        }
+
+        // Then always purge old packets:
+        cleanupStaleIDPackets();
     }
 
     return 0;
