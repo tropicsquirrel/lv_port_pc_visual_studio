@@ -39,6 +39,31 @@ extern "C" {
         int32_t timeSinceLastMessage[4]; // time since last message from each player
     };
 
+    // Set up automatic critical sections for mods to a GameState object
+    // Usage:
+    // withGameState([](GameState& s) {s.totalXP += 10;});
+
+//#if defined(_WIN32) || defined(_WIN64)
+//    // On Windows, no real concurrency — just call directly
+//    template <typename Func>
+//    void withGameState(Func&& func) {
+//        func(gameState);
+//    }
+//#else
+//#include "freertos/FreeRTOS.h"
+//#include "esp32/rom/ets_sys.h"
+//#include "esp_attr.h"
+//
+//    extern portMUX_TYPE muxGameState;
+//
+//    template <typename Func>
+//    void withGameState(Func&& func) {
+//        taskENTER_CRITICAL(&muxGameState);
+//        func(gameState);
+//        taskEXIT_CRITICAL(&muxGameState);
+//    }
+//#endif
+
     /// <summary> Used to advertise a game, admit/reject players from the lobby and show ready status. Unicast. </summary>
     struct SessionPacket
     {

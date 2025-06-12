@@ -1,6 +1,7 @@
 ﻿#include <lvgl.h>
 #include <stdint.h>
-#include "global.hpp"
+#include <unordered_map>
+
 #if defined(_WIN32) || defined(_WIN64)
 #include ".\eez\screens.h"
 #include ".\eez\vars.h"
@@ -8,6 +9,7 @@
 #include "pngs.h"
 #include "mp3s.h"
 #include "json.h"
+#include "global.hpp"
 #else
 #include "screens.h"
 #include "vars.h"
@@ -17,6 +19,7 @@
 #include "../json.h"
 #include "../Display_Driver.h"
 #include "../Audio_PCM5101.h"
+#include "../global.hpp"
 #endif
 
 #pragma once
@@ -49,6 +52,8 @@ extern "C" {
 
     void populate_crew_list(lv_event_t* e);
     void populate_scan_list(lv_event_t* e);
+
+    void processIDPacket(IDPacket packet);
 
     void roller_changed(lv_event_t* e);
     void avatar_next(lv_event_t* e);

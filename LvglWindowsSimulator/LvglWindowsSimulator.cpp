@@ -17,17 +17,23 @@ Config config;                            // Global variable to store configurat
 GameState gameState;                      // Global variable to store game state
 unsigned long badgeMode_lastActivity = 0; // Last activity timestamp for badge mode
 bool badgeMode_triggered = false;         // Flag to indicate if badge mode is triggered
-std::vector<IDPacket> g_idPackets; // Global variable to store ID packets
+std::vector<IDPacket> g_idPackets;        // Global variable to store ID packets
+ContactManager scanResults;
 
-#if defined(_WIN32)
-#include <chrono>
-
-unsigned long millis() {
-    static auto start = std::chrono::steady_clock::now();
-    auto now = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-}
+#ifndef _WIN32
+portMUX_TYPE muxGameState = portMUX_INITIALIZER_UNLOCKED;
 #endif
+
+// moved to json.cpp
+//#if defined(_WIN32)
+//#include <chrono>
+//
+//unsigned long millis() {
+//    static auto start = std::chrono::steady_clock::now();
+//    auto now = std::chrono::steady_clock::now();
+//    return std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+//}
+//#endif
 
 void badgeMode_timer_loop() {
     if (badgeMode_triggered)
@@ -77,6 +83,7 @@ static void handleIncomingIDPacket(const IDPacket& pkt) {
     np.timeArrived = now;
     g_idPackets.push_back(np);
     //printIDPackets();
+    processIDPacket(pkt);
     populate_scan_list(NULL); // Update the UI with the new packet if the contacts screen is active
 }
 
@@ -95,7 +102,7 @@ static void cleanupStaleIDPackets() {
 static IDPacket generateRandomIDPacket() {
     IDPacket p;
     p.boardID = rand() % 32;  // max of 32 possible boards
-    p.avatarID = rand() % 8;  // e.g. eight players
+    p.avatarID = rand() % 8;  // avatar 1-8
     snprintf(p.displayName, sizeof(p.displayName),
         "P%02d", p.avatarID);
     p.status = static_cast<PlayerStatus>(rand() % 3);

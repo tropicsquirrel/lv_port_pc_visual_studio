@@ -6,6 +6,14 @@ const char* DEFAULT_GAME_NAMES[] = {
 };
 const size_t NUM_DEFAULT_GAMES = sizeof(DEFAULT_GAME_NAMES) / sizeof(DEFAULT_GAME_NAMES[0]);
 
+#if defined(_WIN32)
+#include <chrono>
+unsigned long millis() {
+    static auto start = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+}
+#endif
 
 // ContactManager implementation
 ContactManager::ContactManager()
@@ -48,21 +56,53 @@ const ContactData* ContactManager::findContact(uint32_t nodeId) const
     return index < contacts.size() ? &contacts[index] : nullptr;
 }
 
+// Take a read-only ContactData object and add a copy of it to a ContactManager.
+// Retain friend/blocked status on existing contacts.
+// Also update the lastUpdateTime field.
 void ContactManager::addOrUpdateContact(const ContactData& contact)
 {
     size_t index = findIndex(contact.nodeId);
     if (index < contacts.size())
     {
+        bool isFriend = contacts[index].isFriend;
+        bool blocked = contacts[index].blocked;
         contacts[index] = contact;
+        contacts[index].lastUpdateTime = millis();
+        contacts[index].isFriend = isFriend;
+        contacts[index].blocked = blocked;
     }
     else
     {
+        // add the contact to contacts
         contacts.push_back(contact);
-        if (contact.nodeId < 256)
+        contacts[findIndex(contact.nodeId)].lastUpdateTime = millis();
+
+        // update the cache
+        if (contact.nodeId < NODE_ID_CACHE_LIMIT)
         {
             indexCache[contact.nodeId] = contacts.size() - 1;
         }
     }
+}
+
+bool ContactManager::removeContact(uint32_t nodeId)
+{
+    size_t index = findIndex(nodeId);
+    if (index >= contacts.size()) return false;
+
+    contacts.erase(contacts.begin() + index);
+
+    // Rebuild index cache
+    std::fill_n(indexCache, 256, 0);
+    for (size_t i = 0; i < contacts.size(); ++i)
+    {
+        if (contacts[i].nodeId < 256)
+        {
+            indexCache[contacts[i].nodeId] = i;
+        }
+    }
+
+    return true;
 }
 
 // Update contact information from a JSON message (only Self Packets)

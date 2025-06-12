@@ -117,11 +117,13 @@ struct Game
 };
 
 // Contact management class
+#define NODE_ID_CACHE_LIMIT 256
+
 class ContactManager
 {
 private:
     std::vector<ContactData> contacts;
-    size_t indexCache[256];
+    size_t indexCache[NODE_ID_CACHE_LIMIT];
 
     size_t findIndex(uint32_t nodeId) const;
 
@@ -133,6 +135,7 @@ public:
     const ContactData* findContact(uint32_t nodeId) const;
     void addOrUpdateContact(const ContactData& contact);
     bool updateContactInfo(uint32_t nodeId, const String& msg, uint32_t meshNodeTime);
+    bool removeContact(uint32_t nodeId);
 
     // JSON operations
     void fromJson(JsonObjectConst json);
@@ -167,3 +170,5 @@ bool loadConfig(Config& cfg, const char* filename = "L:/default.json");
 bool saveBoardConfig(Config& config, const char* fileName = "L:/default.json");
 void printConfig(const Config& config, bool verbose = false);
 void serialPrintJson(JsonDocument doc);
+
+unsigned long millis();
