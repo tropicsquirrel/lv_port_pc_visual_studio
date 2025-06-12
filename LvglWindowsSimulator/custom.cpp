@@ -416,23 +416,24 @@ void contactListButtonClick(lv_event_t* e)
     lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
     lv_label_set_text(objects.lbl_contacts_xp, "0");
 
-    //extract the ContactData from the user data of the clicked list entry
-    int32_t nodeID = (int32_t)(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
-    ContactData* contact = config.contacts.findContact(nodeID);
+    // extract the ContactData from the user data of the clicked list entry
+    // save that info in a global so we can use it in other functions later
+    contactLastClicked = (int32_t)(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
+
+    // try and get the contactData from config.contacts first
+    ContactData* contact = config.contacts.findContact(contactLastClicked);
     if (nullptr == contact)
     {
-        contact = scanResults.findContact(nodeID);
+        // if that fails, try and get it from scanResults
+        contact = scanResults.findContact(contactLastClicked);
         if (nullptr == contact) return; // no contact found in either list; fail silently
     }
-
-    //set the nodeID so we can track who was clicked
-    contactLastClicked = nodeID;
 
     //set display name in the label
     lv_label_set_text(objects.lbl_contacts_name, (const char*)contact->displayName);
 
     //set the avatar image
-    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(contact->nodeId));
+    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(contact->avatar));
 
     //set the XP
     char str_xp[16];
@@ -452,112 +453,6 @@ void contactListButtonClick(lv_event_t* e)
     }
 }
 
-//// show data from the clicked list entry in the contact details section
-//void list_scan_click(lv_event_t* e)
-//{
-//    // clear out the details
-//    lv_label_set_text(objects.lbl_contacts_name, "Select A Contact");
-//    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
-//    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
-//    lv_label_set_text(objects.lbl_contacts_xp, "0");
-//
-//    ////convert the IDPacket to ContactData
-//    //ContactData* contactTapped = idPacketToContactData(static_cast<IDPacket*>(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e))));
-//
-//    ////extract the IDPacket from the user data of the clicked list entry
-//    //if (nullptr == contactTapped) return; // No packet found, exit
-//
-//    ////set the nodeID so we can track who was clicked
-//    //contactLastClicked = contactTapped;
-//
-//    IDPacket* pkt = static_cast<IDPacket*>(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
-//    if (!pkt) return;
-//
-//    if (contactLastClicked) delete contactLastClicked;  // prevent leak
-//
-//    contactLastClicked = new ContactData();
-//    contactLastClicked->nodeId = pkt->boardID;
-//    contactLastClicked->avatar = pkt->avatarID;
-//    contactLastClicked->totalXP = pkt->totalXP;
-//    strlcpy(contactLastClicked->displayName, pkt->displayName, sizeof(contactLastClicked->displayName));
-//    contactLastClicked->isFriend = false;
-//    contactLastClicked->blocked = false;
-//    contactLastClicked->lastUpdateTime = 0;
-//
-//    //set display name in the label
-//    lv_label_set_text(objects.lbl_contacts_name, (const char*)contactLastClicked->displayName);
-//
-//    //set the avatar image
-//    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(contactLastClicked->avatar));
-//
-//    //set the XP
-//    char str_xp[16];
-//    snprintf(str_xp, sizeof(str_xp), "%d", contactLastClicked->totalXP);
-//    lv_label_set_text(objects.lbl_contacts_xp, str_xp);
-//
-//    //check to see if the contact is a friend or blocked
-//    for(int i= 0; i < config.contacts.getContacts().size(); i++)
-//    {
-//        ContactData* contact = config.contacts.getContacts()[i];
-//        if (contact->nodeId == contact->nodeId)
-//        {
-//            //found the contact, set the friend/blocked status
-//            //blocked
-//            if (contact->blocked)
-//            {
-//                lv_obj_add_state(objects.check_contacts_block, LV_STATE_CHECKED);
-//            }
-//
-//            //friend
-//            if (contact->isFriend)
-//            {
-//                lv_obj_add_state(objects.check_contacts_crew, LV_STATE_CHECKED);
-//            }
-//            return;
-//        }
-//    }
-//}
-//
-//// show data from the clicked list entry in the contact details section
-//void list_crew_click(lv_event_t* e)
-//{
-//    // clear out the details
-//    lv_label_set_text(objects.lbl_contacts_name, "Select A Contact");
-//    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
-//    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
-//    lv_label_set_text(objects.lbl_contacts_xp, "0");
-//
-//    //extract the IDPacket from the user data of the clicked list entry
-//    ContactData* packet = static_cast<ContactData*>(lv_obj_get_user_data((lv_obj_t*)lv_event_get_target(e)));
-//    if (nullptr == packet) return; // No packet found, exit
-//
-//    //set the nodeID so we can track who was clicked
-//    contactLastClicked = packet;
-//
-//    //set display name in the label
-//    lv_label_set_text(objects.lbl_contacts_name, (const char*)packet->displayName);
-//
-//    //set the avatar image
-//    lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(packet->nodeId));
-//
-//    //set the XP
-//    char str_xp[16];
-//    snprintf(str_xp, sizeof(str_xp), "%d", packet->totalXP);
-//    lv_label_set_text(objects.lbl_contacts_xp, str_xp);
-//
-//    if(packet->isFriend)
-//        {
-//        //if the contact is a friend, set the crew checkbox
-//        lv_obj_add_state(objects.check_contacts_crew, LV_STATE_CHECKED);
-//    }
-//
-//    if(packet->blocked)
-//        {
-//        //if the contact is blocked, set the blocked checkbox
-//        lv_obj_add_state(objects.check_contacts_block, LV_STATE_CHECKED);
-//    }
-//}
-
 // populate the crew list with the current crew members
 void populate_crew_list(lv_event_t* e)
 {
@@ -575,7 +470,7 @@ void populate_crew_list(lv_event_t* e)
         currentIDs[contact->nodeId] = true;
 
         if (crew_list_buttons.count(contact->nodeId) == 0) {
-            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_crew, "L:/images/16x16.png", contact->displayName);
+            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_crew, avatarIDToFilename(contact->avatar), contact->displayName);
             lv_obj_set_user_data(entry, (void*)contact->nodeId); // Store the nodeID to look up later
             lv_obj_add_event_cb(entry, contactListButtonClick, LV_EVENT_CLICKED, NULL);
             crew_list_buttons[contact->nodeId] = entry;
@@ -591,10 +486,10 @@ void populate_crew_list(lv_event_t* e)
     }
 }
 
-// TODO - something in here is causing invalidation of object user data (you can tell by the massive negative numbers in the XP field)
+// populates the results in the 'scan' list of contacts
 void populate_scan_list(lv_event_t* e)
 {
-    // return if the contacts screen is NOT active
+    // return if the contacts screen is NOT active to save CPU
     if (lv_obj_get_screen(objects.contacts) != lv_scr_act()) return;
 
     // declare unordered maps
@@ -602,19 +497,13 @@ void populate_scan_list(lv_event_t* e)
     std::unordered_map<int32_t, bool> currentIDs;                       // map between nodeID and if that ID has been seen
 
     // populate scan_list_buttons with all existing buttons in the list
-    for (uint32_t i=0; i < lv_obj_get_child_count_by_type(objects.list_contacts_scan, &lv_button_class); i++)
+    for (uint32_t i = 0; i < lv_obj_get_child_count(objects.list_contacts_scan); i++)
     {
-        lv_obj_t* button = lv_obj_get_child_by_type(objects.list_contacts_scan, i, &lv_button_class);
+        lv_obj_t* button = lv_obj_get_child(objects.list_contacts_scan, i);
         int32_t id = (uint32_t)lv_obj_get_user_data(button);
         scan_list_buttons[id] = button; // create an id entry for each button
         currentIDs[id] = false;  // create an entry for each id and set each to false (false = 'id does not exist in scanResults')
     }
-
-    // Mark all current IDs as false (not seen this update)
-    
-    /*for (const auto& [id, _] : scan_list_buttons) {
-        currentIDs[id] = false;
-    }*/
 
     // go through each contact in scanResults
     //   update existing buttons with usernames
@@ -631,7 +520,7 @@ void populate_scan_list(lv_event_t* e)
         if (scan_list_buttons.count(contact->nodeId) == 0)
         {
             // create the button
-            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_scan, "L:/images/16x16.png", contact->displayName);
+            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_scan, avatarIDToFilename(contact->avatar), contact->displayName);
             lv_obj_set_user_data(entry, (void*)contact->nodeId);
             lv_obj_add_event_cb(entry, contactListButtonClick, LV_EVENT_CLICKED, NULL);
             scan_list_buttons[contact->nodeId] = entry;
@@ -649,37 +538,17 @@ void populate_scan_list(lv_event_t* e)
                 continue;
             }
         }
+    }
 
-        // if the contact is no longer present in scanResults, remove the button
-        for (const auto& [id, seen] : currentIDs) {
-            if (!seen && scan_list_buttons.count(id))
-            {
-                lv_obj_del(scan_list_buttons[id]); // remove the button
-                //scan_list_buttons.erase(id);       // not sure we want to delete an entry that the loop depends on...?
-            }
+    // for each contact no longer present in scanResults, remove the button
+    for (const auto& [id, seen] : currentIDs) {
+        if (!seen && scan_list_buttons.count(id))
+        {
+            lv_obj_delete(scan_list_buttons[id]); // remove the button
+            scan_list_buttons.erase(id);
         }
     }
 
-    // Add new buttons and mark present ones as seen
-    //for (size_t i = 0; i < g_idPackets.size(); ++i) {
-    //    IDPacket* pkt = &g_idPackets[i];
-    //    currentIDs[pkt->boardID] = true;
-
-    //    if (scan_list_buttons.count(pkt->boardID) == 0) {
-    //        lv_obj_t* entry = lv_list_add_button(objects.list_contacts_scan, "L:/images/16x16.png", pkt->displayName);
-    //        lv_obj_set_user_data(entry, pkt);  // ✅ SAFE — direct pointer into vector
-    //        lv_obj_add_event_cb(entry, list_scan_click, LV_EVENT_CLICKED, NULL);
-    //        scan_list_buttons[pkt->boardID] = entry;
-    //    }
-    //}
-
-    //// Remove buttons whose IDPackets are no longer present
-    //for (const auto& [id, seen] : currentIDs) {
-    //    if (!seen && scan_list_buttons.count(id)) {
-    //        lv_obj_del(scan_list_buttons[id]);
-    //        scan_list_buttons.erase(id);
-    //    }
-    //}
 }
 
 // Fires when a tab header on the contacts page is clicked
@@ -691,47 +560,56 @@ static void tabContactsClicked(lv_event_t* e)
 // Fires when the user clicks 'block' on the contacts page
 static void checkContactsBlockClick(lv_event_t* e)
 {
-    printf("BLock\n");
-    //determine if this is on the scan or crew tab
-    switch (int_contacts_tab_current)
+    printf("Block\n");
+    //if blocked is now TRUE:
+    if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
     {
-    case 0: //scan
-        //if blocked is now TRUE:
-        if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
+        ContactData* contact = config.contacts.findContact(contactLastClicked);
+        if (contact) // if they're in the config.contacts list
+        {
+            contact->blocked = true;
+        }
+        else // if not, add them to config.contacts, remove from scanResults
+        {
+            printf("Contact list size: %d\n", (int)config.contacts.size());
+            contact = scanResults.findContact(contactLastClicked); // pull the info from scanResults
+            if (contact)
+            {
+                contact->blocked = true; // set blocked = TRUE before storing
+                config.contacts.addOrUpdateContact(*contact);
+                printf("New contact list size: %d\n", (int)config.contacts.size());
+                scanResults.removeContact(contactLastClicked); // and remove them from scanResults
+            }
+            else // should never happen, but just in case...
+            {
+                printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
+            }
+        }
+    }
+    // if blocked is now FALSE:
+    else
+    {
+        // crew = TRUE, blocked = FALSE -> keep in config.contacts
+        if (lv_obj_get_state(objects.check_contacts_crew) & LV_STATE_CHECKED)
         {
             ContactData* contact = config.contacts.findContact(contactLastClicked);
-            if (contact) //they're in the config.contacts list
+            if (contact) // if they're in the config.contacts list
             {
                 contact->blocked = true;
             }
-            else //add them to config.contacts
+            else
             {
-                printf("Contact list size: %d\n", (int)config.contacts.size());
-                contact = scanResults.findContact(contactLastClicked);
-                if (contact)
-                {
-                    config.contacts.addOrUpdateContact(*contact);
-                    printf("New contact list size: %d\n", (int)config.contacts.size());
-                }
-                else
-                {
-                    printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
-                }
-                populate_crew_list(NULL);
+                printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
             }
-            //convert the scan info to a ContactData object
-            //set 'blocked' to TRUE
-            //call addOrUpdateContact
         }
-        //else (blocked is now FALSE), if crew is FALSE
-        //remove the contact from ContactManager
-        break;
-    case 1: //crew
-
-        break;
-    default:
-        break;
+        else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
+        {
+            config.contacts.removeContact(contactLastClicked);
+        }
     }
+
+    populate_crew_list(NULL); // then update the crew list
+    populate_scan_list(NULL); // and update the scan list
 }
 
 static void checkContactsCrewClick(lv_event_t* e)
