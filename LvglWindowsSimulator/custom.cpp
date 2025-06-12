@@ -560,7 +560,6 @@ static void tabContactsClicked(lv_event_t* e)
 // Fires when the user clicks 'block' on the contacts page
 static void checkContactsBlockClick(lv_event_t* e)
 {
-    printf("Block\n");
     //if blocked is now TRUE:
     if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
     {
@@ -571,18 +570,16 @@ static void checkContactsBlockClick(lv_event_t* e)
         }
         else // if not, add them to config.contacts, remove from scanResults
         {
-            printf("Contact list size: %d\n", (int)config.contacts.size());
             contact = scanResults.findContact(contactLastClicked); // pull the info from scanResults
             if (contact)
             {
                 contact->blocked = true; // set blocked = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
-                printf("New contact list size: %d\n", (int)config.contacts.size());
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
             }
             else // should never happen, but just in case...
             {
-                printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
+                //printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
             }
         }
     }
@@ -599,7 +596,7 @@ static void checkContactsBlockClick(lv_event_t* e)
             }
             else
             {
-                printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
+                //printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
             }
         }
         else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
@@ -614,7 +611,53 @@ static void checkContactsBlockClick(lv_event_t* e)
 
 static void checkContactsCrewClick(lv_event_t* e)
 {
+    //if crew is now TRUE:
+    if (lv_obj_get_state(objects.check_contacts_crew) & LV_STATE_CHECKED)
+    {
+        ContactData* contact = config.contacts.findContact(contactLastClicked);
+        if (contact) // if they're in the config.contacts list
+        {
+            contact->isFriend = true;
+        }
+        else // if not, add them to config.contacts, remove from scanResults
+        {
+            contact = scanResults.findContact(contactLastClicked); // pull the info from scanResults
+            if (contact)
+            {
+                contact->isFriend = true; // set crew = TRUE before storing
+                config.contacts.addOrUpdateContact(*contact);
+                scanResults.removeContact(contactLastClicked); // and remove them from scanResults
+            }
+            else // should never happen, but just in case...
+            {
+                //printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
+            }
+        }
+    }
+    // if crew is now FALSE:
+    else
+    {
+        // crew = FALSE, blocked = TRUE -> keep in config.contacts
+        if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
+        {
+            ContactData* contact = config.contacts.findContact(contactLastClicked);
+            if (contact) // if they're in the config.contacts list
+            {
+                contact->isFriend = false;
+            }
+            else
+            {
+                //printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
+            }
+        }
+        else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
+        {
+            config.contacts.removeContact(contactLastClicked);
+        }
+    }
 
+    populate_crew_list(NULL); // then update the crew list
+    populate_scan_list(NULL); // and update the scan list
 }
 
 // Generic screen loader; requires that the screen to load is passed in as user_data
