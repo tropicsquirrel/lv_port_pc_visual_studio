@@ -4,6 +4,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include ".\eez\screens.h"
+#include ".\eez\fonts.h"
 #include ".\eez\vars.h"
 #include ".\eez\images.h"
 #include "pngs.h"
@@ -12,6 +13,7 @@
 #include "global.hpp"
 #else
 #include "screens.h"
+#include "fonts.h"
 #include "vars.h"
 #include "images.h"
 #include "../pngs.h"
@@ -45,6 +47,8 @@ extern "C" {
 #define LV_BUTTONMATRIX_CTRL_WIDTH_13 (lv_buttonmatrix_ctrl_t)0x000D
 #define LV_BUTTONMATRIX_CTRL_WIDTH_14 (lv_buttonmatrix_ctrl_t)0x000E
 #define LV_BUTTONMATRIX_CTRL_WIDTH_15 (lv_buttonmatrix_ctrl_t)0x000F
+
+    void game1_image_test(lv_event_t* e);
 
     // repeating task callback start/stop
     void repeat_on(uint32_t ms, void (*cb)());

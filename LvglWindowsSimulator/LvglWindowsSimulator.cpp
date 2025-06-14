@@ -234,6 +234,8 @@ int main()
 
         // Then always purge old packets:
         cleanupStaleIDPackets();
+
+        game1_image_test(NULL);
     }
 
     return 0;

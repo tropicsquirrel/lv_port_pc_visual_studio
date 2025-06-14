@@ -14,7 +14,8 @@ static lv_timer_t* _rtr = nullptr;
 
 // globals
 static void (*_rcb)() = nullptr; //repeating callback function pointer
-
+uint64_t tickDelta = 0;
+uint64_t tickThreshold = 500;
 
 /*
 Layer Description
@@ -609,6 +610,7 @@ static void checkContactsBlockClick(lv_event_t* e)
     populate_scan_list(NULL); // and update the scan list
 }
 
+// fires when a contact's 'Crew' block is un/checked
 static void checkContactsCrewClick(lv_event_t* e)
 {
     //if crew is now TRUE:
@@ -658,6 +660,89 @@ static void checkContactsCrewClick(lv_event_t* e)
 
     populate_crew_list(NULL); // then update the crew list
     populate_scan_list(NULL); // and update the scan list
+}
+
+// used to evaluate if host or join screens should have 'ready' or 'engage' enabled
+static void setMissionReadyState(lv_event_t* e)
+{
+    // for the host screen
+    if (lv_scr_act() == lv_obj_get_screen(objects.host))
+    {
+
+    }
+
+    // for the join screen
+    if (lv_scr_act() == lv_obj_get_screen(objects.join))
+    {
+        char strRoller[64]; 
+        lv_roller_get_selected_str(objects.roller_join_games, strRoller, sizeof(strRoller));
+
+        uint32_t sel = lv_dropdown_get_selected(objects.ddl_join_games);
+        sel += strcmp(strRoller, "No Crews Found");
+
+        // if the selected dropdown index is NOT 0 AND the game roller
+        if (lv_dropdown_get_selected(objects.ddl_join_games) > 0 &&
+            strcmp(strRoller, "No Crews Found"))
+        {
+            lv_obj_remove_state(objects.btn_join_ready, LV_STATE_DISABLED);
+            lv_obj_remove_state(objects.cnt_join_ready, LV_STATE_DISABLED);
+        }
+        else
+        {
+            lv_obj_add_state(objects.btn_join_ready, LV_STATE_DISABLED);
+            lv_obj_add_state(objects.cnt_join_ready, LV_STATE_DISABLED);
+        }
+    }
+}
+
+// fires when a player entry on the Host screen is clicked
+void hostPlayerListClick(lv_event_t* e)
+{
+    lv_obj_t* clickedButton = lv_event_get_current_target_obj(e);
+
+    // clear the 'checked' state from all entries
+    for (int i = 0; i < lv_obj_get_child_count(objects.list_host_players); i++)
+    {
+        lv_obj_remove_state(lv_obj_get_child(objects.list_host_players, i), LV_STATE_CHECKED);
+    }
+
+    // re-check the one that got clicked
+    lv_obj_add_state(clickedButton, LV_STATE_CHECKED);
+}
+
+// Game 1 image tests
+void game1_image_test(lv_event_t* e)
+{
+    tickDelta++;
+
+    if (tickDelta < tickThreshold) return; // wait for the next tick
+
+    lv_obj_t* test1 = objects.img_game1_test1;
+    lv_obj_t* test2 = objects.img_game1_test2;
+
+    uint32_t x = rand() % 240;
+    uint32_t y = rand() % 320;
+
+    lv_obj_move_to(test1, x, y);
+
+    x = rand() % 240;
+    y = rand() % 320;
+
+    lv_obj_move_to(test2, x, y);
+
+    tickDelta = 0; // reset the tick delta
+}
+
+void game1Slower(lv_event_t* e)
+{
+    tickThreshold += 10;
+    printf("tickThreshold: %u\n", tickThreshold);
+}
+
+void game1Faster(lv_event_t* e)
+{
+    tickThreshold -= 10;
+    printf("tickThreshold: %u\n", tickThreshold);
 }
 
 // Generic screen loader; requires that the screen to load is passed in as user_data
@@ -779,6 +864,16 @@ void setup_cb()
     //cb_register(objects.btn_profile_info, objects.info);
     //cb_register(objects.btn_profile_settings, objects.settings);
     cb_register(objects.btn_profile_main, objects.main);
+    cb_register(objects.btn_host_contacts, objects.contacts);
+    cb_register(objects.btn_host_info, objects.info);
+    cb_register(objects.btn_host_settings, objects.settings);
+    cb_register(objects.btn_host_profile, objects.profile);
+    cb_register(objects.btn_host_main, objects.main);
+    cb_register(objects.btn_join_contacts, objects.contacts);
+    cb_register(objects.btn_join_info, objects.info);
+    cb_register(objects.btn_join_settings, objects.settings);
+    cb_register(objects.btn_join_profile, objects.profile);
+    cb_register(objects.btn_join_main, objects.main);
 
     // special UI buttons for loading screens    
     lv_obj_add_event_cb(objects.cnt_badge_tappad, end_badge_mode, LV_EVENT_CLICKED, NULL);
@@ -792,6 +887,31 @@ void setup_cb()
     lv_obj_add_event_cb(objects.slider_avatar_green, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_blue, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.slider_avatar_intensity, set_tint, LV_EVENT_VALUE_CHANGED, NULL);
+
+    // mission screen callbacks
+    cb_register(objects.btn_mission_host, objects.host);
+    cb_register(objects.btn_mission_join, objects.join);
+
+    // host screen callbacks
+    lv_dropdown_set_symbol(objects.ddl_host_games, NULL);
+    lv_obj_add_event_cb(objects.ddl_host_games, setMissionReadyState, LV_EVENT_VALUE_CHANGED, (void*)1); // 1 = host
+    //lv_obj_add_event_cb(objects.btn_host_kick, kickHostedPlayer, LV_EVENT_CLICKED, NULL);
+    // populate 4 test players
+    for (int i = 0; i < 4; i++)
+    {
+        char player[16];
+        snprintf(player, sizeof(player), "Player %u", i);
+        lv_obj_t* button = lv_list_add_button(objects.list_host_players, avatarIDToFilename(1), player);
+        lv_obj_set_style_text_font(button, &ui_font_lcars_16, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_add_flag(button, LV_OBJ_FLAG_CHECKABLE);
+        lv_obj_set_style_bg_color(button, lv_color_make(158, 164, 186), LV_PART_MAIN | LV_STATE_CHECKED);
+        lv_obj_add_event_cb(button, hostPlayerListClick, LV_EVENT_CLICKED, NULL);
+    }
+
+    // join screen callbacks
+    lv_dropdown_set_symbol(objects.ddl_join_games, NULL);
+    lv_obj_add_event_cb(objects.ddl_join_games, setMissionReadyState, LV_EVENT_VALUE_CHANGED, (void*)2); // 2 = join
+    lv_obj_add_event_cb(objects.roller_join_games, setMissionReadyState, LV_EVENT_VALUE_CHANGED, NULL);
 
     // profile screen callbacks
     lv_obj_add_event_cb(objects.btn_profile_undo, profile_undo, LV_EVENT_CLICKED, NULL);
@@ -828,7 +948,12 @@ void setup_cb()
 
     // game1
     cb_register(objects.btn_mission_game1, objects.game1);
+    lv_obj_add_event_cb(objects.cnt_game1_left, game1Slower, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(objects.cnt_game1_right, game1Faster, LV_EVENT_CLICKED, NULL);
+    lv_img_set_src(objects.img_game1_test1, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test2, "L:/images/16x16.png");
 
+    // other stuff
     roller_changed(NULL); // Initialize the roller
     applyConfig(config); // Apply the config to the UI and the board
 
