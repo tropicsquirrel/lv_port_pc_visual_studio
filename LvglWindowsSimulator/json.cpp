@@ -64,8 +64,8 @@ void ContactManager::addOrUpdateContact(const ContactData& contact)
     size_t index = findIndex(contact.nodeId);
     if (index < contacts.size())
     {
-        bool isFriend = contacts[index].isFriend;
-        bool blocked = contacts[index].blocked;
+        bool isFriend = contacts[index].isFriend || contact.isFriend;
+        bool blocked = contacts[index].blocked || contact.blocked;
         contacts[index] = contact;
         contacts[index].lastUpdateTime = millis();
         contacts[index].isFriend = isFriend;

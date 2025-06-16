@@ -15,7 +15,7 @@ static lv_timer_t* _rtr = nullptr;
 // globals
 static void (*_rcb)() = nullptr; //repeating callback function pointer
 uint64_t tickDelta = 0;
-uint64_t tickThreshold = 500;
+uint64_t tickThreshold = 100;
 
 /*
 Layer Description
@@ -430,6 +430,10 @@ void contactListButtonClick(lv_event_t* e)
         if (nullptr == contact) return; // no contact found in either list; fail silently
     }
 
+    // enable the checkboxes
+    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_DISABLED);
+    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_DISABLED);
+
     //set display name in the label
     lv_label_set_text(objects.lbl_contacts_name, (const char*)contact->displayName);
 
@@ -561,13 +565,20 @@ static void tabContactsClicked(lv_event_t* e)
 // Fires when the user clicks 'block' on the contacts page
 static void checkContactsBlockClick(lv_event_t* e)
 {
+    if (0 == contactLastClicked) return; // no contact selected, exit
+
+    char display[64];
+    ContactData* contact;
+
     //if blocked is now TRUE:
     if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
     {
-        ContactData* contact = config.contacts.findContact(contactLastClicked);
+        contact = config.contacts.findContact(contactLastClicked);
         if (contact) // if they're in the config.contacts list
         {
             contact->blocked = true;
+            snprintf(display, sizeof(display), "Crewmate '%s' blocked.", contact->displayName);
+            lv_label_set_text(objects.lbl_contacts_name, display);
         }
         else // if not, add them to config.contacts, remove from scanResults
         {
@@ -577,10 +588,12 @@ static void checkContactsBlockClick(lv_event_t* e)
                 contact->blocked = true; // set blocked = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
+                snprintf(display, sizeof(display), "'%s' blocked.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
             }
-            else // should never happen, but just in case...
+            else // contact no longer exists for some reason
             {
-                //printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
     }
@@ -590,21 +603,44 @@ static void checkContactsBlockClick(lv_event_t* e)
         // crew = TRUE, blocked = FALSE -> keep in config.contacts
         if (lv_obj_get_state(objects.check_contacts_crew) & LV_STATE_CHECKED)
         {
-            ContactData* contact = config.contacts.findContact(contactLastClicked);
+            contact = config.contacts.findContact(contactLastClicked);
             if (contact) // if they're in the config.contacts list
             {
-                contact->blocked = true;
+                contact->blocked = false;
+                snprintf(display, sizeof(display), "Crew '%s' allowed.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
             }
-            else
+            else // contact no longer exists for some reason
             {
-                //printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
         else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
         {
-            config.contacts.removeContact(contactLastClicked);
+            contact = config.contacts.findContact(contactLastClicked); // pull the info from scanResults
+            if (contact)
+            {
+                snprintf(display, sizeof(display), "Contact '%s' allowed.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
+                config.contacts.removeContact(contactLastClicked);
+            }
+            else
+            {
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
+            }
         }
     }
+
+    // clear out the details (prevents double-clicking from causing issues)
+    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
+    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+    lv_label_set_text(objects.lbl_contacts_xp, "0");
+    contactLastClicked = 0;
+
+    // disable the checkboxes
+    lv_obj_add_state(objects.check_contacts_block, LV_STATE_DISABLED);
+    lv_obj_add_state(objects.check_contacts_crew, LV_STATE_DISABLED);
+
 
     populate_crew_list(NULL); // then update the crew list
     populate_scan_list(NULL); // and update the scan list
@@ -613,13 +649,20 @@ static void checkContactsBlockClick(lv_event_t* e)
 // fires when a contact's 'Crew' block is un/checked
 static void checkContactsCrewClick(lv_event_t* e)
 {
+    if (0 == contactLastClicked) return; // no contact selected, exit
+
+    char display[64];
+    ContactData* contact;
+
     //if crew is now TRUE:
     if (lv_obj_get_state(objects.check_contacts_crew) & LV_STATE_CHECKED)
     {
-        ContactData* contact = config.contacts.findContact(contactLastClicked);
+        contact = config.contacts.findContact(contactLastClicked);
         if (contact) // if they're in the config.contacts list
         {
             contact->isFriend = true;
+            snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
+            lv_label_set_text(objects.lbl_contacts_name, display);
         }
         else // if not, add them to config.contacts, remove from scanResults
         {
@@ -628,11 +671,13 @@ static void checkContactsCrewClick(lv_event_t* e)
             {
                 contact->isFriend = true; // set crew = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
+                snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
             }
             else // should never happen, but just in case...
             {
-                //printf("CONTACT NOT FOUND - NOT ADDED TO CONFIG.CONTACTS (checkContactsBlockClick)\n");
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
     }
@@ -642,21 +687,43 @@ static void checkContactsCrewClick(lv_event_t* e)
         // crew = FALSE, blocked = TRUE -> keep in config.contacts
         if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
         {
-            ContactData* contact = config.contacts.findContact(contactLastClicked);
+            contact = config.contacts.findContact(contactLastClicked);
             if (contact) // if they're in the config.contacts list
             {
                 contact->isFriend = false;
+                snprintf(display, sizeof(display), "'%s' removed from crew.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
             }
             else
             {
-                //printf("CONTACT NOT FOUND - BLOCKED NOT UPDATED (checkContactsBlockClick)\n");
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
         else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
         {
-            config.contacts.removeContact(contactLastClicked);
+            contact = config.contacts.findContact(contactLastClicked);
+            if (contact)
+            {
+                snprintf(display, sizeof(display), "'%s' removed from crew.", contact->displayName);
+                lv_label_set_text(objects.lbl_contacts_name, display);
+                config.contacts.removeContact(contactLastClicked);
+            }
+            else
+            {
+                lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
+            }
         }
     }
+
+    // clear out the details (prevents double-clicking from causing issues)
+    lv_obj_remove_state(objects.check_contacts_block, LV_STATE_CHECKED);
+    lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_CHECKED);
+    lv_label_set_text(objects.lbl_contacts_xp, "0");
+    contactLastClicked = 0;
+
+    // disable the checkboxes
+    lv_obj_add_state(objects.check_contacts_block, LV_STATE_DISABLED);
+    lv_obj_add_state(objects.check_contacts_crew, LV_STATE_DISABLED);
 
     populate_crew_list(NULL); // then update the crew list
     populate_scan_list(NULL); // and update the scan list
@@ -717,18 +784,33 @@ void game1_image_test(lv_event_t* e)
 
     if (tickDelta < tickThreshold) return; // wait for the next tick
 
-    lv_obj_t* test1 = objects.img_game1_test1;
-    lv_obj_t* test2 = objects.img_game1_test2;
+    lv_obj_t* images[15];
 
-    uint32_t x = rand() % 240;
-    uint32_t y = rand() % 320;
+    images[0] = objects.img_game1_test1;
+    images[1] = objects.img_game1_test2;
+    images[2] = objects.img_game1_test3;
+    images[3] = objects.img_game1_test4;
+    images[4] = objects.img_game1_test5;
+    images[5] = objects.img_game1_test6;
+    images[6] = objects.img_game1_test7;
+    images[7] = objects.img_game1_test8;
+    images[8] = objects.img_game1_test9;
+    images[9] = objects.img_game1_test10;
+    images[10] = objects.img_game1_test11;
+    images[11] = objects.img_game1_test12;
+    images[12] = objects.img_game1_test13;
+    images[13] = objects.img_game1_test14;
+    images[14] = objects.img_game1_test15;
+    
+    uint32_t x;
+    uint32_t y;
 
-    lv_obj_move_to(test1, x, y);
-
-    x = rand() % 240;
-    y = rand() % 320;
-
-    lv_obj_move_to(test2, x, y);
+    for(int i=0; i < 15; i++)
+    {
+        x = (lv_obj_get_x(images[i]) + rand() % 5) % 240;
+        y = (lv_obj_get_y(images[i]) + rand() % 5) % 320;
+        lv_obj_move_to(images[i], x, y);
+    }
 
     tickDelta = 0; // reset the tick delta
 }
@@ -927,11 +1009,10 @@ void setup_cb()
     lv_obj_add_event_cb(objects.sld_settings_volume, set_volume, LV_EVENT_VALUE_CHANGED, NULL);
 
     // contacts screen callbacks
-
     lv_obj_add_event_cb(objects.check_contacts_block, checkContactsBlockClick, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(objects.check_contacts_crew, checkContactsCrewClick, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_clear_state(objects.check_contacts_block, LV_STATE_DISABLED);
-    lv_obj_clear_state(objects.check_contacts_crew, LV_STATE_DISABLED);
+    lv_obj_add_state(objects.check_contacts_block, LV_STATE_DISABLED);
+    lv_obj_add_state(objects.check_contacts_crew, LV_STATE_DISABLED);
 
     // contact tab button callback & styling
     lv_obj_t* tabview_contacts_buttons = lv_tabview_get_tab_bar(objects.tabview_contacts);
@@ -952,6 +1033,19 @@ void setup_cb()
     lv_obj_add_event_cb(objects.cnt_game1_right, game1Faster, LV_EVENT_CLICKED, NULL);
     lv_img_set_src(objects.img_game1_test1, "L:/images/16x16.png");
     lv_img_set_src(objects.img_game1_test2, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test3, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test4, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test5, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test6, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test7, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test8, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test9, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test10, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test11, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test12, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test13, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test14, "L:/images/16x16.png");
+    lv_img_set_src(objects.img_game1_test15, "L:/images/16x16.png");
 
     // other stuff
     roller_changed(NULL); // Initialize the roller

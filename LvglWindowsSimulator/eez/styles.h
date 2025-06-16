@@ -141,6 +141,8 @@ void remove_style_text_label_white(lv_obj_t *obj);
 
 // Style: check-default
 lv_style_t *get_style_check_default_MAIN_DEFAULT();
+lv_style_t *get_style_check_default_MAIN_DISABLED();
+lv_style_t *get_style_check_default_INDICATOR_DISABLED();
 void add_style_check_default(lv_obj_t *obj);
 void remove_style_check_default(lv_obj_t *obj);
 

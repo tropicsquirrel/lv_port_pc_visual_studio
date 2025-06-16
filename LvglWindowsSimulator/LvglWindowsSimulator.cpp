@@ -101,7 +101,7 @@ static void cleanupStaleIDPackets() {
 // Generate a random IDPacket for testing purposes
 static IDPacket generateRandomIDPacket() {
     IDPacket p;
-    p.boardID = rand() % 32;  // max of 32 possible boards
+    p.boardID = max(1, rand() % 32);  // max of 32 possible boards, never return 0
     p.avatarID = rand() % 8;  // avatar 1-8
     snprintf(p.displayName, sizeof(p.displayName),
         "P%02d", p.avatarID);
