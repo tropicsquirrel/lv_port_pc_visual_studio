@@ -58,6 +58,8 @@ extern "C" {
     void game1_image_test(lv_event_t* e);
 
     char* avatarIDToFilename(int32_t avatarID);
+    bool applyConfig(Config& config);
+    bool saveAndApplyBoardConfig(Config& config);
 
     // repeating task callback start/stop
     void repeat_on(uint32_t ms, void (*cb)());

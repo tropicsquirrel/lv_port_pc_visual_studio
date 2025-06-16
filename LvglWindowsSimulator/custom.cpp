@@ -28,8 +28,10 @@ extern lv_display_t* disp;                  // global reference to the LVGL disp
 
 // Repeating callback task 
 #ifdef _WIN32
-static void _thread_loop(uint32_t ms) {
-    while (_rrun) {
+static void _thread_loop(uint32_t ms)
+{
+    while (_rrun)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
         if (_rrun && _rcb) _rcb();
     }
@@ -37,7 +39,8 @@ static void _thread_loop(uint32_t ms) {
 #endif
 
 // repeat the given callback function every ms milliseconds
-void repeat_on(uint32_t ms, void (*cb)()) {
+void repeat_on(uint32_t ms, void (*cb)())
+{
     repeat_off();
     _rcb = cb;
 #ifdef _WIN32
@@ -53,12 +56,14 @@ void repeat_on(uint32_t ms, void (*cb)()) {
 }
 
 // stop the repeating callback
-void repeat_off() {
+void repeat_off()
+{
 #ifdef _WIN32
     _rrun = false;
     if (_rthr.joinable()) _rthr.join();
 #else
-    if (_rtr) {
+    if (_rtr)
+    {
         lv_timer_del(_rtr);
         _rtr = nullptr;
     }
@@ -75,6 +80,122 @@ char* avatarIDToFilename(int32_t avatarID)
     // DEBUG VERSION - CHANGE FOR PRODUCTION
     snprintf(filename, sizeof(filename), "L:/images/16x16.png");
     return filename;
+}
+
+// return the name/board ID of a contact, depending on the user's settings
+//  Display Names   -> Everyone     = always show username
+//                  -> None         = always show board ID
+//                  -> Not Blocked  = show DisplayName unless isBlocked
+//                  -> Crew         = only show DisplayName if isCrew
+char* getName(ContactData* contact)
+{
+    char retVal[64];
+
+    switch (config.board.displayNameOptions.showNamesFrom)
+    {
+    case Everyone:
+        return contact->displayName;
+        break;
+
+    case None:
+        snprintf(retVal, sizeof(retVal), "%u", contact->nodeId);
+        return retVal;
+        break;
+
+    case NotBlocked:
+        if (contact->isBlocked)
+        {
+            snprintf(retVal, sizeof(retVal), "%u", contact->nodeId);
+            return retVal;
+        }
+        else
+            return contact->displayName;
+        break;
+
+    case Crew:
+        return contact->displayName;
+        break;
+
+    default:
+        snprintf(retVal, sizeof(retVal), "%u", contact->nodeId);
+        return retVal;
+        break;
+    }
+}
+
+// change UI settings and apply them to the board
+bool applyConfig(Config& config)
+{
+    //username
+    lv_textarea_set_text(objects.txt_profile_username, config.user.displayName);
+
+    //volume
+    lv_slider_set_value(objects.sld_settings_volume, config.board.volume, LV_ANIM_OFF);
+#ifndef _WIN32
+    //Volume_adjustment(config.board.volume);
+#endif // !_WIN32
+
+    //airplane mode
+    lv_obj_set_state(objects.check_settings_airplanemode, LV_STATE_CHECKED, config.board.airplaneMode);
+    //actually change wifi
+
+    //badge mode
+    lv_obj_set_state(objects.check_settings_badgemode, LV_STATE_CHECKED, config.board.badgeMode.enabled);
+    lv_label_set_text(objects.lbl_settings_badgedelay, std::to_string(config.board.badgeMode.delay).c_str());
+
+    String displayUsernames;
+    switch (config.board.displayNameOptions.showNamesFrom)
+    {
+    case Everyone:
+        displayUsernames = "Everyone";
+        break;
+    case NotBlocked:
+        displayUsernames = "Not Blocked";
+        break;
+    case Crew:
+        displayUsernames = "Crew";
+        break;
+    case None:
+        displayUsernames = "None";
+        break;
+    default:
+        break;
+    }
+    lv_label_set_text(objects.lbl_settings_usernames, displayUsernames.c_str());
+
+    String gameHosts;
+    switch (config.board.displayNameOptions.gameHosts)
+    {
+    case Everyone:
+        gameHosts = "Everyone";
+        break;
+    case NotBlocked:
+        gameHosts = "Not Blocked";
+        break;
+    case Crew:
+        gameHosts = "Crew";
+        break;
+    case None:
+        gameHosts = "None";
+        break;
+    default:
+        break;
+    }
+    lv_label_set_text(objects.lbl_settings_gamehosts, gameHosts.c_str());
+
+    return true;
+}
+
+bool saveAndApplyBoardConfig(Config& config)
+{
+    // Save the configuration to the file
+    if (!saveBoardConfig(config))
+    {
+        printf("Failed to save board config\n");
+        return false;
+    }
+    // Apply the configuration to the board
+    return applyConfig(config);
 }
 
 // load the badge screen and rotate the display
@@ -120,11 +241,11 @@ void game1_image_test(lv_event_t* e)
     images[12] = objects.img_game1_test13;
     images[13] = objects.img_game1_test14;
     images[14] = objects.img_game1_test15;
-    
+
     uint32_t x;
     uint32_t y;
 
-    for(int i=0; i < 15; i++)
+    for (int i = 0; i < 15; i++)
     {
         x = (lv_obj_get_x(images[i]) + rand() % 5) % 240;
         y = (lv_obj_get_y(images[i]) + rand() % 5) % 320;
@@ -147,10 +268,12 @@ void game1Faster(lv_event_t* e)
 }
 
 // Generic screen loader; requires that the screen to load is passed in as user_data
-void load_screen(lv_event_t* e) {
+void load_screen(lv_event_t* e)
+{
     // Get the screen object from user_data
     lv_obj_t* target_screen = static_cast<lv_obj_t*>(lv_event_get_user_data(e));
-    if (target_screen) {
+    if (target_screen)
+    {
         lv_screen_load_anim(target_screen, LV_SCR_LOAD_ANIM_NONE, 200, 0, false);
     }
 }
@@ -162,8 +285,10 @@ static void cb_register(lv_obj_t* button, lv_obj_t* screen)
 }
 
 // convert an lv_event code to a char*
-const char* get_lv_event_name(lv_event_code_t event) {
-    switch (event) {
+const char* get_lv_event_name(lv_event_code_t event)
+{
+    switch (event)
+    {
     case LV_EVENT_ALL: return "LV_EVENT_ALL";
     case LV_EVENT_PRESSED: return "LV_EVENT_PRESSED";
     case LV_EVENT_PRESSING: return "LV_EVENT_PRESSING";
@@ -214,7 +339,8 @@ static void debug_events(lv_event_t* e)
             if (indev)
             {
                 lv_indev_type_t type = lv_indev_get_type(indev); // Get the type of the indev object
-                if (type == LV_INDEV_TYPE_POINTER) {
+                if (type == LV_INDEV_TYPE_POINTER)
+                {
                     lv_point_t point;
                     lv_indev_get_point(indev, &point); // Get the point associated with the event
                     printf("Pointer event at (%d, %d)\n", point.x, point.y);

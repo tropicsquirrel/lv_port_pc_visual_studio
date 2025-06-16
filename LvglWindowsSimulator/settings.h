@@ -2,8 +2,6 @@
 
 #include "custom.h"
 
-bool applyConfig(Config& config);
-bool saveAndApplyBoardConfig(Config& config);
 void set_airplane_mode(lv_event_t* e);
 void set_badge_mode(lv_event_t* e);
 void increase_delay(lv_event_t* e);
