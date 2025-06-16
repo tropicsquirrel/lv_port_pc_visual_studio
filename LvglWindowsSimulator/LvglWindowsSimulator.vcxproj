@@ -657,6 +657,8 @@
     <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantTag.hpp" />
     <ClInclude Include="ArduinoJson\src\ArduinoJson\Variant\VariantTo.hpp" />
     <ClInclude Include="ArduinoJson\src\ArduinoJson\version.hpp" />
+    <ClInclude Include="avatar.h" />
+    <ClInclude Include="contacts.h" />
     <ClInclude Include="custom.h" />
     <ClInclude Include="eez\actions.h" />
     <ClInclude Include="eez\fonts.h" />
@@ -667,11 +669,15 @@
     <ClInclude Include="eez\ui.h" />
     <ClInclude Include="eez\vars.h" />
     <ClInclude Include="global.hpp" />
+    <ClInclude Include="info.h" />
     <ClInclude Include="json.h" />
     <ClInclude Include="lv_conf.h" />
     <ClInclude Include="lv_custom_alloc.h" />
+    <ClInclude Include="mission.h" />
     <ClInclude Include="mp3s.h" />
     <ClInclude Include="pngs.h" />
+    <ClInclude Include="profile.h" />
+    <ClInclude Include="settings.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3421,6 +3427,8 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="avatar.cpp" />
+    <ClCompile Include="contacts.cpp" />
     <ClCompile Include="custom.cpp" />
     <ClCompile Include="eez\images.c" />
     <ClCompile Include="eez\screens.c" />
@@ -3433,6 +3441,7 @@
     <ClCompile Include="eez\ui_image_ui_element___icons.c" />
     <ClCompile Include="eez\ui_image_ui_element___main_divider.c" />
     <ClCompile Include="eez\ui_image_ui_element___subdivider.c" />
+    <ClCompile Include="info.cpp" />
     <ClCompile Include="json.cpp" />
     <ClCompile Include="lv_custom_alloc.cpp" />
     <ClCompile Include="libpng-1.6.44\png.c" />
@@ -3451,9 +3460,11 @@
     <ClCompile Include="libpng-1.6.44\pngwtran.c" />
     <ClCompile Include="libpng-1.6.44\pngwutil.c" />
     <ClCompile Include="LvglWindowsSimulator.cpp" />
+    <ClCompile Include="mission.cpp" />
     <ClCompile Include="mp3s.cpp" />
     <ClCompile Include="pngs.cpp" />
     <ClCompile Include="profile.cpp" />
+    <ClCompile Include="settings.cpp" />
     <ClCompile Include="zlib-1.3.1\adler32.c" />
     <ClCompile Include="zlib-1.3.1\compress.c" />
     <ClCompile Include="zlib-1.3.1\crc32.c" />

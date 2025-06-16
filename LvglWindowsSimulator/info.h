@@ -1,1 +1,4 @@
-ECHO is on.
+﻿#pragma once
+
+#include "custom.h"
+

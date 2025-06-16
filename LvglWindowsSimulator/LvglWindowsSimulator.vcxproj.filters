@@ -1891,6 +1891,24 @@
       <Filter>ArduinoJson</Filter>
     </ClInclude>
     <ClInclude Include="global.hpp" />
+    <ClInclude Include="profile.h">
+      <Filter>custom</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>custom</Filter>
+    </ClInclude>
+    <ClInclude Include="avatar.h">
+      <Filter>custom</Filter>
+    </ClInclude>
+    <ClInclude Include="contacts.h">
+      <Filter>custom</Filter>
+    </ClInclude>
+    <ClInclude Include="info.h">
+      <Filter>custom</Filter>
+    </ClInclude>
+    <ClInclude Include="mission.h">
+      <Filter>custom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -4092,6 +4110,21 @@
     </ClCompile>
     <ClCompile Include="json.cpp" />
     <ClCompile Include="profile.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
+    <ClCompile Include="avatar.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
+    <ClCompile Include="contacts.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
+    <ClCompile Include="info.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
+    <ClCompile Include="mission.cpp">
       <Filter>custom</Filter>
     </ClCompile>
   </ItemGroup>

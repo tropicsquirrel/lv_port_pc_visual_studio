@@ -24,6 +24,13 @@
 #include "../global.hpp"
 #endif
 
+#include "avatar.h"
+#include "profile.h"
+#include "mission.h"
+#include "contacts.h"
+#include "settings.h"
+#include "info.h"
+
 #pragma once
 
 #ifdef __cplusplus
@@ -49,6 +56,8 @@ extern "C" {
 #define LV_BUTTONMATRIX_CTRL_WIDTH_15 (lv_buttonmatrix_ctrl_t)0x000F
 
     void game1_image_test(lv_event_t* e);
+
+    char* avatarIDToFilename(int32_t avatarID);
 
     // repeating task callback start/stop
     void repeat_on(uint32_t ms, void (*cb)());
