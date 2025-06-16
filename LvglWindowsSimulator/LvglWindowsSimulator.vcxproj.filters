@@ -4091,6 +4091,9 @@
       <Filter>eez</Filter>
     </ClCompile>
     <ClCompile Include="json.cpp" />
+    <ClCompile Include="profile.cpp">
+      <Filter>custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">

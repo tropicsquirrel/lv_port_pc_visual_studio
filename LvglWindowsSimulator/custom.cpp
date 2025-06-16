@@ -211,8 +211,8 @@ bool applyConfig(Config& config)
     case NotBlocked:
         displayUsernames = "Not Blocked";
         break;
-    case Friends:
-        displayUsernames = "Friends";
+    case Crew:
+        displayUsernames = "Crew";
         break;
     case None:
         displayUsernames = "None";
@@ -231,8 +231,8 @@ bool applyConfig(Config& config)
     case NotBlocked:
         gameHosts = "Not Blocked";
         break;
-    case Friends:
-        gameHosts = "Friends";
+    case Crew:
+        gameHosts = "Crew";
         break;
     case None:
         gameHosts = "None";
@@ -322,8 +322,8 @@ static void set_usernames(lv_event_t* e)
     if (strcmp(usernames, "Everyone") == 0)
         config.board.displayNameOptions.showNamesFrom = NotBlocked;
     else if (strcmp(usernames, "Not Blocked") == 0)
-        config.board.displayNameOptions.showNamesFrom = Friends;
-    else if (strcmp(usernames, "Friends") == 0)
+        config.board.displayNameOptions.showNamesFrom = Crew;
+    else if (strcmp(usernames, "Crew") == 0)
         config.board.displayNameOptions.showNamesFrom = None;
     else
     {
@@ -339,8 +339,8 @@ static void set_gamehosts(lv_event_t* e)
     if (strcmp(gameHosts, "Everyone") == 0)
         config.board.displayNameOptions.gameHosts = NotBlocked;
     else if (strcmp(gameHosts, "Not Blocked") == 0)
-        config.board.displayNameOptions.gameHosts = Friends;
-    else if (strcmp(gameHosts, "Friends") == 0)
+        config.board.displayNameOptions.gameHosts = Crew;
+    else if (strcmp(gameHosts, "Crew") == 0)
         config.board.displayNameOptions.gameHosts = None;
     else
     {
@@ -400,9 +400,9 @@ ContactData* idPacketToContactData(IDPacket* idPacket)
     if (nullptr == idPacket) return nullptr; // No packet found, exit
     ContactData* contact = new ContactData();
     contact->avatar = idPacket->avatarID;
-    contact->blocked = false;
+    contact->isBlocked = false;
     strlcpy(contact->displayName, idPacket->displayName, sizeof(contact->displayName));
-    contact->isFriend = false;
+    contact->isCrew = false;
     contact->nodeId = idPacket->boardID;
     contact->totalXP = idPacket->totalXP;
     contact->lastUpdateTime = idPacket->timeArrived;
@@ -445,13 +445,13 @@ void contactListButtonClick(lv_event_t* e)
     snprintf(str_xp, sizeof(str_xp), "%d", contact->totalXP);
     lv_label_set_text(objects.lbl_contacts_xp, str_xp);
 
-    if (contact->isFriend)
+    if (contact->isCrew)
     {
         //if the contact is a friend, set the crew checkbox
         lv_obj_add_state(objects.check_contacts_crew, LV_STATE_CHECKED);
     }
 
-    if (contact->blocked)
+    if (contact->isBlocked)
     {
         //if the contact is blocked, set the blocked checkbox
         lv_obj_add_state(objects.check_contacts_block, LV_STATE_CHECKED);
@@ -570,13 +570,13 @@ static void checkContactsBlockClick(lv_event_t* e)
     char display[64];
     ContactData* contact;
 
-    //if blocked is now TRUE:
+    //if isBlocked is now TRUE:
     if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
     {
         contact = config.contacts.findContact(contactLastClicked);
         if (contact) // if they're in the config.contacts list
         {
-            contact->blocked = true;
+            contact->isBlocked = true;
             snprintf(display, sizeof(display), "Crewmate '%s' blocked.", contact->displayName);
             lv_label_set_text(objects.lbl_contacts_name, display);
         }
@@ -585,7 +585,7 @@ static void checkContactsBlockClick(lv_event_t* e)
             contact = scanResults.findContact(contactLastClicked); // pull the info from scanResults
             if (contact)
             {
-                contact->blocked = true; // set blocked = TRUE before storing
+                contact->isBlocked = true; // set isBlocked = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
                 snprintf(display, sizeof(display), "'%s' blocked.", contact->displayName);
@@ -597,16 +597,16 @@ static void checkContactsBlockClick(lv_event_t* e)
             }
         }
     }
-    // if blocked is now FALSE:
+    // if isBlocked is now FALSE:
     else
     {
-        // crew = TRUE, blocked = FALSE -> keep in config.contacts
+        // crew = TRUE, isBlocked = FALSE -> keep in config.contacts
         if (lv_obj_get_state(objects.check_contacts_crew) & LV_STATE_CHECKED)
         {
             contact = config.contacts.findContact(contactLastClicked);
             if (contact) // if they're in the config.contacts list
             {
-                contact->blocked = false;
+                contact->isBlocked = false;
                 snprintf(display, sizeof(display), "Crew '%s' allowed.", contact->displayName);
                 lv_label_set_text(objects.lbl_contacts_name, display);
             }
@@ -615,7 +615,7 @@ static void checkContactsBlockClick(lv_event_t* e)
                 lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
-        else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
+        else // crew = FALSE, isBlocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
         {
             contact = config.contacts.findContact(contactLastClicked); // pull the info from scanResults
             if (contact)
@@ -660,7 +660,7 @@ static void checkContactsCrewClick(lv_event_t* e)
         contact = config.contacts.findContact(contactLastClicked);
         if (contact) // if they're in the config.contacts list
         {
-            contact->isFriend = true;
+            contact->isCrew = true;
             snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
             lv_label_set_text(objects.lbl_contacts_name, display);
         }
@@ -669,7 +669,7 @@ static void checkContactsCrewClick(lv_event_t* e)
             contact = scanResults.findContact(contactLastClicked); // pull the info from scanResults
             if (contact)
             {
-                contact->isFriend = true; // set crew = TRUE before storing
+                contact->isCrew = true; // set crew = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
                 snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
                 lv_label_set_text(objects.lbl_contacts_name, display);
@@ -684,13 +684,13 @@ static void checkContactsCrewClick(lv_event_t* e)
     // if crew is now FALSE:
     else
     {
-        // crew = FALSE, blocked = TRUE -> keep in config.contacts
+        // crew = FALSE, isBlocked = TRUE -> keep in config.contacts
         if (lv_obj_get_state(objects.check_contacts_block) & LV_STATE_CHECKED)
         {
             contact = config.contacts.findContact(contactLastClicked);
             if (contact) // if they're in the config.contacts list
             {
-                contact->isFriend = false;
+                contact->isCrew = false;
                 snprintf(display, sizeof(display), "'%s' removed from crew.", contact->displayName);
                 lv_label_set_text(objects.lbl_contacts_name, display);
             }
@@ -699,7 +699,7 @@ static void checkContactsCrewClick(lv_event_t* e)
                 lv_label_set_text(objects.lbl_contacts_name, "Contact lost.");
             }
         }
-        else // crew = FALSE, blocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
+        else // crew = FALSE, isBlocked = FALSE -> remove from config.contacts (scanning will pick them up again when in range)
         {
             contact = config.contacts.findContact(contactLastClicked);
             if (contact)
@@ -735,7 +735,17 @@ static void setMissionReadyState(lv_event_t* e)
     // for the host screen
     if (lv_scr_act() == lv_obj_get_screen(objects.host))
     {
-
+        // if the selected dropdown index is NOT 0 
+        if (lv_dropdown_get_selected(objects.ddl_host_games))
+        {
+            lv_obj_remove_state(objects.btn_host_start, LV_STATE_DISABLED);
+            lv_obj_remove_state(objects.cnt_host_start, LV_STATE_DISABLED);
+        }
+        else
+        {
+            lv_obj_add_state(objects.btn_host_start, LV_STATE_DISABLED);
+            lv_obj_add_state(objects.cnt_host_start, LV_STATE_DISABLED);
+        }
     }
 
     // for the join screen
@@ -766,6 +776,7 @@ static void setMissionReadyState(lv_event_t* e)
 void hostPlayerListClick(lv_event_t* e)
 {
     lv_obj_t* clickedButton = lv_event_get_current_target_obj(e);
+    bool buttonCheckState = lv_obj_has_state(clickedButton, LV_STATE_CHECKED);
 
     // clear the 'checked' state from all entries
     for (int i = 0; i < lv_obj_get_child_count(objects.list_host_players); i++)
@@ -774,7 +785,10 @@ void hostPlayerListClick(lv_event_t* e)
     }
 
     // re-check the one that got clicked
-    lv_obj_add_state(clickedButton, LV_STATE_CHECKED);
+    if(buttonCheckState)
+        lv_obj_add_state(clickedButton, LV_STATE_CHECKED);
+    else
+        lv_obj_remove_state(clickedButton, LV_STATE_CHECKED);
 }
 
 // Game 1 image tests
@@ -1066,7 +1080,7 @@ void processIDPacket(IDPacket packet)
     ContactData* contact = idPacketToContactData(&packet);
     ContactData* foundContact = config.contacts.findContact(contact->nodeId);
 
-    // if the Node ID is in the freinds or blocked list, add/update it in config.contacts
+    // if the Node ID is in the freinds or isBlocked list, add/update it in config.contacts
     if (foundContact)
     {
         config.contacts.addOrUpdateContact(*contact);

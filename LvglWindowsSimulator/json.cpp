@@ -57,19 +57,19 @@ const ContactData* ContactManager::findContact(uint32_t nodeId) const
 }
 
 // Take a read-only ContactData object and add a copy of it to a ContactManager.
-// Retain friend/blocked status on existing contacts.
+// Retain isCrew/isBlocked status on existing contacts.
 // Also update the lastUpdateTime field.
 void ContactManager::addOrUpdateContact(const ContactData& contact)
 {
     size_t index = findIndex(contact.nodeId);
     if (index < contacts.size())
     {
-        bool isFriend = contacts[index].isFriend || contact.isFriend;
-        bool blocked = contacts[index].blocked || contact.blocked;
+        bool isCrew = contacts[index].isCrew || contact.isCrew;
+        bool isBlocked = contacts[index].isBlocked || contact.isBlocked;
         contacts[index] = contact;
         contacts[index].lastUpdateTime = millis();
-        contacts[index].isFriend = isFriend;
-        contacts[index].blocked = blocked;
+        contacts[index].isCrew = isCrew;
+        contacts[index].isBlocked = isBlocked;
     }
     else
     {
@@ -147,8 +147,8 @@ void ContactManager::fromJson(JsonObjectConst json)
 
         JsonObjectConst data = kv.value().as<JsonObjectConst>();
         strlcpy(contact.displayName, data["DisplayName"] | "", sizeof(contact.displayName));
-        contact.isFriend = data["Friend"] | false;
-        contact.blocked = data["Blocked"] | false;
+        contact.isCrew = data["isCrew"] | false;
+        contact.isBlocked = data["isBlocked"] | false;
         contact.totalXP = data["TotalXP"] | 0;
         contact.avatar = data["Avatar"] | 0;
 
@@ -169,22 +169,22 @@ void ContactManager::toJson(JsonObject& json) const
             //JsonObject contactObj = json.createNestedObject(nodeIdStr);
             JsonObject contactObj = json[nodeIdStr];
             contactObj["DisplayName"] = contact.displayName;
-            contactObj["Friend"] = contact.isFriend;
-            contactObj["Blocked"] = contact.blocked;
+            contactObj["isCrew"] = contact.isCrew;
+            contactObj["isBlocked"] = contact.isBlocked;
             contactObj["TotalXP"] = contact.totalXP;
             contactObj["Avatar"] = contact.avatar;
         }
     }
 }
 
-// Get friends
-std::vector<ContactData*> ContactManager::getFriends()
+// Get crew
+std::vector<ContactData*> ContactManager::getCrew()
 {
     std::vector<ContactData*> result;
     for (std::vector<ContactData>::iterator it = contacts.begin(); it != contacts.end(); ++it)
     {
         ContactData& contact = *it;
-        if (contact.isFriend)
+        if (contact.isCrew)
         {
             result.push_back(&contact);
         }
@@ -216,7 +216,7 @@ std::vector<ContactData*> ContactManager::getContacts()
     for (std::vector<ContactData>::iterator it = contacts.begin(); it != contacts.end(); ++it)
     {
         ContactData& contact = *it;
-        //if (contact.isFriend)
+        //if (contact.isCrew)
         //{
             result.push_back(&contact);
         //}
@@ -293,7 +293,7 @@ static DisplayOptions stringToDisplayOption(const char* str)
 {
     if (strcmp(str, "Everyone") == 0) return Everyone;
     if (strcmp(str, "NotBlocked") == 0) return NotBlocked;
-    if (strcmp(str, "Friends") == 0) return Friends;
+    if (strcmp(str, "Crew") == 0) return Crew;
     if (strcmp(str, "None") == 0) return None;
     return Everyone;  // default
 }
@@ -515,7 +515,7 @@ static const char* displayOptionToString(int option)
     {
     case Everyone: return "Everyone";
     case NotBlocked: return "NotBlocked";
-    case Friends: return "Friends";
+    case Crew: return "Crew";
     case None: return "None";
     default: return "Unknown";
     }
@@ -542,9 +542,9 @@ static void printContactData(const ContactData& contact, bool verbose = false, i
     printf("%sContact NodeID: %u\n", spaces.c_str(), contact.nodeId);
     printf("%s  DisplayName: %s\n", spaces.c_str(), contact.displayName);
     printf("%s  Roles: %s%s\n", spaces.c_str(),"x",
-        contact.isFriend ? "Contact " : "");
+        contact.isCrew ? "Contact " : "");
     printf("%s  Status: %s%s\n", spaces.c_str(),
-        contact.blocked ? "Blocked " : "",
+        contact.isBlocked ? "Blocked " : "",
         contact.pendingSave ? "PendingSave " : "");
     printf("%s  LastUpdate: %llu\n", spaces.c_str(), contact.lastUpdateTime);
     printf("%s  TotalXP: %d\n", spaces.c_str(), contact.totalXP);
@@ -564,8 +564,8 @@ static void printContactManager(const ContactManager& manager, bool verbose = fa
 
     for (const auto& contact : manager)
     {
-        if (contact.isFriend) totalContacts++;
-        if (contact.blocked) blockedContacts++;
+        if (contact.isCrew) totalContacts++;
+        if (contact.isBlocked) blockedContacts++;
         if (contact.pendingSave) pendingUpdates++;
     }
 
@@ -590,7 +590,7 @@ static void printContactManager(const ContactManager& manager, bool verbose = fa
         printf("\nBlocked Contacts:");
         for (const auto& contact : manager)
         {
-            if (contact.blocked)
+            if (contact.isBlocked)
             {
                 printContactData(contact, false, 2);
             }
@@ -721,8 +721,8 @@ bool loadConfig(Config& cfg, const char* filename) {
         c.nodeId = strtoul(kv.key().c_str(), nullptr, 10);
         JsonObject entry = kv.value().as<JsonObject>();
         strlcpy(c.displayName, entry["DisplayName"] | "", sizeof(c.displayName));
-        c.isFriend = entry["Friend"] | false;
-        c.blocked = entry["Blocked"] | false;
+        c.isCrew = entry["isCrew"] | false;
+        c.isBlocked = entry["isBlocked"] | false;
         c.totalXP = entry["TotalXP"] | 0;
         c.avatar = entry["Avatar"] | 0; 
         cfg.contacts.addOrUpdateContact(c);
@@ -798,8 +798,8 @@ static void configToJson(const Config& config, JsonDocument& doc)
         snprintf(id, sizeof(id), "%u", c.nodeId);
         auto entry = contacts[id];
         entry["DisplayName"] = c.displayName;
-        entry["Friend"] = c.isFriend;
-        entry["Blocked"] = c.blocked;
+        entry["isCrew"] = c.isCrew;
+        entry["isBlocked"] = c.isBlocked;
         entry["TotalXP"] = c.totalXP;
         entry["Avatar"] = c.avatar; 
     }

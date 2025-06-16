@@ -55,8 +55,8 @@ inline void strlcpy(char* dst, const char* src, size_t size) {
 enum DisplayOptions
 {
     Everyone = 0,   // everyone
-    NotBlocked = 1, // all except blocked
-    Friends = 2,    // friends only
+    NotBlocked = 1, // all except isBlocked
+    Crew = 2,       // crew only
     None = 3        // no names
 };
 
@@ -64,8 +64,8 @@ struct ContactData
 {
     uint32_t nodeId = 0;
     char displayName[64] = "";
-    bool isFriend = false;
-    bool blocked = false;
+    bool isCrew = false;
+    bool isBlocked = false;
     bool pendingSave = false;
     uint64_t lastUpdateTime = 0;
     int totalXP = 0;
@@ -154,7 +154,7 @@ public:
 
     // Filtering
     std::vector<ContactData*> getContacts();
-    std::vector<ContactData*> getFriends();
+    std::vector<ContactData*> getCrew();
 };
 
 struct Config
