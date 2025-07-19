@@ -87,7 +87,7 @@ char* avatarIDToFilename(int32_t avatarID)
 //                  -> None         = always show board ID
 //                  -> Not Blocked  = show DisplayName unless isBlocked
 //                  -> Crew         = only show DisplayName if isCrew
-char* getName(ContactData* contact)
+char* getNameFromContact(ContactData* contact)
 {
     char retVal[64];
 
@@ -121,6 +121,36 @@ char* getName(ContactData* contact)
         return retVal;
         break;
     }
+}
+
+// timer callback for controlDoubleTapGuard
+void controlDoubleTapGuardTimer_cb(lv_timer_t* timer)
+{
+    lv_obj_t* target = (lv_obj_t*)lv_timer_get_user_data(timer);
+    lv_obj_set_state(target, LV_STATE_DISABLED, false);
+}
+
+// Disables the touched object for msToDisable (default = 0.25 sec)
+// This prevents accidental double-tapping of controls
+void controlDoubleTapGuard(lv_event_t* e, int32_t msToDisable = 250)
+{
+    lv_obj_t* target = (lv_obj_t*)lv_event_get_target(e);
+    lv_obj_set_state(target, LV_STATE_DISABLED, true);
+    lv_timer_t* timer = lv_timer_create(controlDoubleTapGuardTimer_cb, msToDisable, target);
+    lv_timer_set_repeat_count(timer, 1);
+}
+
+// Force a reload of Crew & Scan contact data
+void reloadContactLists()
+{
+    // clear all contact lists
+    lv_obj_clean(objects.list_contacts_crew);
+    lv_obj_clean(objects.list_contacts_scan);
+
+    populate_crew_list(NULL);
+    populate_scan_list(NULL);
+
+    // TODO: fix rando crashes when changing display options; crew list hidden on change
 }
 
 // change UI settings and apply them to the board

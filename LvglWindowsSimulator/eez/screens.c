@@ -8,6 +8,8 @@
 #include "styles.h"
 #include "ui.h"
 
+extern objects_t objects;
+
 #include <string.h>
 
 objects_t objects;
@@ -1827,7 +1829,7 @@ void create_screen_host() {
             // ddl_host_games
             lv_obj_t *obj = lv_dropdown_create(parent_obj);
             objects.ddl_host_games = obj;
-            lv_obj_set_pos(obj, 105, 294);
+            lv_obj_set_pos(obj, 105, 291);
             lv_obj_set_size(obj, 128, 26);
             lv_dropdown_set_options(obj, "Select a game\nGame 1\nGame 2\nGame 3");
             lv_dropdown_set_selected(obj, 0);
@@ -2253,7 +2255,7 @@ void create_screen_join() {
             // ddl_join_games
             lv_obj_t *obj = lv_dropdown_create(parent_obj);
             objects.ddl_join_games = obj;
-            lv_obj_set_pos(obj, 105, 294);
+            lv_obj_set_pos(obj, 105, 291);
             lv_obj_set_size(obj, 128, 26);
             lv_dropdown_set_options(obj, "Select a game\nGame 1\nGame 2\nGame 3");
             lv_dropdown_set_selected(obj, 0);
@@ -2272,7 +2274,7 @@ void create_screen_join() {
             // roller_join_games
             lv_obj_t *obj = lv_roller_create(parent_obj);
             objects.roller_join_games = obj;
-            lv_obj_set_pos(obj, 106, 141);
+            lv_obj_set_pos(obj, 105, 141);
             lv_obj_set_size(obj, 127, 146);
             lv_roller_set_options(obj, "No Crews Found\nSome other text", LV_ROLLER_MODE_NORMAL);
             lv_obj_set_style_radius(obj, 25, LV_PART_MAIN | LV_STATE_DEFAULT);

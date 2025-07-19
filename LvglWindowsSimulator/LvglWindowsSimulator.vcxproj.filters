@@ -4127,6 +4127,9 @@
     <ClCompile Include="mission.cpp">
       <Filter>custom</Filter>
     </ClCompile>
+    <ClCompile Include="eez\ui_image_16x16.c">
+      <Filter>eez</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">

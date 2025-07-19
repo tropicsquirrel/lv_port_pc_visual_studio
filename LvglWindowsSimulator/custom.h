@@ -60,6 +60,9 @@ extern "C" {
     char* avatarIDToFilename(int32_t avatarID);
     bool applyConfig(Config& config);
     bool saveAndApplyBoardConfig(Config& config);
+    char* getNameFromContact(ContactData* contact);
+    void reloadContactLists();
+    void controlDoubleTapGuard(lv_event_t* e, int32_t msToDisable);
 
     // repeating task callback start/stop
     void repeat_on(uint32_t ms, void (*cb)());

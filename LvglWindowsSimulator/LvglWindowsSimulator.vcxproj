@@ -3438,6 +3438,7 @@
     <ClCompile Include="eez\ui_font_lcars_16.c" />
     <ClCompile Include="eez\ui_font_lcars_20.c" />
     <ClCompile Include="eez\ui_font_lcars_60.c" />
+    <ClCompile Include="eez\ui_image_16x16.c" />
     <ClCompile Include="eez\ui_image_ui_element___icons.c" />
     <ClCompile Include="eez\ui_image_ui_element___main_divider.c" />
     <ClCompile Include="eez\ui_image_ui_element___subdivider.c" />

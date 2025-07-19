@@ -42,6 +42,7 @@ void set_usernames(lv_event_t* e)
     {
         config.board.displayNameOptions.showNamesFrom = Everyone;
     }
+    reloadContactLists();
     saveAndApplyBoardConfig(config);
 }
 

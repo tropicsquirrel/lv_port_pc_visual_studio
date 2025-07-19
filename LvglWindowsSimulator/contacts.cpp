@@ -44,7 +44,7 @@ void contactListButtonClick(lv_event_t* e)
     lv_obj_remove_state(objects.check_contacts_crew, LV_STATE_DISABLED);
 
     //set display name in the label
-    lv_label_set_text(objects.lbl_contacts_name, (const char*)contact->displayName);
+    lv_label_set_text(objects.lbl_contacts_name, getNameFromContact(contact));
 
     //set the avatar image
     lv_image_set_src(objects.img_contacts_avatar, avatarIDToFilename(contact->avatar));
@@ -86,7 +86,7 @@ void populate_crew_list(lv_event_t* e)
 
         if (crew_list_buttons.count(contact->nodeId) == 0)
         {
-            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_crew, avatarIDToFilename(contact->avatar), contact->displayName);
+            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_crew, avatarIDToFilename(contact->avatar), getNameFromContact(contact));
             lv_obj_set_user_data(entry, (void*)contact->nodeId); // Store the nodeID to look up later
             lv_obj_add_event_cb(entry, contactListButtonClick, LV_EVENT_CLICKED, NULL);
             crew_list_buttons[contact->nodeId] = entry;
@@ -138,7 +138,7 @@ void populate_scan_list(lv_event_t* e)
         if (scan_list_buttons.count(contact->nodeId) == 0)
         {
             // create the button
-            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_scan, avatarIDToFilename(contact->avatar), contact->displayName);
+            lv_obj_t* entry = lv_list_add_button(objects.list_contacts_scan, avatarIDToFilename(contact->avatar), getNameFromContact(contact));
             lv_obj_set_user_data(entry, (void*)contact->nodeId);
             lv_obj_add_event_cb(entry, contactListButtonClick, LV_EVENT_CLICKED, NULL);
             scan_list_buttons[contact->nodeId] = entry;
@@ -152,7 +152,7 @@ void populate_scan_list(lv_event_t* e)
             // make sure the contact still exists
             if (currentIDs[contact->nodeId])
             {
-                lv_list_set_button_text(objects.list_contacts_scan, scan_list_buttons[contact->nodeId], contact->displayName);
+                lv_list_set_button_text(objects.list_contacts_scan, scan_list_buttons[contact->nodeId], getNameFromContact(contact));
                 continue;
             }
         }
@@ -191,7 +191,7 @@ void checkContactsBlockClick(lv_event_t* e)
         if (contact) // if they're in the config.contacts list
         {
             contact->isBlocked = true;
-            snprintf(display, sizeof(display), "Crewmate '%s' blocked.", contact->displayName);
+            snprintf(display, sizeof(display), "Crewmate '%s' blocked.", getNameFromContact(contact));
             lv_label_set_text(objects.lbl_contacts_name, display);
         }
         else // if not, add them to config.contacts, remove from scanResults
@@ -202,7 +202,7 @@ void checkContactsBlockClick(lv_event_t* e)
                 contact->isBlocked = true; // set isBlocked = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
-                snprintf(display, sizeof(display), "'%s' blocked.", contact->displayName);
+                snprintf(display, sizeof(display), "'%s' blocked.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
             }
             else // contact no longer exists for some reason
@@ -221,7 +221,7 @@ void checkContactsBlockClick(lv_event_t* e)
             if (contact) // if they're in the config.contacts list
             {
                 contact->isBlocked = false;
-                snprintf(display, sizeof(display), "Crew '%s' allowed.", contact->displayName);
+                snprintf(display, sizeof(display), "Crew '%s' allowed.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
             }
             else // contact no longer exists for some reason
@@ -234,7 +234,7 @@ void checkContactsBlockClick(lv_event_t* e)
             contact = config.contacts.findContact(contactLastClicked); // pull the info from scanResults
             if (contact)
             {
-                snprintf(display, sizeof(display), "Contact '%s' allowed.", contact->displayName);
+                snprintf(display, sizeof(display), "Contact '%s' allowed.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
                 config.contacts.removeContact(contactLastClicked);
             }
@@ -275,7 +275,7 @@ void checkContactsCrewClick(lv_event_t* e)
         if (contact) // if they're in the config.contacts list
         {
             contact->isCrew = true;
-            snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
+            snprintf(display, sizeof(display), "'%s' added to crew.", getNameFromContact(contact));
             lv_label_set_text(objects.lbl_contacts_name, display);
         }
         else // if not, add them to config.contacts, remove from scanResults
@@ -285,7 +285,7 @@ void checkContactsCrewClick(lv_event_t* e)
             {
                 contact->isCrew = true; // set crew = TRUE before storing
                 config.contacts.addOrUpdateContact(*contact);
-                snprintf(display, sizeof(display), "'%s' added to crew.", contact->displayName);
+                snprintf(display, sizeof(display), "'%s' added to crew.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
                 scanResults.removeContact(contactLastClicked); // and remove them from scanResults
             }
@@ -305,7 +305,7 @@ void checkContactsCrewClick(lv_event_t* e)
             if (contact) // if they're in the config.contacts list
             {
                 contact->isCrew = false;
-                snprintf(display, sizeof(display), "'%s' removed from crew.", contact->displayName);
+                snprintf(display, sizeof(display), "'%s' removed from crew.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
             }
             else
@@ -318,7 +318,7 @@ void checkContactsCrewClick(lv_event_t* e)
             contact = config.contacts.findContact(contactLastClicked);
             if (contact)
             {
-                snprintf(display, sizeof(display), "'%s' removed from crew.", contact->displayName);
+                snprintf(display, sizeof(display), "'%s' removed from crew.", getNameFromContact(contact));
                 lv_label_set_text(objects.lbl_contacts_name, display);
                 config.contacts.removeContact(contactLastClicked);
             }
