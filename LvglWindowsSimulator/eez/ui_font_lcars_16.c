@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Size: 16 px
  * Bpp: 4
- * Opts: --bpp 4 --size 16 --no-compress --font ..\..\Antonio-VariableFont_wght.ttf --range 32-127 --format lvgl
+ * Opts: --bpp 4 --size 16 --no-compress --font ..\..\Antonio-VariableFont_wght.ttf --symbols • --range 32-127 --format lvgl
  ******************************************************************************/
 
 #ifdef __has_include
@@ -704,7 +704,11 @@ static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap[] = {
 
     /* U+007E "~" */
     0x2, 0x97, 0x10, 0x86, 0xd, 0xff, 0xfc, 0xf6,
-    0x7, 0x32, 0x9e, 0xb0
+    0x7, 0x32, 0x9e, 0xb0,
+
+    /* U+2022 "•" */
+    0x0, 0x0, 0x1, 0xdf, 0xa0, 0x6f, 0xff, 0x16,
+    0xff, 0xf1, 0xc, 0xf9, 0x0
 };
 
 
@@ -808,7 +812,8 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] = {
     {.bitmap_index = 3364, .adv_w = 82, .box_w = 5, .box_h = 16, .ofs_x = 0, .ofs_y = -2},
     {.bitmap_index = 3404, .adv_w = 67, .box_w = 2, .box_h = 16, .ofs_x = 1, .ofs_y = -1},
     {.bitmap_index = 3420, .adv_w = 82, .box_w = 5, .box_h = 16, .ofs_x = 0, .ofs_y = -2},
-    {.bitmap_index = 3460, .adv_w = 140, .box_w = 8, .box_h = 3, .ofs_x = 0, .ofs_y = 7}
+    {.bitmap_index = 3460, .adv_w = 140, .box_w = 8, .box_h = 3, .ofs_x = 0, .ofs_y = 7},
+    {.bitmap_index = 3472, .adv_w = 108, .box_w = 5, .box_h = 5, .ofs_x = 1, .ofs_y = 4}
 };
 
 /*---------------------
@@ -822,6 +827,10 @@ static const lv_font_fmt_txt_cmap_t cmaps[] =
 {
     {
         .range_start = 32, .range_length = 95, .glyph_id_start = 1,
+        .unicode_list = NULL, .glyph_id_ofs_list = NULL, .list_length = 0, .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY
+    },
+    {
+        .range_start = 8226, .range_length = 1, .glyph_id_start = 96,
         .unicode_list = NULL, .glyph_id_ofs_list = NULL, .list_length = 0, .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY
     }
 };
@@ -1081,7 +1090,7 @@ static lv_font_fmt_txt_dsc_t font_dsc = {
     .cmaps = cmaps,
     .kern_dsc = &kern_pairs,
     .kern_scale = 16,
-    .cmap_num = 1,
+    .cmap_num = 2,
     .bpp = 4,
     .kern_classes = 0,
     .bitmap_format = 0,

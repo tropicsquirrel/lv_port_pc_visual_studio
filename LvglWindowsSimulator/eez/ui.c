@@ -44,7 +44,7 @@ void loadScreen(enum ScreensEnum screenId) {
 
 void ui_init() {
     create_screens();
-    loadScreen(SCREEN_ID_MAIN);
+    loadScreen(1);
 }
 
 void ui_tick() {

@@ -9,8 +9,23 @@ extern "C" {
 
 extern const lv_img_dsc_t img_ui_element___main_divider;
 extern const lv_img_dsc_t img_ui_element___subdivider;
-extern const lv_img_dsc_t img_ui_element___icons;
 extern const lv_img_dsc_t img_16x16;
+extern const lv_img_dsc_t img_stars;
+extern const lv_img_dsc_t img_ui_element___badge_disabled;
+extern const lv_img_dsc_t img_ui_element___badge_enabled;
+extern const lv_img_dsc_t img_ui_element___battery_000;
+extern const lv_img_dsc_t img_ui_element___battery_025;
+extern const lv_img_dsc_t img_ui_element___battery_050;
+extern const lv_img_dsc_t img_ui_element___battery_075;
+extern const lv_img_dsc_t img_ui_element___battery_100;
+extern const lv_img_dsc_t img_ui_element___wi_fi_disabled;
+extern const lv_img_dsc_t img_ui_element___wi_fi_enabled;
+extern const lv_img_dsc_t img_ui___not_ready;
+extern const lv_img_dsc_t img_ui___ready;
+extern const lv_img_dsc_t img_ui___shuttle;
+extern const lv_img_dsc_t img_endor_logo_e;
+extern const lv_img_dsc_t img_ui___github_qr_code;
+extern const lv_img_dsc_t img_endor_logo_full;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -20,7 +35,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[4];
+extern const ext_img_desc_t images[19];
 
 
 #ifdef __cplusplus

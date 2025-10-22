@@ -146,6 +146,23 @@ lv_style_t *get_style_check_default_INDICATOR_DISABLED();
 void add_style_check_default(lv_obj_t *obj);
 void remove_style_check_default(lv_obj_t *obj);
 
+// Style: Screen_Black
+lv_style_t *get_style_screen_black_MAIN_DEFAULT();
+void add_style_screen_black(lv_obj_t *obj);
+void remove_style_screen_black(lv_obj_t *obj);
+
+// Style: roller_lcars_16
+lv_style_t *get_style_roller_lcars_16_MAIN_DEFAULT();
+lv_style_t *get_style_roller_lcars_16_SELECTED_DEFAULT();
+void add_style_roller_lcars_16(lv_obj_t *obj);
+void remove_style_roller_lcars_16(lv_obj_t *obj);
+
+// Style: container_bullet_button
+lv_style_t *get_style_container_bullet_button_MAIN_DEFAULT();
+lv_style_t *get_style_container_bullet_button_MAIN_DISABLED();
+void add_style_container_bullet_button(lv_obj_t *obj);
+void remove_style_container_bullet_button(lv_obj_t *obj);
+
 
 
 #ifdef __cplusplus
