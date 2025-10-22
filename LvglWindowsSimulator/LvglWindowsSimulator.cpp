@@ -5,7 +5,6 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
-#include "eez/ui.h"
 
 int main()
 {
@@ -78,15 +77,15 @@ int main()
         return -1;
     }
 
-    ui_init();
-    //lv_demo_widgets();
+    //ui_init();
+    lv_demo_widgets();
     //lv_demo_benchmark();
 
     while (1)
     {
         uint32_t time_till_next = lv_timer_handler();
         lv_delay_ms(time_till_next);
-        ui_tick();
+        //ui_tick();
     }
 
     return 0;
