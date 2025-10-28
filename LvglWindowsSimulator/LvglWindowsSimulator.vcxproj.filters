@@ -1433,6 +1433,31 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClInclude>
     <ClInclude Include="lv_conf.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\actions.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\fonts.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\structs.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\vars.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="custom.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3497,6 +3522,22 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClCompile>
     <ClCompile Include="LvglWindowsSimulator.cpp" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="custom.cpp" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui_font_pipboy_14.c">
+      <Filter>eez</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="freetype">
@@ -4716,6 +4757,9 @@
     </Filter>
     <Filter Include="lvgl\zephyr">
       <UniqueIdentifier>{1265f1bd-f9a3-4f46-bf6e-bb2675da02ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="eez">
+      <UniqueIdentifier>{08ee4239-7f66-40a0-a43e-c1407124d1dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -12381,5 +12425,6 @@
     <None Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\zephyr\module.yml">
       <Filter>lvgl\zephyr</Filter>
     </None>
+    <None Include="freetype.props" />
   </ItemGroup>
 </Project>

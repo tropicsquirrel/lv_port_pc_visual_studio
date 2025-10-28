@@ -517,6 +517,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\tileview\lv_tileview_private.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\actions.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\fonts.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\structs.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.h" />
+    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\vars.h" />
+    <ClInclude Include="custom.h" />
     <ClInclude Include="lv_conf.h" />
   </ItemGroup>
   <ItemGroup>
@@ -3267,6 +3276,12 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.c" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.c" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.c" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.c" />
+    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui_font_pipboy_14.c" />
+    <ClCompile Include="custom.cpp" />
     <ClCompile Include="LvglWindowsSimulator.cpp" />
   </ItemGroup>
   <ItemGroup>
