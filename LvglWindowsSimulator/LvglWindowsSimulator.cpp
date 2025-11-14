@@ -5,7 +5,7 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
-#include "C:\Users\data\OneDrive\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.h"
+#include ".\eez\ui.h"
 #include "custom.h"
 
 int main()

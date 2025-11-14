@@ -1433,31 +1433,31 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClInclude>
     <ClInclude Include="lv_conf.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\actions.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\fonts.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\structs.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.h">
-      <Filter>eez</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\vars.h">
-      <Filter>eez</Filter>
-    </ClInclude>
     <ClInclude Include="custom.h" />
+    <ClInclude Include="eez\actions.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\fonts.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\images.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\screens.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\structs.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\styles.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\ui.h">
+      <Filter>eez</Filter>
+    </ClInclude>
+    <ClInclude Include="eez\vars.h">
+      <Filter>eez</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LvglWindowsSimulator.manifest" />
@@ -3522,20 +3522,20 @@
       <Filter>lvgl\src\widgets\win</Filter>
     </ClCompile>
     <ClCompile Include="LvglWindowsSimulator.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.c">
-      <Filter>eez</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.c">
-      <Filter>eez</Filter>
-    </ClCompile>
     <ClCompile Include="custom.cpp" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui_font_pipboy_14.c">
+    <ClCompile Include="eez\images.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="eez\screens.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="eez\styles.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="eez\ui.c">
+      <Filter>eez</Filter>
+    </ClCompile>
+    <ClCompile Include="eez\ui_font_pipboy_14.c">
       <Filter>eez</Filter>
     </ClCompile>
   </ItemGroup>

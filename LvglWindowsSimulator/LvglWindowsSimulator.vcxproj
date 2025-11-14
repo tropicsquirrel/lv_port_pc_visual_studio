@@ -36,7 +36,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>LV_CONF_INCLUDE_SIMPLE;LV_LVGL_H_INCLUDE_SIMPLE;LV_USE_DEV_VERSION;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization Condition="'$(Configuration)'=='Release'">MinSpace</Optimization>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\delug\OneDrive\Source\Arduino\git\lv_port_pc_visual_studio-9.2\LvglWindowsSimulator\eez;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(HOMEDRIVE)$(HOMEPATH)\OneDrive\Source\Arduino\git\lv_port_pc_visual_studio-9.2\LvglWindowsSimulator\eez;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -517,15 +517,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\tileview\lv_tileview_private.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\LvglPlatform\lvgl\src\widgets\win\lv_win_private.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\actions.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\fonts.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\structs.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.h" />
-    <ClInclude Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\vars.h" />
     <ClInclude Include="custom.h" />
+    <ClInclude Include="eez\actions.h" />
+    <ClInclude Include="eez\fonts.h" />
+    <ClInclude Include="eez\images.h" />
+    <ClInclude Include="eez\screens.h" />
+    <ClInclude Include="eez\structs.h" />
+    <ClInclude Include="eez\styles.h" />
+    <ClInclude Include="eez\ui.h" />
+    <ClInclude Include="eez\vars.h" />
     <ClInclude Include="lv_conf.h" />
   </ItemGroup>
   <ItemGroup>
@@ -3276,12 +3276,12 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\images.c" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\screens.c" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\styles.c" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui.c" />
-    <ClCompile Include="..\..\..\..\..\Documents\Arduino\lv_port_pc_visual_studio\LvglWindowsSimulator\eez\ui_font_pipboy_14.c" />
     <ClCompile Include="custom.cpp" />
+    <ClCompile Include="eez\images.c" />
+    <ClCompile Include="eez\screens.c" />
+    <ClCompile Include="eez\styles.c" />
+    <ClCompile Include="eez\ui.c" />
+    <ClCompile Include="eez\ui_font_pipboy_14.c" />
     <ClCompile Include="LvglWindowsSimulator.cpp" />
   </ItemGroup>
   <ItemGroup>
